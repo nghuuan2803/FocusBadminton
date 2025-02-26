@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.DapperQueries;
+﻿using Application.Interfaces;
+using Application.Interfaces.DapperQueries;
 using Domain.Repositories;
 using Shared.Enums;
 
@@ -8,7 +9,6 @@ namespace Application.Features.HoldSlots
     {
         public int CourtId { get; set; }
         public int TimeSlotId { get; set; }
-        public DateTime HoldAt { get; set; }
         public string? HoldBy { get; set; }
         public BookingType BookingType { get; set; }
         public DateTimeOffset BeginAt { get; set; }
@@ -20,16 +20,23 @@ namespace Application.Features.HoldSlots
     {
         private readonly IRepository<BookingHold> _repository;
         private readonly IScheduleQueries _schedules;
+        private readonly ISlotNotification _slotNotification;
 
-        public HoldSlotCommandHandler(IRepository<BookingHold> repository, IScheduleQueries schedules)
+        public HoldSlotCommandHandler(
+            IRepository<BookingHold> repository,
+            IScheduleQueries schedules,
+            ISlotNotification slotNotification)
         {
             _repository = repository;
             _schedules = schedules;
+            _slotNotification = slotNotification;
         }
 
         public async Task<int> Handle(HoldSlotCommand request, CancellationToken cancellationToken)
         {
-            var available = await _schedules.CheckAvailable(request.CourtId,
+            // Kiểm tra slot có khả dụng để giữ hay không
+            var available = await _schedules.CheckAvailable(
+                request.CourtId,
                 request.TimeSlotId,
                 request.BookingType,
                 request.BeginAt,
@@ -40,19 +47,41 @@ namespace Application.Features.HoldSlots
             {
                 return 0;
             }
+
+            var now = DateTimeOffset.UtcNow;
             var bookingHold = new BookingHold
             {
                 CourtId = request.CourtId,
                 TimeSlotId = request.TimeSlotId,
-                HeldAt = request.HoldAt,
+                HeldAt = now,
                 HeldBy = request.HoldBy,
+                ExpiresAt = now.AddMinutes(5),
                 BookingType = request.BookingType,
                 BeginAt = request.BeginAt,
                 EndAt = request.EndAt,
                 DayOfWeek = request.DayOfWeek
             };
-            await _repository.AddAsync(bookingHold,cancellationToken);
+
+            // Lưu record BookingHold vào repository (và database)
+            await _repository.AddAsync(bookingHold, cancellationToken);
             await _repository.SaveAsync(cancellationToken);
+
+            // Tạo payload chi tiết chứa các thông tin cần thiết để client cập nhật giao diện và xử lý logic tránh overlap
+            var payload = new
+            {
+                HoldSlotId = bookingHold.Id,
+                CourtId = bookingHold.CourtId,
+                TimeSlotId = bookingHold.TimeSlotId,
+                BookingType = bookingHold.BookingType,
+                BeginAt = bookingHold.BeginAt,
+                EndAt = bookingHold.EndAt,
+                DayOfWeek = bookingHold.DayOfWeek,
+                HeldBy = bookingHold.HeldBy
+            };
+
+            // Gửi thông báo cho tất cả client rằng slot đã được giữ với payload chi tiết
+            await _slotNotification.NotifySlotHeldAsync(payload, cancellationToken);
+
             return bookingHold.Id;
         }
     }

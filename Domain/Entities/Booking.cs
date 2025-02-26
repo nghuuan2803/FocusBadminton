@@ -19,6 +19,7 @@ namespace Domain.Entities
         public int? PromotionId { get; set; } = null;
         public Promotion? Promotion { get; set; }
         public double Discount { get; set; }
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
 
         public DateTimeOffset? PausedDate { get; set; }
         public DateTimeOffset? ResumeDate { get; set; }

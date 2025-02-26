@@ -1,7 +1,7 @@
 ﻿using Domain.Common;
 using Shared.Auth;
 
-namespace Sh.Interfaces
+namespace Application.Interfaces
 {
     public interface IAuthService
     {

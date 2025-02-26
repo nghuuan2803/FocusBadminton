@@ -1,6 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using Web.Client.Models
+@inherits LayoutComponentBase
 
-<div class="page">
+@* <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
@@ -14,10 +15,48 @@
             @Body
         </article>
     </main>
+</div> *@
+<div class="page">
+    <div class="sidebar">
+        <SidebarMenu MenuItems="menuItems" />
+    </div>
+    <main>
+        <div class="top-row px-4">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+@code {
+    private List<IMenuComponent> menuItems = new List<IMenuComponent>();
+
+    protected override void OnInitialized()
+    {
+        menuItems.Add(new MenuLeaf("Home", "/", "fa-solid fa-house"));
+
+        var productsNode = new MenuNode("Products", "/products", "fa-solid fa-box");
+        var electronicsNode = new MenuNode("Electronics", "/products/electronics", "fa-solid fa-plug");
+        electronicsNode.Add(new MenuLeaf("Phones", "/products/phones", "fa-solid fa-mobile"));
+        var phoneBrandsNode = new MenuNode("Phone Brands");
+        phoneBrandsNode.Add(new MenuLeaf("Apple", "/products/phones/apple", "fa-brands fa-apple"));
+        phoneBrandsNode.Add(new MenuLeaf("Samsung", "/products/phones/samsung", "fa-brands fa-samsung"));
+        electronicsNode.Add(phoneBrandsNode);
+        electronicsNode.Add(new MenuLeaf("Laptops", "/products/laptops", "fa-solid fa-laptop"));
+
+        var clothingNode = new MenuNode("Clothing", "/products/clothing", "fa-solid fa-shirt");
+        clothingNode.Add(new MenuLeaf("Men", "/products/clothing/men", "fa-solid fa-person"));
+        var menCategoriesNode = new MenuNode("Categories");
+        menCategoriesNode.Add(new MenuLeaf("Shirts", "/products/clothing/men/shirts", "fa-solid fa-tshirt"));
+        menCategoriesNode.Add(new MenuLeaf("Pants", "/products/clothing/men/pants", "fa-solid fa-person-dress"));
+        clothingNode.Add(menCategoriesNode);
+
+        productsNode.Add(electronicsNode);
+        productsNode.Add(clothingNode);
+        menuItems.Add(productsNode);
+
+        menuItems.Add(new MenuLeaf("Contact", "/contact", "fa-solid fa-envelope"));
+    }
+}

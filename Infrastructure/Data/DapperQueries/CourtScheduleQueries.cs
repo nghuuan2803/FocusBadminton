@@ -25,9 +25,9 @@ namespace Infrastructure.Data.DapperQueries
             parameters.Add("BookingType", (int)bookingType);
             parameters.Add("BeginAt", beginAt, DbType.DateTimeOffset);
             parameters.Add("EndAt", endAt, DbType.DateTimeOffset);
-            parameters.Add("DayOfWeek", dayOfWeek, DbType.DateTimeOffset);
+            parameters.Add("DayOfWeek", dayOfWeek, DbType.String);
 
-            return await connection.QueryFirstAsync<bool>(
+            return await connection.QueryFirstOrDefaultAsync<bool>(
                 "GetBookingScheduleForAdmin",
                 parameters,
                 commandType: CommandType.StoredProcedure

@@ -1,6 +1,6 @@
-﻿using Sh.Interfaces;
-using Domain.Common;
+﻿using Domain.Common;
 using Domain.Entities;
+using Application.Interfaces;
 
 namespace BadmintonCourtBooking.Infrastructure.Identity
 {

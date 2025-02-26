@@ -1,5 +1,4 @@
-﻿using Sh.Interfaces;
-using Domain.Common;
+﻿using Domain.Common;
 using Domain.Entities;
 using Google.Apis.Auth;
 using Infrastructure.Data;
@@ -12,6 +11,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Shared.Auth;
+using Application.Interfaces;
 
 namespace Infrastructure.Identity
 {

@@ -3,7 +3,7 @@
     public enum PaymentMethod
     {
         Cash,
-        BankTranfer,
+        BankTransfer,
         Momo,
         VnPay,
         ZaloPay

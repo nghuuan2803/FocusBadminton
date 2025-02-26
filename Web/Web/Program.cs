@@ -1,10 +1,13 @@
 using Microsoft.OpenApi.Models;
 using Web.Components;
-using Sh;
 using Infrastructure;
 using Web.Crons;
 using System.Threading.RateLimiting;
 using Web.Policies;
+using Web.Hubs;
+using Application;
+using Web.Services;
+using Application.Interfaces;
 
 namespace Web
 {
@@ -13,7 +16,7 @@ namespace Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.WebHost.UseUrls("https://0.0.0.0:7000");
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen(option =>
@@ -44,6 +47,7 @@ namespace Web
                 });
             });
             builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
+            builder.Services.AddScoped<ISlotNotification,SlotNotification>();
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
@@ -62,7 +66,7 @@ namespace Web
                         }));
             });
             builder.Services.AddPolicies();
-            //builder.Services.AddHostedService<AutoReleaseSchedule>();
+            builder.Services.AddHostedService<AutoReleaseSlot>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -88,6 +92,7 @@ namespace Web
                 o.AllowAnyHeader();
                 o.AllowAnyMethod();
             });
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseAntiforgery();
@@ -95,6 +100,7 @@ namespace Web
             //app.UseMiddleware<ValidationExceptionMiddleware>();
 
             app.MapControllers();
+            app.MapHub<SlotHub>("/slotHub");
 
             app.MapStaticAssets();
             app.MapRazorComponents<App>()

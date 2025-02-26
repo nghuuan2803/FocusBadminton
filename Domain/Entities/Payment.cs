@@ -17,6 +17,8 @@ namespace Domain.Entities
 
         [MaxLength(100)]
         public string? Image { get; set; }
-        public PaymentStatus Status { get; set; } = PaymentStatus.Applied;
+        public DateTime PaidAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+        public PaymentStatus Status { get; set; } = PaymentStatus.Succeeded;
     }
 }

@@ -1,12 +1,12 @@
-﻿using Sh.Common;
-using Sh.Common.Behaviours;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Application.Features.Bookings.Commands;
 using Shared.Bookings;
+using Application.Common.Behaviours;
+using Application.Common;
 
-namespace Sh
+namespace Application
 {
     public static class DependencyInjection
     {
@@ -19,7 +19,7 @@ namespace Sh
             // Đăng ký ValidationBehavior
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddScoped<IRequestHandler<CreateBookingCommand, Result<BookingDTO>>,
-                Application.Features.Bookings.Commands.NotValidate.CreateBookingCommandHandler>();
+                Features.Bookings.Commands.CreateBookingCommandHandler>();
             //...
             return services;
         }

@@ -17,6 +17,7 @@ namespace Application.Features.Bookings.Commands
         public double Deposit { get; set; }
         public int? VoucherId { get; set; }
         public double Discount { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         [MaxLength(250)]
         public string? Note { get; set; }
@@ -44,6 +45,7 @@ namespace Application.Features.Bookings.Commands
 
         public async Task<Result<BookingDTO>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
+            // kiểm tra xem đã giữ lịch chưa
             var holds = await _holdRepo.GetAllAsync(x => x.HeldBy == request.MemberId.ToString() && x.ExpiresAt > DateTimeOffset.Now);
             if (holds.Count() != request.Details.Count)
             {
@@ -58,13 +60,24 @@ namespace Application.Features.Bookings.Commands
                     x.DayOfWeek == item.DayOfWeek))
                 {
                     return Result<BookingDTO>.Failure(Error.Validation("Chưa giữ lịch"));
-                }                
+                }
             }
+            // bắt đầu transaction
             await _unitOfWork.BeginAsync();
+
+            // tạo booking
             var booking = _mapper.Map<Booking>(request);
-            await _repository.AddAsync(booking);
+
+            // xóa giữ lịch
             _holdRepo.RemoveRange(holds);
+
+            // lưu booking
+            await _repository.AddAsync(booking);
+
+            // commit transaction
             await _unitOfWork.CommitAsync();
+
+            // trả về kết quả
             var result = _mapper.Map<BookingDTO>(booking);
             return Result<BookingDTO>.Success(result);
         }

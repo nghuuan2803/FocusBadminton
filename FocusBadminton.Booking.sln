@@ -8,6 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6E2070DB-4769-491E-BE96-E455B363934F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_items", "solution_items", "{72B8F7A2-EB4C-4127-890E-60C9A4C37C6F}"
+	ProjectSection(SolutionItems) = preProject
+		..\proc_schedule_v3.sql = ..\proc_schedule_v3.sql
+		..\seeddata.sql = ..\seeddata.sql
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{E93158DF-F1D2-4B01-ADD8-E25C196DE7DF}"
 EndProject

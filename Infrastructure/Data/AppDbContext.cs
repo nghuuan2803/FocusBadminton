@@ -75,27 +75,74 @@ namespace Infrastructure.Data
         }
         private void AddRoles(ModelBuilder builder)
         {
+            string sysAdminRoleId = "1ce72cac-5134-437d-bd03-0f76c5180afe";
             string adminRoleId = "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c";
-            string customerRoleId = "9af7d912-ca02-41ce-a82f-86e859573129";
-            var customerRole = new Role
+            string guestRoleId = "9af7d912-ca02-41ce-a82f-86e859573129";
+            string teamLeaderRoleId = "be4ab03e-0ce3-4ee0-ba17-2a666a185455";
+            string managerRoleId = "225a8b8f-6895-4429-8e64-76355415fa94";
+            string memberRoleId = "7a4dff7f-3d6a-4883-800b-7103ce57af94";
+            string coachRoleId = "3a8535c5-15c8-4d21-b9f4-d47cf0b4ef0b";
+            string studentRoleId = "40632c41-b76e-4a46-b74a-4f2f4d42661d";
+            var guestRole = new Role
             {
-                Id = customerRoleId,
-                Name = "Customer",
-                NormalizedName = "CUSTOMER"
+                Id = guestRoleId,
+                Name = "guest",
+                NormalizedName = "GUEST"
             };
             var adminRole = new Role
             {
                 Id = adminRoleId,
-                Name = "Admin",
+                Name = "admin",
                 NormalizedName = "ADMIN"
             };
-            builder.Entity<Role>().HasData(customerRole);
+            var teamLeaderRole = new Role
+            {
+                Id = teamLeaderRoleId,
+                Name = "team_leader",
+                NormalizedName = "TEAM_LEADER"
+            };
+            var managerRole = new Role
+            {
+                Id = managerRoleId,
+                Name = "manager",
+                NormalizedName = "MANAGER"
+            };
+            var memberRole = new Role
+            {
+                Id = memberRoleId,
+                Name = "member",
+                NormalizedName = "MEMBER"
+            };
+            var coachRole = new Role
+            {
+                Id = coachRoleId,
+                Name = "coach",
+                NormalizedName = "COACH"
+            };
+            var studentRole = new Role
+            {
+                Id = studentRoleId,
+                Name = "student",
+                NormalizedName = "STUDENT"
+            };
+            var sysAdminRole = new Role
+            {
+                Id = sysAdminRoleId,
+                Name = "sys_admin",
+                NormalizedName = "SYS_ADMIN"
+            };
+            builder.Entity<Role>().HasData(teamLeaderRole);
+            builder.Entity<Role>().HasData(managerRole);
+            builder.Entity<Role>().HasData(memberRole);
+            builder.Entity<Role>().HasData(coachRole);
+            builder.Entity<Role>().HasData(studentRole);
+            builder.Entity<Role>().HasData(guestRole);
             builder.Entity<Role>().HasData(adminRole);
+            builder.Entity<Role>().HasData(sysAdminRole);
         }
-
         private void AddAdmin(ModelBuilder builder)
         {
-            var adminUser = new Account
+            var adminAcc = new Account
             {
                 Id = "8c18473e-f0be-4202-bc37-38ced67318cb",
                 UserName = "admin",
@@ -103,22 +150,58 @@ namespace Infrastructure.Data
                 Email = "nghuuan2803@gmail.com",
                 NormalizedEmail = "nghuuan2803@gmail.com".ToUpper(),
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTimeOffset.UtcNow,
                 CreatedBy = "System"
             };
-
+            var sysAdminAcc = new Account
+            {
+                Id = "845d2699-2419-4cd6-96ac-1d592f143e41",
+                UserName = "sys_admin",
+                NormalizedUserName = "SYS_ADMIN",
+                Email = "anhuu2803@gmail.com",
+                NormalizedEmail = "anhuu2803@gmail.com".ToUpper(),
+                EmailConfirmed = true,
+                CreatedAt = DateTimeOffset.UtcNow,
+                CreatedBy = "System"
+            };
+            var managerAcc = new Account
+            {
+                Id = "0cb31850-6e26-43b0-bd66-ae58e99cad7d",
+                UserName = "manager",
+                NormalizedUserName = "manager",
+                Email = "anhuu2803@gmail.com",
+                NormalizedEmail = "anhuu2803@gmail.com".ToUpper(),
+                EmailConfirmed = true,
+                CreatedAt = DateTimeOffset.UtcNow,
+                CreatedBy = "System"
+            };
             // Hash mật khẩu admin
             var passwordHasher = new PasswordHasher<Account>();
-            adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin@123");
-            builder.Entity<Account>().HasData(adminUser);
+            adminAcc.PasswordHash = passwordHasher.HashPassword(adminAcc, "Admin@123");
+            sysAdminAcc.PasswordHash = passwordHasher.HashPassword(sysAdminAcc, "Sys_Admin@123");
+            managerAcc.PasswordHash = passwordHasher.HashPassword(managerAcc, "Sys_Admin@123");
+            builder.Entity<Account>().HasData(adminAcc);
+            builder.Entity<Account>().HasData(sysAdminAcc);
+            builder.Entity<Account>().HasData(managerAcc);
 
             var adminUserRole = new IdentityUserRole<string>
             {
                 UserId = "8c18473e-f0be-4202-bc37-38ced67318cb",
                 RoleId = "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c"
             };
+            var sysAdminUserRole = new IdentityUserRole<string>
+            {
+                UserId = "845d2699-2419-4cd6-96ac-1d592f143e41",
+                RoleId = "1ce72cac-5134-437d-bd03-0f76c5180afe"
+            };
+            var managerUserRole = new IdentityUserRole<string>
+            {
+                UserId = "0cb31850-6e26-43b0-bd66-ae58e99cad7d",
+                RoleId = "225a8b8f-6895-4429-8e64-76355415fa94"
+            };
             builder.Entity<IdentityUserRole<string>>().HasData(adminUserRole);
+            builder.Entity<IdentityUserRole<string>>().HasData(sysAdminUserRole);
+            builder.Entity<IdentityUserRole<string>>().HasData(managerUserRole);
         }
         private void AddBusinesRules(ModelBuilder builder)
         {
@@ -256,7 +339,7 @@ namespace Infrastructure.Data
         private void AddTimeSlots(ModelBuilder builder)
         {
             int minute = 0;
-            double duration = 1;
+            double duration = 0.5;
             int i = 0;
             while (true)
             {
@@ -271,7 +354,7 @@ namespace Infrastructure.Data
                     Duration = duration,
                     CreatedAt = DateTimeOffset.Now,
                 };
-                if (time.StartTime.Days > 0 || endTime.Hours > 22)
+                if (time.StartTime.Days > 0 || endTime.Hours > 23)
                     break;
                 builder.Entity<TimeSlot>().HasData(time);
                 minute += (int)(60 * duration);

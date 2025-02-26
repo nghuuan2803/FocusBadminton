@@ -12,6 +12,6 @@
         public BookingType BookingType { get; set; } = BookingType.InDay;
         public DateTimeOffset? BeginAt { get; set; }
         public DateTimeOffset? EndAt { get; set; }
-        public string DayOfWeek { get; set; }
+        public string? DayOfWeek { get; set; }
     }
 }

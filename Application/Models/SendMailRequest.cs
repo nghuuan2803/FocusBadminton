@@ -1,4 +1,4 @@
-﻿namespace Sh.Models
+﻿namespace Application.Models
 {
     public class SendMailRequest
     {

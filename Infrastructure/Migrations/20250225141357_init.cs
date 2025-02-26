@@ -403,7 +403,7 @@ namespace Infrastructure.Migrations
                     BookingType = table.Column<int>(type: "int", nullable: false),
                     BeginAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     EndAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DayOfWeek = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false)
+                    DayOfWeek = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -474,6 +474,7 @@ namespace Infrastructure.Migrations
                     VoucherId = table.Column<int>(type: "int", nullable: true),
                     PromotionId = table.Column<int>(type: "int", nullable: true),
                     Discount = table.Column<double>(type: "float", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     PausedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     ResumeDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
@@ -511,6 +512,8 @@ namespace Infrastructure.Migrations
                     Info = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Note = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     Image = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PaidAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -621,47 +624,58 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "CreatedAt", "CreatedBy", "Name", "NormalizedName", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { "9af7d912-ca02-41ce-a82f-86e859573129", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "Customer", "CUSTOMER", null, null },
-                    { "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "Admin", "ADMIN", null, null }
+                    { "1ce72cac-5134-437d-bd03-0f76c5180afe", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "sys_admin", "SYS_ADMIN", null, null },
+                    { "225a8b8f-6895-4429-8e64-76355415fa94", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "manager", "MANAGER", null, null },
+                    { "3a8535c5-15c8-4d21-b9f4-d47cf0b4ef0b", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "coach", "COACH", null, null },
+                    { "40632c41-b76e-4a46-b74a-4f2f4d42661d", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "student", "STUDENT", null, null },
+                    { "7a4dff7f-3d6a-4883-800b-7103ce57af94", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "member", "MEMBER", null, null },
+                    { "9af7d912-ca02-41ce-a82f-86e859573129", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "guest", "GUEST", null, null },
+                    { "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "admin", "ADMIN", null, null },
+                    { "be4ab03e-0ce3-4ee0-ba17-2a666a185455", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "System", "team_leader", "TEAM_LEADER", null, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "Avatar", "ConcurrencyStamp", "CreatedAt", "CreatedBy", "DeleteDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PersonalPoints", "PhoneNumber", "PhoneNumberConfirmed", "RewardPoints", "SecurityStamp", "TwoFactorEnabled", "UpdatedAt", "UpdatedBy", "UserName" },
-                values: new object[] { "8c18473e-f0be-4202-bc37-38ced67318cb", 0, null, "ae7a3a4a-682a-4206-bdf3-013bca1543b7", new DateTimeOffset(new DateTime(2025, 2, 20, 11, 53, 58, 692, DateTimeKind.Unspecified).AddTicks(2057), new TimeSpan(0, 0, 0, 0, 0)), "System", null, "nghuuan2803@gmail.com", true, false, null, "NGHUUAN2803@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEGwT5HlcL+Prfwb8yZFgrUPZXQCzpw8vfAsdekJ8k0kKA/5aYIJqXlyElKCV1QyA1Q==", 0.0, null, false, 0.0, "4505396e-a4fb-41cd-9c9c-c820880ef576", false, null, null, "admin" });
+                values: new object[,]
+                {
+                    { "0cb31850-6e26-43b0-bd66-ae58e99cad7d", 0, null, "538b3989-d40b-4fb8-ac41-f3805471c089", new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(520), new TimeSpan(0, 0, 0, 0, 0)), "System", null, "anhuu2803@gmail.com", true, false, null, "ANHUU2803@GMAIL.COM", "manager", "AQAAAAIAAYagAAAAEKyW1rVEQA8ZJzT1uv1ulEmqUUP8DqGSeLs6GBWEOORPvMBg3hJZqmNJbm1u+LNCkA==", 0.0, null, false, 0.0, null, false, null, null, "manager" },
+                    { "845d2699-2419-4cd6-96ac-1d592f143e41", 0, null, "de54d49f-9429-40c1-8ffa-8bb49d621e45", new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(516), new TimeSpan(0, 0, 0, 0, 0)), "System", null, "anhuu2803@gmail.com", true, false, null, "ANHUU2803@GMAIL.COM", "SYS_ADMIN", "AQAAAAIAAYagAAAAEN2iTha805bc48lwWsm/2SsFHmdNHUGG8R1yaMbB/ZNVj6r4GkglfZh6Q+1xASaitg==", 0.0, null, false, 0.0, null, false, null, null, "sys_admin" },
+                    { "8c18473e-f0be-4202-bc37-38ced67318cb", 0, null, "16f27721-27a8-4812-99fe-03bdd1e67e85", new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(509), new TimeSpan(0, 0, 0, 0, 0)), "System", null, "nghuuan2803@gmail.com", true, false, null, "NGHUUAN2803@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEIZz4erD+gay8IBrpf2XSmpiVeci/jIkvZYTQSiNL8r9+vPQ7XgcEBEaLdTduNQHEw==", 0.0, null, false, 0.0, null, false, null, null, "admin" }
+                });
 
             migrationBuilder.InsertData(
                 table: "BusinessRules",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Description", "IsApplied", "Name", "UpdatedAt", "UpdatedBy", "Value" },
                 values: new object[,]
                 {
-                    { "close_time", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4924), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Giờ đóng cửa", null, null, "22:00" },
-                    { "deposit_rate_fixed", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4932), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Yêu cầu đặt cọc khi đặt cố định", null, null, "1 d" },
-                    { "deposit_rate_hourly", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4931), new TimeSpan(0, 7, 0, 0, 0)), "system", null, false, "Yêu cầu đặt cọc khi đặt theo giờ", null, null, "0.2 p" },
-                    { "login_fixed", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4935), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Yêu cầu đăng nhập khi đặt cố định", null, null, "" },
-                    { "login_hourly", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4934), new TimeSpan(0, 7, 0, 0, 0)), "system", null, false, "Yêu cầu đăng nhập khi đặt theo giờ", null, null, "" },
-                    { "open_time", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4902), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Giờ mở cửa", null, null, "05:00" },
-                    { "payment_hourly", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4933), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Yêu cầu thanh toán khi đặt theo giờ", null, null, "" },
-                    { "price_friday", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4926), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Chỉnh giá thứ 6", null, null, "1.1" },
-                    { "price_saturday", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4928), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Chỉnh giá thứ 7", null, null, "1.2" },
-                    { "price_sunday", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4929), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Chỉnh giá Chủ nhật", null, null, "1.2" },
-                    { "release_slot", new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4936), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Thời gian tự nhả lịch nếu không đặt", null, null, "5:00" }
+                    { "close_time", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1931), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Giờ đóng cửa", null, null, "22:00" },
+                    { "deposit_rate_fixed", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1938), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Yêu cầu đặt cọc khi đặt cố định", null, null, "1 d" },
+                    { "deposit_rate_hourly", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1936), new TimeSpan(0, 7, 0, 0, 0)), "system", null, false, "Yêu cầu đặt cọc khi đặt theo giờ", null, null, "0.2 p" },
+                    { "login_fixed", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1942), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Yêu cầu đăng nhập khi đặt cố định", null, null, "" },
+                    { "login_hourly", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1940), new TimeSpan(0, 7, 0, 0, 0)), "system", null, false, "Yêu cầu đăng nhập khi đặt theo giờ", null, null, "" },
+                    { "open_time", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1893), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Giờ mở cửa", null, null, "05:00" },
+                    { "payment_hourly", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1939), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Yêu cầu thanh toán khi đặt theo giờ", null, null, "" },
+                    { "price_friday", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1932), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Chỉnh giá thứ 6", null, null, "1.1" },
+                    { "price_saturday", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1934), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Chỉnh giá thứ 7", null, null, "1.2" },
+                    { "price_sunday", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1935), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Chỉnh giá Chủ nhật", null, null, "1.2" },
+                    { "release_slot", new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1943), new TimeSpan(0, 7, 0, 0, 0)), "system", null, true, "Thời gian tự nhả lịch nếu không đặt", null, null, "5:00" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Facilities",
                 columns: new[] { "Id", "Address", "Coofficient", "CreatedAt", "CreatedBy", "Images", "Latitude", "Layout", "Longitude", "ManagerId", "Name", "PlaceId", "Status", "UpdatedAt", "UpdatedBy" },
-                values: new object[] { 1, "16 Đ. 53, Phường 14, Gò Vấp, Hồ Chí Minh", 1.0, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5821), new TimeSpan(0, 7, 0, 0, 0)), "system", null, "10.850212299999999", null, "106.64369049999999", null, "Sân cầu Focus", null, 1, null, null });
+                values: new object[] { 1, "16 Đ. 53, Phường 14, Gò Vấp, Hồ Chí Minh", 1.0, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3967), new TimeSpan(0, 7, 0, 0, 0)), "system", null, "10.850212299999999", null, "106.64369049999999", null, "Sân cầu Focus", null, 1, null, null });
 
             migrationBuilder.InsertData(
                 table: "TeamTiers",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Description", "DiscountPercent", "Image", "MinPoints", "Name", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5268), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.050000000000000003, null, 500000.0, "Đồng", null, null },
-                    { 2, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5272), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.10000000000000001, null, 1500000.0, "Bạc", null, null },
-                    { 3, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5273), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.14999999999999999, null, 5000000.0, "Vàng", null, null },
-                    { 4, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5274), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.20000000000000001, null, 15000000.0, "Kim Cương", null, null }
+                    { 1, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2419), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.050000000000000003, null, 500000.0, "Đồng", null, null },
+                    { 2, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2423), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.10000000000000001, null, 1500000.0, "Bạc", null, null },
+                    { 3, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2425), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.14999999999999999, null, 5000000.0, "Vàng", null, null },
+                    { 4, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2426), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0.20000000000000001, null, 15000000.0, "Kim Cương", null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -669,23 +683,44 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Duration", "EndTime", "IsApplied", "IsDeleted", "Price", "StartTime", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5454), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 6, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 5, 0, 0, 0), null, null },
-                    { 2, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5479), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 7, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 6, 0, 0, 0), null, null },
-                    { 3, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5494), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 8, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 7, 0, 0, 0), null, null },
-                    { 4, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5509), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 9, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 8, 0, 0, 0), null, null },
-                    { 5, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5524), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 10, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 9, 0, 0, 0), null, null },
-                    { 6, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5540), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 11, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 10, 0, 0, 0), null, null },
-                    { 7, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5555), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 12, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 11, 0, 0, 0), null, null },
-                    { 8, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5570), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 13, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 12, 0, 0, 0), null, null },
-                    { 9, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5681), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 14, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 13, 0, 0, 0), null, null },
-                    { 10, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5699), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 15, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 14, 0, 0, 0), null, null },
-                    { 11, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5713), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 16, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 15, 0, 0, 0), null, null },
-                    { 12, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5729), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 17, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 16, 0, 0, 0), null, null },
-                    { 13, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5744), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 18, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 17, 0, 0, 0), null, null },
-                    { 14, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5759), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 19, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 18, 0, 0, 0), null, null },
-                    { 15, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5773), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 20, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 19, 0, 0, 0), null, null },
-                    { 16, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5788), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 21, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 20, 0, 0, 0), null, null },
-                    { 17, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5802), new TimeSpan(0, 7, 0, 0, 0)), "system", 1.0, new TimeSpan(0, 22, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 21, 0, 0, 0), null, null }
+                    { 1, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2665), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 5, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 5, 0, 0, 0), null, null },
+                    { 2, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2697), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 6, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 5, 30, 0, 0), null, null },
+                    { 3, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2721), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 6, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 6, 0, 0, 0), null, null },
+                    { 4, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2746), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 7, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 6, 30, 0, 0), null, null },
+                    { 5, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2925), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 7, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 7, 0, 0, 0), null, null },
+                    { 6, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3077), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 8, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 7, 30, 0, 0), null, null },
+                    { 7, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3119), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 8, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 8, 0, 0, 0), null, null },
+                    { 8, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3184), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 9, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 8, 30, 0, 0), null, null },
+                    { 9, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3209), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 9, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 9, 0, 0, 0), null, null },
+                    { 10, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3232), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 10, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 9, 30, 0, 0), null, null },
+                    { 11, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3255), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 10, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 10, 0, 0, 0), null, null },
+                    { 12, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3276), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 11, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 10, 30, 0, 0), null, null },
+                    { 13, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3297), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 11, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 11, 0, 0, 0), null, null },
+                    { 14, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3319), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 12, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 11, 30, 0, 0), null, null },
+                    { 15, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3348), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 12, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 12, 0, 0, 0), null, null },
+                    { 16, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3371), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 13, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 12, 30, 0, 0), null, null },
+                    { 17, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3393), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 13, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 13, 0, 0, 0), null, null },
+                    { 18, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3416), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 14, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 13, 30, 0, 0), null, null },
+                    { 19, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3438), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 14, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 14, 0, 0, 0), null, null },
+                    { 20, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3459), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 15, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 14, 30, 0, 0), null, null },
+                    { 21, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3481), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 15, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 15, 0, 0, 0), null, null },
+                    { 22, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3503), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 16, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 15, 30, 0, 0), null, null },
+                    { 23, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3557), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 16, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 16, 0, 0, 0), null, null },
+                    { 24, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3580), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 17, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 16, 30, 0, 0), null, null },
+                    { 25, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3603), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 17, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 17, 0, 0, 0), null, null },
+                    { 26, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3624), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 18, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 17, 30, 0, 0), null, null },
+                    { 27, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3646), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 18, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 18, 0, 0, 0), null, null },
+                    { 28, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3667), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 19, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 18, 30, 0, 0), null, null },
+                    { 29, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3732), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 19, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 19, 0, 0, 0), null, null },
+                    { 30, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3756), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 20, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 19, 30, 0, 0), null, null },
+                    { 31, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3785), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 20, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 20, 0, 0, 0), null, null },
+                    { 32, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3808), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 21, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 20, 30, 0, 0), null, null },
+                    { 33, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3831), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 21, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 21, 0, 0, 0), null, null },
+                    { 34, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3856), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 22, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 21, 30, 0, 0), null, null },
+                    { 35, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3878), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 22, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 22, 0, 0, 0), null, null },
+                    { 36, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3899), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 23, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 22, 30, 0, 0), null, null },
+                    { 37, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3921), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(0, 23, 30, 0, 0), true, false, 50000.0, new TimeSpan(0, 23, 0, 0, 0), null, null },
+                    { 38, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3943), new TimeSpan(0, 7, 0, 0, 0)), "system", 0.5, new TimeSpan(1, 0, 0, 0, 0), true, false, 50000.0, new TimeSpan(0, 23, 30, 0, 0), null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -693,28 +728,33 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Description", "DiscountType", "Duration", "MaximumValue", "Name", "UpdatedAt", "UpdatedBy", "Value" },
                 values: new object[,]
                 {
-                    { 1, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5355), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, 30, 0.0, "Phiếu giảm giá 10%", null, null, 10.0 },
-                    { 2, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5352), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, 30, 0.0, "Phiếu giảm giá 15%", null, null, 15.0 },
-                    { 3, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5357), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, 15, 0.0, "Phiếu giảm giá 20%", null, null, 20.0 },
-                    { 4, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5358), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0, 15, 0.0, "Phiếu giảm giá 20.000đ", null, null, 20000.0 },
-                    { 5, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5360), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0, 15, 0.0, "Phiếu giảm giá 30.000đ", null, null, 30000.0 }
+                    { 1, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2535), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, 30, 0.0, "Phiếu giảm giá 10%", null, null, 10.0 },
+                    { 2, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2532), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, 30, 0.0, "Phiếu giảm giá 15%", null, null, 15.0 },
+                    { 3, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2537), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, 15, 0.0, "Phiếu giảm giá 20%", null, null, 20.0 },
+                    { 4, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2539), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0, 15, 0.0, "Phiếu giảm giá 20.000đ", null, null, 20000.0 },
+                    { 5, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2540), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 0, 15, 0.0, "Phiếu giảm giá 30.000đ", null, null, 30000.0 }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c", "8c18473e-f0be-4202-bc37-38ced67318cb" });
+                values: new object[,]
+                {
+                    { "225a8b8f-6895-4429-8e64-76355415fa94", "0cb31850-6e26-43b0-bd66-ae58e99cad7d" },
+                    { "1ce72cac-5134-437d-bd03-0f76c5180afe", "845d2699-2419-4cd6-96ac-1d592f143e41" },
+                    { "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c", "8c18473e-f0be-4202-bc37-38ced67318cb" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Courts",
                 columns: new[] { "Id", "Coofficient", "CreatedAt", "CreatedBy", "Description", "FacilityId", "Images", "Name", "Status", "Type", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, 1.2, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5850), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 1 (VIP)", 1, 1, null, null },
-                    { 2, 1.2, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5852), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 2 (VIP)", 1, 1, null, null },
-                    { 3, 1.0, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5854), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 3", 1, 0, null, null },
-                    { 4, 1.0, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5855), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 4", 1, 0, null, null },
-                    { 5, 1.0, new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5857), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 5", 1, 0, null, null }
+                    { 1, 1.2, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3998), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 1 (VIP)", 1, 1, null, null },
+                    { 2, 1.2, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4001), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 2 (VIP)", 1, 1, null, null },
+                    { 3, 1.0, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4003), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 3", 1, 0, null, null },
+                    { 4, 1.0, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4004), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 4", 1, 0, null, null },
+                    { 5, 1.0, new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4006), new TimeSpan(0, 7, 0, 0, 0)), "system", null, 1, null, "Sân 5", 1, 0, null, null }
                 });
 
             migrationBuilder.CreateIndex(

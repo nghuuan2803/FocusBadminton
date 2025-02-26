@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250220115359_init")]
+    [Migration("20250225141357_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -126,21 +126,58 @@ namespace Infrastructure.Migrations
                         {
                             Id = "8c18473e-f0be-4202-bc37-38ced67318cb",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ae7a3a4a-682a-4206-bdf3-013bca1543b7",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 11, 53, 58, 692, DateTimeKind.Unspecified).AddTicks(2057), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "16f27721-27a8-4812-99fe-03bdd1e67e85",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(509), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "System",
                             Email = "nghuuan2803@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "NGHUUAN2803@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGwT5HlcL+Prfwb8yZFgrUPZXQCzpw8vfAsdekJ8k0kKA/5aYIJqXlyElKCV1QyA1Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIZz4erD+gay8IBrpf2XSmpiVeci/jIkvZYTQSiNL8r9+vPQ7XgcEBEaLdTduNQHEw==",
                             PersonalPoints = 0.0,
                             PhoneNumberConfirmed = false,
                             RewardPoints = 0.0,
-                            SecurityStamp = "4505396e-a4fb-41cd-9c9c-c820880ef576",
                             TwoFactorEnabled = false,
                             UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = "845d2699-2419-4cd6-96ac-1d592f143e41",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "de54d49f-9429-40c1-8ffa-8bb49d621e45",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(516), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Email = "anhuu2803@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ANHUU2803@GMAIL.COM",
+                            NormalizedUserName = "SYS_ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN2iTha805bc48lwWsm/2SsFHmdNHUGG8R1yaMbB/ZNVj6r4GkglfZh6Q+1xASaitg==",
+                            PersonalPoints = 0.0,
+                            PhoneNumberConfirmed = false,
+                            RewardPoints = 0.0,
+                            TwoFactorEnabled = false,
+                            UserName = "sys_admin"
+                        },
+                        new
+                        {
+                            Id = "0cb31850-6e26-43b0-bd66-ae58e99cad7d",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "538b3989-d40b-4fb8-ac41-f3805471c089",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(520), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Email = "anhuu2803@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ANHUU2803@GMAIL.COM",
+                            NormalizedUserName = "manager",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKyW1rVEQA8ZJzT1uv1ulEmqUUP8DqGSeLs6GBWEOORPvMBg3hJZqmNJbm1u+LNCkA==",
+                            PersonalPoints = 0.0,
+                            PhoneNumberConfirmed = false,
+                            RewardPoints = 0.0,
+                            TwoFactorEnabled = false,
+                            UserName = "manager"
                         });
                 });
 
@@ -188,6 +225,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTimeOffset?>("PausedDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
                     b.Property<int?>("PromotionId")
                         .HasColumnType("int");
@@ -307,7 +347,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DayOfWeek")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
@@ -383,7 +422,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "open_time",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4902), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1893), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Giờ mở cửa",
@@ -392,7 +431,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "close_time",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4924), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1931), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Giờ đóng cửa",
@@ -401,7 +440,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "price_friday",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4926), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1932), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Chỉnh giá thứ 6",
@@ -410,7 +449,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "price_saturday",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4928), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1934), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Chỉnh giá thứ 7",
@@ -419,7 +458,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "price_sunday",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4929), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1935), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Chỉnh giá Chủ nhật",
@@ -428,7 +467,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "deposit_rate_hourly",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4931), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1936), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = false,
                             Name = "Yêu cầu đặt cọc khi đặt theo giờ",
@@ -437,7 +476,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "deposit_rate_fixed",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4932), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1938), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Yêu cầu đặt cọc khi đặt cố định",
@@ -446,7 +485,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "payment_hourly",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4933), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1939), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Yêu cầu thanh toán khi đặt theo giờ",
@@ -455,7 +494,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "login_hourly",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4934), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1940), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = false,
                             Name = "Yêu cầu đăng nhập khi đặt theo giờ",
@@ -464,7 +503,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "login_fixed",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4935), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1942), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Yêu cầu đăng nhập khi đặt cố định",
@@ -473,7 +512,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "release_slot",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(4936), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1943), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Thời gian tự nhả lịch nếu không đặt",
@@ -569,7 +608,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             Coofficient = 1.2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5850), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3998), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 1 (VIP)",
@@ -580,7 +619,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 2,
                             Coofficient = 1.2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5852), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4001), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 2 (VIP)",
@@ -591,7 +630,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 3,
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5854), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4003), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 3",
@@ -602,7 +641,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 4,
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5855), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4004), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 4",
@@ -613,7 +652,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 5,
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5857), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4006), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 5",
@@ -694,7 +733,7 @@ namespace Infrastructure.Migrations
                             Id = 1,
                             Address = "16 Đ. 53, Phường 14, Gò Vấp, Hồ Chí Minh",
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5821), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3967), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             Latitude = "10.850212299999999",
                             Longitude = "106.64369049999999",
@@ -857,6 +896,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("BookingId")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Image")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -871,6 +913,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Note")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -995,19 +1040,67 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
+                            Id = "be4ab03e-0ce3-4ee0-ba17-2a666a185455",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Name = "team_leader",
+                            NormalizedName = "TEAM_LEADER"
+                        },
+                        new
+                        {
+                            Id = "225a8b8f-6895-4429-8e64-76355415fa94",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Name = "manager",
+                            NormalizedName = "MANAGER"
+                        },
+                        new
+                        {
+                            Id = "7a4dff7f-3d6a-4883-800b-7103ce57af94",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Name = "member",
+                            NormalizedName = "MEMBER"
+                        },
+                        new
+                        {
+                            Id = "3a8535c5-15c8-4d21-b9f4-d47cf0b4ef0b",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Name = "coach",
+                            NormalizedName = "COACH"
+                        },
+                        new
+                        {
+                            Id = "40632c41-b76e-4a46-b74a-4f2f4d42661d",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Name = "student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
                             Id = "9af7d912-ca02-41ce-a82f-86e859573129",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "System",
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
+                            Name = "guest",
+                            NormalizedName = "GUEST"
                         },
                         new
                         {
                             Id = "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "System",
-                            Name = "Admin",
+                            Name = "admin",
                             NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "1ce72cac-5134-437d-bd03-0f76c5180afe",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = "System",
+                            Name = "sys_admin",
+                            NormalizedName = "SYS_ADMIN"
                         });
                 });
 
@@ -1113,7 +1206,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5268), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2419), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.050000000000000003,
                             MinPoints = 500000.0,
@@ -1122,7 +1215,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5272), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2423), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.10000000000000001,
                             MinPoints = 1500000.0,
@@ -1131,7 +1224,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5273), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2425), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.14999999999999999,
                             MinPoints = 5000000.0,
@@ -1140,7 +1233,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5274), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2426), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.20000000000000001,
                             MinPoints = 15000000.0,
@@ -1197,10 +1290,10 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5454), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2665), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 6, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 5, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1209,10 +1302,22 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5479), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2697), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 7, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 6, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 5, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2721), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 6, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1220,11 +1325,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 3,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5494), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 4,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2746), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 8, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 7, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 6, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2925), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 7, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1232,11 +1349,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5509), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3077), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 9, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 8, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3119), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 8, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1244,11 +1373,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 5,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5524), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 8,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3184), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 10, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 9, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 8, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3209), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 9, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1256,11 +1397,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 6,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5540), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 10,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3232), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 11, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 10, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 9, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3255), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 10, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1268,11 +1421,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 7,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5555), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 12,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3276), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 11, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 10, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3297), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 11, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1280,11 +1445,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 8,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5570), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 14,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3319), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 13, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 11, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3348), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 12, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1292,11 +1469,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 9,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5681), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 16,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3371), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 13, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 12, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3393), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 13, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1304,11 +1493,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 10,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5699), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 18,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3416), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 15, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3438), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 14, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1316,11 +1517,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 11,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5713), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 20,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3459), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 15, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 14, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3481), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 15, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1328,11 +1541,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 12,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5729), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 22,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3503), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 15, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3557), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 16, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1340,11 +1565,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 13,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5744), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 24,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3580), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 16, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3603), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1352,11 +1589,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 14,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5759), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 26,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3624), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 19, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 17, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3646), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 18, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1364,11 +1613,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 15,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5773), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 28,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3667), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 20, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 19, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 18, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3732), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 19, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1376,11 +1637,23 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 16,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5788), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 30,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3756), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 21, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 20, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 19, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3785), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 20, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
@@ -1388,15 +1661,87 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 17,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5802), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = 32,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3808), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
-                            Duration = 1.0,
-                            EndTime = new TimeSpan(0, 22, 0, 0, 0),
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 21, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 20, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3831), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 21, 30, 0, 0),
                             IsApplied = true,
                             IsDeleted = false,
                             Price = 50000.0,
                             StartTime = new TimeSpan(0, 21, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3856), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 22, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 21, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3878), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 22, 30, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 22, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3899), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 23, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 22, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3921), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(0, 23, 30, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 23, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3943), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedBy = "system",
+                            Duration = 0.5,
+                            EndTime = new TimeSpan(1, 0, 0, 0, 0),
+                            IsApplied = true,
+                            IsDeleted = false,
+                            Price = 50000.0,
+                            StartTime = new TimeSpan(0, 23, 30, 0, 0)
                         });
                 });
 
@@ -1522,7 +1867,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5355), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2535), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 1,
                             Duration = 30,
@@ -1533,7 +1878,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5352), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2532), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 1,
                             Duration = 30,
@@ -1544,7 +1889,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5357), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2537), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 1,
                             Duration = 15,
@@ -1555,7 +1900,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5358), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2539), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 0,
                             Duration = 15,
@@ -1566,7 +1911,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 20, 18, 53, 58, 769, DateTimeKind.Unspecified).AddTicks(5360), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2540), new TimeSpan(0, 7, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 0,
                             Duration = 15,
@@ -1677,6 +2022,16 @@ namespace Infrastructure.Migrations
                         {
                             UserId = "8c18473e-f0be-4202-bc37-38ced67318cb",
                             RoleId = "bdd06cc1-4b82-48ce-9aa2-2f574bd1896c"
+                        },
+                        new
+                        {
+                            UserId = "845d2699-2419-4cd6-96ac-1d592f143e41",
+                            RoleId = "1ce72cac-5134-437d-bd03-0f76c5180afe"
+                        },
+                        new
+                        {
+                            UserId = "0cb31850-6e26-43b0-bd66-ae58e99cad7d",
+                            RoleId = "225a8b8f-6895-4429-8e64-76355415fa94"
                         });
                 });
 

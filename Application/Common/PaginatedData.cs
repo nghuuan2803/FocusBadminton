@@ -1,4 +1,4 @@
-﻿namespace Sh.Common
+﻿namespace Application.Common
 {
     public class PaginatedData<T>
     {

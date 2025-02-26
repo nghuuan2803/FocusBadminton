@@ -1,6 +1,5 @@
 ﻿using Application.Features.Schedules;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Endpoints
@@ -29,5 +28,6 @@ namespace Web.Endpoints
             var result = await _mediator.Send(query);
             return Ok(result);
         }
+
     }
 }

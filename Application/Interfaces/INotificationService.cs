@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Sh.Interfaces
+namespace Application.Interfaces
 {
     public interface INotificationService
     {

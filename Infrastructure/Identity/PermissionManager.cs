@@ -1,5 +1,5 @@
-﻿using Sh.Interfaces;
-using Domain.Common;
+﻿using Domain.Common;
+using Application.Interfaces;
 
 namespace Infrastructure.Identity
 {

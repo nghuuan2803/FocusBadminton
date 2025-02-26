@@ -1,7 +1,6 @@
-﻿using Sh.Models;
-using Domain.Common;
+﻿using Application.Models;
 
-namespace Sh.Interfaces
+namespace Application.Interfaces
 {
     public interface IMailService
     {
