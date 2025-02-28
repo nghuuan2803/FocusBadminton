@@ -35,9 +35,9 @@ namespace Web.Endpoints
             var result = await _mediator.Send(command);
             if (result)
             {
-                return Ok(result);
+                return Ok(true);
             }
-            return BadRequest(result);
+            return BadRequest("Slot không thể nhả");
         }
     }
 }

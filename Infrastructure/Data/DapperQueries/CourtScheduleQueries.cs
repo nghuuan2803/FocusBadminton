@@ -28,7 +28,7 @@ namespace Infrastructure.Data.DapperQueries
             parameters.Add("DayOfWeek", dayOfWeek, DbType.String);
 
             return await connection.QueryFirstOrDefaultAsync<bool>(
-                "GetBookingScheduleForAdmin",
+                "CheckBookingHold",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
@@ -57,11 +57,12 @@ namespace Infrastructure.Data.DapperQueries
             parameters.Add("Date", date.Date, DbType.Date);
             parameters.Add("CourtId", courtId);
 
-            return await connection.QueryAsync<ScheduleDTO>(
+            var data = await connection.QueryAsync<ScheduleDTO>(
                 "GetBookingScheduleForCourt",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+            return data;
         }
     }
 }

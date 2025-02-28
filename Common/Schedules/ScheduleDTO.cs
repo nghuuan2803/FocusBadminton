@@ -8,14 +8,18 @@
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public ScheduleStatus Status { get; set; }
-
+        public int? HoldId { get; set; }
+        public string? HeldBy { get; set; }
         public enum ScheduleStatus
         {
-            Availble = 1,
-            CanNotHold = 2,
-            Holding = 3,
+            TimeOut = 0,
+            Available = 1,
+            Holding = 2,
+            Pending = 3,
             Booked = 4,
-            Paused = 5
+            Completed = 5,
+            Paused = 6,
+            Blocked = 7
         }
     }
 }

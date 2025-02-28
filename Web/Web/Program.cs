@@ -6,8 +6,8 @@ using System.Threading.RateLimiting;
 using Web.Policies;
 using Web.Hubs;
 using Application;
-using Web.Services;
 using Application.Interfaces;
+using Web.NotificationServices;
 
 namespace Web
 {
@@ -47,12 +47,13 @@ namespace Web
                 });
             });
             builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
-            builder.Services.AddScoped<ISlotNotification,SlotNotification>();
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
 
             builder.Services.AddSignalR();
+            builder.Services.AddScoped<ISlotNotification,SlotNotification>();
+            builder.Services.AddAntDesign();
 
             builder.Services.AddRateLimiter(options =>
             {

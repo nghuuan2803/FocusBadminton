@@ -6,7 +6,6 @@ namespace Application.Features.HoldSlots
     public class ReleaseSlotCommand : IRequest<bool>
     {
         public int HoldId { get; set; }
-        public DateTime HeldAt { get; set; }
         public string? HeldBy { get; set; }
     }
 
@@ -30,7 +29,7 @@ namespace Application.Features.HoldSlots
                 return false;
             }
             // Kiểm tra thông tin xác thực
-            if (bookingHold.HeldAt != request.HeldAt || bookingHold.HeldBy != request.HeldBy)
+            if (bookingHold.HeldBy != request.HeldBy)
             {
                 return false;
             }

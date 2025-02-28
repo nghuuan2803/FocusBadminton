@@ -1,8 +1,5 @@
 ﻿namespace Domain.Entities
 {
-    /// <summary>
-    /// Khung giờ
-    ///</summary>
     public class TimeSlot : BaseAuditableEntity<int>
     {
         public TimeSpan StartTime { get; set; }

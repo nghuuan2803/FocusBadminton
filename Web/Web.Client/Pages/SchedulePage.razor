@@ -1,0 +1,310 @@
+﻿@page "/schedules"
+@using Microsoft.AspNetCore.SignalR.Client
+
+@using Newtonsoft.Json
+
+<div class="container mt-4">
+    <h1 class="mb-3">Lịch Đặt Sân</h1>
+
+    <div class="mb-3">
+        <label for="datePicker" class="form-label">Chọn ngày:</label>
+        <input type="date" id="datePicker" class="form-control w-25 d-inline-block"
+        @bind="Date" @bind:format="yyyy-MM-dd" />
+        <button class="btn btn-primary ms-2" @onclick="HandleFilter">Lọc</button>
+        <button class="btn btn-secondary ms-2" @onclick="ResetFilter">Đặt lại</button>
+    </div>
+
+    @if (isLoading)
+    {
+        <p class="text-muted">Đang tải...</p>
+    }
+    else if (courts.Any())
+    {
+        <div class="table-container">
+            <table class="schedule-table table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="fixed-column">Sân</th>
+                        @foreach (var timeSlot in timeSlots)
+                        {
+                            <th>@timeSlot.StartTime.ToString("hh\\:mm")</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var court in courts)
+                    {
+                        <tr>
+                            <td class="fixed-column">@court</td>
+                            @foreach (var timeSlot in timeSlots)
+                            {
+                                var slot = schedules.FirstOrDefault(s => s.CourtName == court && s.TimeSlotId == timeSlot.Id);
+                                <td style="background-color: @(slot != null ? GetStatusColor(slot.Status) : "#ffffff")">
+                                    @(slot != null ? GetStatusText(slot.Status) : "Trống")
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Không có dữ liệu lịch</p>
+    }
+</div>
+
+<style>
+    /* Container chính, giữ toàn bộ chiều rộng viewport nhưng không vượt quá */
+    .container {
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 100%;
+    max-width: none; /* Bỏ giới hạn max-width mặc định của Bootstrap */
+    }
+
+    /* Container cho bảng, giới hạn độ rộng và buộc cuộn ngang */
+    .table-container {
+    overflow-x: auto;
+    max-width: calc(100vw - 350px); /* Giới hạn độ rộng, trừ phần menu 250px */
+    width: 100%;
+    }
+
+    .schedule-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    min-width: 0; /* Ngăn bảng phình ra */
+    }
+
+    .schedule-table th, .schedule-table td {
+    width: 100px; /* Độ rộng cố định cho mỗi cột khung giờ */
+    max-width: 100px;
+    min-width: 100px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .fixed-column {
+    position: sticky;
+    left: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
+    }
+
+    .table-dark th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #212529;
+    color: white;
+    }
+</style>
+
+@code {
+    [Inject] private CourtScheduleService CourtScheduleService { get; set; } = null!;
+    [Inject] private ILogger<ScheduleDTO> Logger { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private SlotService SlotService { get; set; } = null!; // Chưa dùng nhưng tao giữ lại
+
+    private SlotRealtimeHelper _realtimeHelper = null!;
+    public DateTime Date { get; set; } = DateTime.Today;
+    private List<ScheduleDTO> schedules = [];
+    private List<string> courts = [];
+    private List<TimeSlotDTO> timeSlots = [];
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Khởi tạo SlotRealtimeHelper
+        _realtimeHelper = new SlotRealtimeHelper($"{NavigationManager.BaseUri}slotHub");
+        _realtimeHelper.OnSlotHeld += HandleSlotHeld;
+        _realtimeHelper.OnSlotReleased += HandleSlotReleased;
+        _realtimeHelper.OnBookingCreated += HandleBookingCreated;
+
+        // Kết nối SignalR
+        await _realtimeHelper.StartAsync();
+
+        // Load lịch ban đầu
+        await LoadSchedules();
+    }
+
+    private async Task LoadSchedules()
+    {
+        isLoading = true;
+        try
+        {
+            Logger.LogInformation($"Loading schedules for FacilityId: 1, Date: {Date:yyyy-MM-dd}");
+            schedules = await CourtScheduleService.GetFacilitySchedules(1, Date) ?? [];
+            courts = schedules.Select(s => s.CourtName!).Distinct().OrderBy(c => c).ToList();
+            timeSlots = schedules.Select(s => new TimeSlotDTO { Id = s.TimeSlotId, StartTime = s.StartTime, EndTime = s.EndTime })
+                                .DistinctBy(t => t.Id)
+                                .OrderBy(t => t.StartTime)
+                                .ToList();
+            Logger.LogInformation($"Loaded {schedules.Count} schedules, {courts.Count} courts, {timeSlots.Count} time slots.");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading schedules: {ex.Message}");
+            schedules = [];
+            courts = [];
+            timeSlots = [];
+        }
+        finally
+        {
+            isLoading = false;
+        }
+        StateHasChanged();
+    }
+
+    private async void HandleSlotHeld(object payload)
+    {
+        Logger.LogInformation("Slot held: Payload = {@Payload}", payload);
+        try
+        {
+            var payloadString = payload.ToString();
+            // Deserialize payload thành một đối tượng cụ thể
+            var slotPayload = JsonConvert.DeserializeObject<SlotPayload>(payloadString);
+            if (slotPayload == null)
+            {
+                Logger.LogWarning("Failed to deserialize SlotHeld payload.");
+                return;
+            }
+
+            int courtId = slotPayload.CourtId;
+            int timeSlotId = slotPayload.TimeSlotId;
+            string? heldBy = slotPayload.HeldBy;
+
+            var slot = schedules.FirstOrDefault(s => s.CourtId == courtId && s.TimeSlotId == timeSlotId);
+            if (slot != null)
+            {
+                slot.Status = ScheduleDTO.ScheduleStatus.Holding;
+                slot.HeldBy = heldBy;
+            }
+            else
+            {
+                var courtName = schedules.FirstOrDefault(s => s.CourtId == courtId)?.CourtName;
+                var timeSlot = timeSlots.FirstOrDefault(t => t.Id == timeSlotId);
+                if (courtName != null && timeSlot != null)
+                {
+                    schedules.Add(new ScheduleDTO
+                        {
+                            CourtId = courtId,
+                            CourtName = courtName,
+                            TimeSlotId = timeSlotId,
+                            StartTime = timeSlot.StartTime,
+                            EndTime = timeSlot.EndTime,
+                            Status = ScheduleDTO.ScheduleStatus.Holding,
+                            HeldBy = heldBy
+                        });
+                    courts = schedules.Select(s => s.CourtName!).Distinct().OrderBy(c => c).ToList();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error handling SlotHeld: {Message}", ex.Message);
+        }
+        await LoadSchedules();
+    }
+
+    private async void HandleSlotReleased(object payload)
+    {
+        Logger.LogInformation("SignalR - Slot released: {@Payload}", payload);
+        string payloadString = payload.ToString();
+        var slotPayload = JsonConvert.DeserializeObject<SlotPayload>(payloadString);
+        if (slotPayload == null)
+        {
+            Logger.LogWarning("Failed to deserialize SlotHeld payload.");
+            return;
+        }
+
+        int courtId = slotPayload.CourtId;
+        int timeSlotId = slotPayload.TimeSlotId;
+        string? heldBy = slotPayload.HeldBy;
+        var slot = schedules.FirstOrDefault(s => s.CourtId == courtId && s.TimeSlotId == timeSlotId);
+        if (slot != null)
+        {
+            slot.Status = ScheduleDTO.ScheduleStatus.Available;
+            slot.HeldBy = null;
+        }
+        StateHasChanged();
+        await LoadSchedules();
+    }
+
+    private async void HandleBookingCreated(int bookingId)
+    {
+        Logger.LogInformation("Booking created: BookingId = {BookingId}", bookingId);
+        _ = LoadSchedules();
+        await LoadSchedules();
+    }
+
+    private async Task HandleFilter()
+    {
+        await LoadSchedules();
+    }
+
+    private async Task ResetFilter()
+    {
+        Date = DateTime.Today;
+        schedules = [];
+        await LoadSchedules();
+    }
+
+    private string GetStatusText(ScheduleDTO.ScheduleStatus status) => status switch
+    {
+        ScheduleDTO.ScheduleStatus.Available => "Trống",
+        ScheduleDTO.ScheduleStatus.TimeOut => "--",
+        ScheduleDTO.ScheduleStatus.Holding => "Khóa",
+        ScheduleDTO.ScheduleStatus.Pending => "Chờ duyệt",
+        ScheduleDTO.ScheduleStatus.Booked => "Đã duyệt",
+        ScheduleDTO.ScheduleStatus.Completed => "Kết thúc",
+        ScheduleDTO.ScheduleStatus.Paused => "Tạm ngưng",
+        _ => "Không xác định"
+    };
+
+    private string GetStatusColor(ScheduleDTO.ScheduleStatus status) => status switch
+    {
+        ScheduleDTO.ScheduleStatus.Available => "#d4edda",
+        ScheduleDTO.ScheduleStatus.TimeOut => "#e9ecef",
+        ScheduleDTO.ScheduleStatus.Holding => "#8c8c8c",
+        ScheduleDTO.ScheduleStatus.Pending => "#ffd591",
+        ScheduleDTO.ScheduleStatus.Booked => "#cce5ff",
+        ScheduleDTO.ScheduleStatus.Completed => "#cce5ff",
+        ScheduleDTO.ScheduleStatus.Paused => "#f8d7da",
+        _ => "#ffffff"
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_realtimeHelper != null)
+        {
+            await _realtimeHelper.DisposeAsync();
+        }
+    }
+
+    private class TimeSlotDTO
+    {
+        public int Id { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+    }
+    private class SlotPayload
+    {
+        public int HoldSlotId { get; set; }
+        public int CourtId { get; set; }
+        public int TimeSlotId { get; set; }
+        public int? BookingType { get; set; }
+        public DateTimeOffset? BeginAt { get; set; }
+        public DateTimeOffset? EndAt { get; set; }
+        public string? DayOfWeek { get; set; }
+        public string? HeldBy { get; set; }
+    }
+}

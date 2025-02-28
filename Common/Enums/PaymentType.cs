@@ -4,7 +4,7 @@
     {
         Deposit,
         Part,
-        Complete,
+        CompleteBooking,
         Other
     }
 }

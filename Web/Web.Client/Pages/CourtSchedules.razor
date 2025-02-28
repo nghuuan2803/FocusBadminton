@@ -1,9 +1,8 @@
-﻿@page "/court/{CourtId:int}"
+﻿@page "/schedules-v1"
+@inject CourtScheduleService CourtScheduleService
 @inject NavigationManager NavigationManager
-
-<Button OnClick="@(() => NavigationManager.NavigateTo("/schedules"))">Quay lại</Button>
 <div class="court-schedules-container">
-    <h1>Lịch Đặt Sân @CourtId</h1>
+    <h1>Lịch Đặt Sân (Cơ sở 1)</h1>
     <div>
         <label>Ngày: </label>
         <DatePicker TValue="DateTime" Size="InputSize.Large" @bind-Value="Date" />
@@ -20,6 +19,16 @@
             <Table TItem="ScheduleDTO"
                    DataSource="@schedules"
                    RowKey="record => record.CourtId + '-' + record.TimeSlotId">
+                <Column TData="ScheduleDTO" Title="Mã Sân" >
+                    <Template>
+                        @context.CourtId
+                    </Template>
+                </Column>
+                <Column TData="ScheduleDTO" Title="Sân">
+                    <Template>
+                        @context.CourtName
+                    </Template>
+                </Column>
                 <Column TData="ScheduleDTO" Title="Khung giờ">
                     <Template>
                         @context.StartTime.ToString("hh\\:mm") - @context.EndTime.ToString("hh\\:mm")
@@ -43,13 +52,10 @@
     .court-schedules-container {
         padding: 20px;
     }
-
     h1 {
         margin-bottom: 20px;
     }
-
     .schedule-table {
         margin-top: 20px;
     }
 </style>
-

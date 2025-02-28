@@ -5,7 +5,6 @@
         Cash,
         BankTransfer,
         Momo,
-        VnPay,
-        ZaloPay
+        VnPay
     }
 }

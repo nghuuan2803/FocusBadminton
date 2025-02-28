@@ -48,7 +48,7 @@ namespace Application.Features.HoldSlots
                 return 0;
             }
 
-            var now = DateTimeOffset.UtcNow;
+            var now = DateTimeOffset.Now;
             var bookingHold = new BookingHold
             {
                 CourtId = request.CourtId,
@@ -72,7 +72,7 @@ namespace Application.Features.HoldSlots
                 HoldSlotId = bookingHold.Id,
                 CourtId = bookingHold.CourtId,
                 TimeSlotId = bookingHold.TimeSlotId,
-                BookingType = bookingHold.BookingType,
+                BookingType = (int)bookingHold.BookingType,
                 BeginAt = bookingHold.BeginAt,
                 EndAt = bookingHold.EndAt,
                 DayOfWeek = bookingHold.DayOfWeek,

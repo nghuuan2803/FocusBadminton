@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Application.Interfaces;
+using AutoMapper;
 using Domain.Repositories;
 using Shared.Bookings;
 using Shared.Enums;
@@ -33,21 +34,27 @@ namespace Application.Features.Bookings.Commands
         private readonly IRepository<BookingHold> _holdRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ISlotNotification _slotNotification;
 
-        public CreateBookingCommandHandler(IRepository<Booking> repository,
-            IRepository<BookingHold> holds, IUnitOfWork unitOfWork, IMapper mapper)
+        public CreateBookingCommandHandler(
+            IRepository<Booking> repository,
+            IRepository<BookingHold> holds,
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ISlotNotification slotNotification) // Thêm ISlotNotification
         {
             _repository = repository;
             _holdRepo = holds;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _slotNotification = slotNotification;
         }
 
         public async Task<Result<BookingDTO>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
             // kiểm tra xem đã giữ lịch chưa
             var holds = await _holdRepo.GetAllAsync(x => x.HeldBy == request.MemberId.ToString() && x.ExpiresAt > DateTimeOffset.Now);
-            if (holds.Count() != request.Details.Count)
+            if (holds.Count() < request.Details.Count)
             {
                 return Result<BookingDTO>.Failure(Error.Validation("Chưa giữ lịch"));
             }
@@ -76,6 +83,8 @@ namespace Application.Features.Bookings.Commands
 
             // commit transaction
             await _unitOfWork.CommitAsync();
+
+            await _slotNotification.NotifyBookingCreatedAsync(booking.Id,cancellationToken);
 
             // trả về kết quả
             var result = _mapper.Map<BookingDTO>(booking);
