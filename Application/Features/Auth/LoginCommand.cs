@@ -1,6 +1,6 @@
 ﻿namespace Application.Features.Auth
 {
-    class LoginCommand
+    public class LoginCommand
     {
     }
 }

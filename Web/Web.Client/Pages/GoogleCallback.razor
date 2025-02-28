@@ -1,0 +1,49 @@
+﻿@page "/google-callback"
+@using Microsoft.AspNetCore.WebUtilities
+@using Blazored.LocalStorage
+@using Shared.Auth
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILocalStorageService LocalStorage
+@inject IConfiguration Configuration
+
+<h3>Đang xử lý đăng nhập từ Google...</h3>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.TryGetValue("code", out var code))
+        {
+            var loginRequest = new { code = code.ToString() };
+            var apiUrl = "https://localhost:7000/api/auth/google-login";
+
+            var response = await Http.PostAsJsonAsync(apiUrl, loginRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                if (authResponse is not null)
+                {
+                    // ✅ Lưu token vào LocalStorage
+                    await LocalStorage.SetItemAsync("accessToken", authResponse.accessToken);
+                    await LocalStorage.SetItemAsync("refreshToken", authResponse.refreshToken);
+
+                    // Chuyển hướng về trang chủ
+                    Navigation.NavigateTo("/");
+                    return;
+                }
+            }
+
+            Console.WriteLine("Lỗi khi trao đổi auth code.");
+        }
+        else
+        {
+            Console.WriteLine("Không tìm thấy auth code.");
+        }
+
+        Navigation.NavigateTo("/login");
+    }
+}

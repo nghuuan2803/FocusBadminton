@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Web.Client.ApiServices;
-
+using Blazored.LocalStorage;
 namespace Web.Client
 {
     internal class Program
@@ -18,6 +18,8 @@ namespace Web.Client
             builder.Services.AddScoped(sp => httpClient);
             builder.Services.AddScoped<CourtScheduleService>();
             builder.Services.AddScoped<SlotService>();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7000/") });
+            builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();
         }
     }

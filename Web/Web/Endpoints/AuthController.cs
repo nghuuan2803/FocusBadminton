@@ -1,27 +1,31 @@
-﻿using Infrastructure.Identity;
-using Microsoft.AspNetCore.Http;
+using Application.Features.Auth.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using Web.Request.Auth;
 
 namespace Web.Endpoints
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
-    public class AuthController(AuthService service) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        [HttpPost("login-google")]
-        public async Task<IActionResult> LoginGoogle([FromBody] GoogleAuthRequest request)
+
+        private readonly IMediator _mediator;
+        public AuthController(IMediator mediator)
         {
-            var result = await service.LoginByGoogleAsync(request.IdToken);
+            _mediator = mediator;
+        }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> LoginByGoogle([FromBody] LoginByGoogleRequest request)
+        {
+            var command = new LoginByGoogleCommand(request.Code);
+            var result = await _mediator.Send(command);
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new { error = result.Errors });
             }
-            return Ok(new { accessToken = result.Data.accessToken, refreshToken = result.Data.refreshToken });
+            return Ok(result.Data);
         }
-    }
-    public class GoogleAuthRequest
-    {
-        public string IdToken { get; set; }
     }
 }
