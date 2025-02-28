@@ -1,0 +1,37 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Đăng nhập bằng Google</h3>
+<button @onclick="LoginViaGoogle">Đăng nhập bằng Google</button>
+
+@code {
+    private bool _isInitialized = false;
+    private string clientId = "568380109802-dtu6hse617l9bs7dg0tn9me2fl3tvau4.apps.googleusercontent.com";
+    private string redirectUri = "https://localhost:7000/google-callback"; 
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_isInitialized)
+        {
+            _isInitialized = true;
+            await JS.InvokeVoidAsync("initLogin"); // Chạy JS sau khi trang load
+        }
+    }
+
+    async Task LoginViaGoogle()
+    {
+        Console.WriteLine("Bắt đầu chuyển hướng đến Google...");
+
+        var authUrl = $"https://accounts.google.com/o/oauth2/v2/auth" +
+              $"?response_type=code" +
+              $"&client_id={clientId}" +
+              $"&redirect_uri={redirectUri}" +
+              $"&scope=openid%20email%20profile" +
+              $"&state=xyz" +
+              $"&prompt=select_account";
+
+        Console.WriteLine($"URL chuyển hướng: {authUrl}");
+        Navigation.NavigateTo(authUrl, forceLoad: true); // Chuyển hướng đến Google
+    }
+}

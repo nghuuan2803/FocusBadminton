@@ -1,10 +1,13 @@
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Web.Components;
 using Sh;
 using Infrastructure;
-using Web.Crons;
 using System.Threading.RateLimiting;
 using Web.Policies;
+using Sh.Interfaces;
+using Application.Features.Auth.Strategies;
+using Application.Features.Auth.Factories;
+
 
 namespace Web
 {
@@ -43,6 +46,9 @@ namespace Web
                     }
                 });
             });
+            builder.Services.AddScoped<GoogleLoginStrategy>();
+            builder.Services.AddScoped<ILoginStrategyFactory, LoginStrategyFactory>();
+
             builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
             // Add services to the container.
             builder.Services.AddRazorComponents()
@@ -62,6 +68,10 @@ namespace Web
                         }));
             });
             builder.Services.AddPolicies();
+
+            builder.Services.AddHttpClient();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
             //builder.Services.AddHostedService<AutoReleaseSchedule>();
             var app = builder.Build();
 
