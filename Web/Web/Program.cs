@@ -78,6 +78,9 @@ namespace Web
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
+            builder.Services.AddScoped<GoogleLoginStrategy>();
+            builder.Services.AddScoped<ILoginStrategyFactory, LoginStrategyFactory>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

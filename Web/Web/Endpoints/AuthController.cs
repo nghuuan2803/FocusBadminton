@@ -1,5 +1,4 @@
-using Application.Features.Auth.Commands;
-using MediatR;
+﻿using Application.Features.Auth.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Web.Request.Auth;
 
@@ -9,18 +8,19 @@ namespace Web.Endpoints
     [ApiController]
     public class AuthController : ControllerBase
     {
-
-        private readonly IMediator _mediator;
-        public AuthController(IMediator mediator)
+        private readonly ILoginStrategyFactory _loginStrategyFactory;
+        public AuthController(ILoginStrategyFactory loginStrategyFactory)
         {
-            _mediator = mediator;
+            _loginStrategyFactory = loginStrategyFactory;
         }
 
-        [HttpPost("google-login")]
-        public async Task<IActionResult> LoginByGoogle([FromBody] LoginByGoogleRequest request)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] AuthLoginRequest request)
         {
-            var command = new LoginByGoogleCommand(request.Code);
-            var result = await _mediator.Send(command);
+            // 📌 Chọn strategy dựa vào request.LoginType ("google", "password", "facebook", ...)
+            var strategy = _loginStrategyFactory.GetStrategy(request.LoginType);
+            var result = await strategy.LoginAsync(request.Credential);
+
             if (!result.Succeeded)
             {
                 return BadRequest(new { error = result.Errors });

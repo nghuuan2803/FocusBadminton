@@ -17,8 +17,10 @@
 
         if (query.TryGetValue("code", out var code))
         {
-            var loginRequest = new { code = code.ToString() };
-            var apiUrl = "https://localhost:7000/api/auth/google-login";
+            // AuthController đang mong đợi một object có LoginType và Credential nên dòng 
+            // này SAI !!! var loginRequest = new { code = code.ToString() };
+            var loginRequest = new { LoginType = "google", Credential = code.ToString() };  
+            var apiUrl = "https://localhost:7000/api/auth/login"; 
 
             var response = await Http.PostAsJsonAsync(apiUrl, loginRequest);
 

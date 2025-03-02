@@ -13,14 +13,12 @@ namespace Application.Features.Auth.Factories
 
         public ILoginStrategy GetStrategy(string loginType)
         {
-            switch (loginType.ToLower())
+            return loginType.ToLower() switch
             {
-                case "google":
-                    return _serviceProvider.GetRequiredService<GoogleLoginStrategy>();
-                // Bạn có thể thêm các case khác như "facebook", "password", v.v.
-                default:
-                    throw new ArgumentException("Loại đăng nhập không hợp lệ.", nameof(loginType));
-            }
+                "google" => _serviceProvider.GetRequiredService<GoogleLoginStrategy>(),
+                
+                _ => throw new ArgumentException("Loại đăng nhập không hợp lệ.", nameof(loginType))
+            };
         }
     }
 }

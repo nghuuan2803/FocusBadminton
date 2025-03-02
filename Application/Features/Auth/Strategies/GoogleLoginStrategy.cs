@@ -13,6 +13,7 @@ namespace Application.Features.Auth.Strategies
 
         public async Task<Result<AuthResponse>> LoginAsync(string credential)
         {
+            // Auth code
             return await _authService.LoginByGoogleAsync(credential);
         }
     }
