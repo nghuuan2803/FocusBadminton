@@ -1,21 +1,18 @@
-﻿using AntDesign;
-
-namespace Web.Client.Pages
+﻿namespace Web.Client.Pages
 {
-    public partial class CourtSchedules
+    public partial class SchedulePage
     {
-        [Parameter] public int CourtId { get; set; }
         [Inject] private CourtScheduleService CourtScheduleService { get; set; } = null!;
-        [Inject] private ILogger<CourtScheduleDTO> Logger { get; set; } = null!;
+        [Inject] private ILogger<ScheduleDTO> Logger { get; set; } = null!;
         [Inject] private NavigationManager NavigationManager { get; set; } = null!;
         [Inject] private SlotService SlotService { get; set; } = null!;
         [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
+
         private SlotEventListener _realtimeHelper = null!;
-        private DateTime StartDate { get; set; } = DateTime.Today;
-        private DateTime EndDate { get; set; } = DateTime.Today.AddDays(6); // Mặc định là 7 ngày sau
-        private List<CourtScheduleDTO> schedules = [];
-        private string courtName = "";
+        public DateTime Date { get; set; } = DateTime.Today;
+        private List<ScheduleDTO> schedules = [];
+        private List<string> courts = [];
         private List<TimeSlotDTO> timeSlots = [];
         private Dictionary<string, SlotComponent> slotComponentRefs = new();
         private bool isLoading = false;
@@ -28,11 +25,6 @@ namespace Web.Client.Pages
             _realtimeHelper.OnBookingCreated += HandleBookingCreated;
 
             await _realtimeHelper.StartAsync();
-            //await LoadSchedules();
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
             await LoadSchedules();
         }
 
@@ -41,14 +33,14 @@ namespace Web.Client.Pages
             isLoading = true;
             try
             {
-                Logger.LogInformation($"Loading schedules for CourtId: {CourtId}, StartDate: {StartDate:yyyy-MM-dd}, EndDate: {EndDate:yyyy-MM-dd}");
-                schedules = await CourtScheduleService.GetCourtSchedulesInRange(CourtId, StartDate, EndDate) ?? [];
-                courtName = schedules.FirstOrDefault()?.CourtName ?? $"Sân {CourtId}";
+                Logger.LogInformation($"Loading schedules for FacilityId: 1, Date: {Date:yyyy-MM-dd}");
+                schedules = await CourtScheduleService.GetFacilitySchedules(1, Date) ?? [];
+                courts = schedules.Select(s => s.CourtName!).Distinct().OrderBy(c => c).ToList();
                 timeSlots = schedules.Select(s => new TimeSlotDTO { Id = s.TimeSlotId, StartTime = s.StartTime, EndTime = s.EndTime })
                                     .DistinctBy(t => t.Id)
                                     .OrderBy(t => t.StartTime)
                                     .ToList();
-                Logger.LogInformation($"Loaded {schedules.Count} schedules, {timeSlots.Count} time slots.");
+                Logger.LogInformation($"Loaded {schedules.Count} schedules, {courts.Count} courts, {timeSlots.Count} time slots.");
 
                 slotComponentRefs.Clear(); // Reset danh sách tham chiếu khi reload
             }
@@ -56,7 +48,7 @@ namespace Web.Client.Pages
             {
                 Logger.LogError(ex, "Error loading schedules: {ex.Message}");
                 schedules = [];
-                courtName = $"Sân {CourtId}";
+                courts = [];
                 timeSlots = [];
             }
             finally
@@ -68,8 +60,7 @@ namespace Web.Client.Pages
 
         private void HandleSlotUpdated(SlotComponent updatedSlot)
         {
-            var scheduleDate = schedules.FirstOrDefault(s => s.CourtId == updatedSlot.CourtId && s.TimeSlotId == updatedSlot.TimeSlotId)?.ScheduleDate ?? DateTime.Today;
-            var key = $"{updatedSlot.CourtId}_{updatedSlot.TimeSlotId}_{scheduleDate:yyyyMMdd}";
+            var key = $"{updatedSlot.CourtId}_{updatedSlot.TimeSlotId}";
             if (!slotComponentRefs.ContainsKey(key))
             {
                 slotComponentRefs[key] = updatedSlot;
@@ -90,12 +81,7 @@ namespace Web.Client.Pages
                     return;
                 }
 
-                if (slotPayload.CourtId != CourtId) return; // Chỉ xử lý cho sân hiện tại
-
-                var scheduleDate = slotPayload.BeginAt?.Date ?? DateTime.Today;
-                if (scheduleDate < StartDate || scheduleDate > EndDate) return; // Chỉ xử lý trong khoảng thời gian hiển thị
-
-                var slot = schedules.FirstOrDefault(s => s.CourtId == slotPayload.CourtId && s.TimeSlotId == slotPayload.TimeSlotId && s.ScheduleDate == scheduleDate);
+                var slot = schedules.FirstOrDefault(s => s.CourtId == slotPayload.CourtId && s.TimeSlotId == slotPayload.TimeSlotId);
                 if (slot != null)
                 {
                     slot.Status = ScheduleStatus.Holding;
@@ -103,13 +89,12 @@ namespace Web.Client.Pages
                 }
                 else
                 {
+                    var courtName = schedules.FirstOrDefault(s => s.CourtId == slotPayload.CourtId)?.CourtName;
                     var timeSlot = timeSlots.FirstOrDefault(t => t.Id == slotPayload.TimeSlotId);
-                    if (timeSlot != null)
+                    if (courtName != null && timeSlot != null)
                     {
-                        schedules.Add(new CourtScheduleDTO
+                        schedules.Add(new ScheduleDTO
                         {
-                            ScheduleDate = scheduleDate,
-                            DayOfWeek = scheduleDate.DayOfWeek.ToString(),
                             CourtId = slotPayload.CourtId,
                             CourtName = courtName,
                             TimeSlotId = slotPayload.TimeSlotId,
@@ -119,13 +104,14 @@ namespace Web.Client.Pages
                             HeldBy = slotPayload.HeldBy,
                             HoldId = slotPayload.HoldSlotId
                         });
+                        courts = schedules.Select(s => s.CourtName!).Distinct().OrderBy(c => c).ToList();
                     }
                 }
 
-                var key = $"{slotPayload.CourtId}_{slotPayload.TimeSlotId}_{scheduleDate:yyyyMMdd}";
+                var key = $"{slotPayload.CourtId}_{slotPayload.TimeSlotId}";
                 if (slotComponentRefs.TryGetValue(key, out var slotComponent))
                 {
-                    slotComponent.HandleRealtimeSignal(ScheduleStatus.Holding, slotPayload.HoldSlotId, slotPayload.HeldBy);
+                    slotComponent.HandleRealtimeSignal(ScheduleStatus.Holding,slotPayload.HoldSlotId, slotPayload.HeldBy);
                 }
             }
             catch (Exception ex)
@@ -147,12 +133,7 @@ namespace Web.Client.Pages
                     return;
                 }
 
-                if (slotPayload.CourtId != CourtId) return;
-
-                var scheduleDate = slotPayload.BeginAt?.Date ?? DateTime.Today;
-                if (scheduleDate < StartDate || scheduleDate > EndDate) return;
-
-                var slot = schedules.FirstOrDefault(s => s.CourtId == slotPayload.CourtId && s.TimeSlotId == slotPayload.TimeSlotId && s.ScheduleDate == scheduleDate);
+                var slot = schedules.FirstOrDefault(s => s.CourtId == slotPayload.CourtId && s.TimeSlotId == slotPayload.TimeSlotId);
                 if (slot != null)
                 {
                     slot.Status = ScheduleStatus.Available;
@@ -160,10 +141,10 @@ namespace Web.Client.Pages
                     slot.HoldId = null;
                 }
 
-                var key = $"{slotPayload.CourtId}_{slotPayload.TimeSlotId}_{scheduleDate:yyyyMMdd}";
+                var key = $"{slotPayload.CourtId}_{slotPayload.TimeSlotId}";
                 if (slotComponentRefs.TryGetValue(key, out var slotComponent))
                 {
-                    slotComponent.HandleRealtimeSignal(ScheduleStatus.Available, (int)slot.HoldId, null);
+                    slotComponent.HandleRealtimeSignal(ScheduleStatus.Available,-1, null);
                 }
             }
             catch (Exception ex)
@@ -187,70 +168,40 @@ namespace Web.Client.Pages
 
                 foreach (var detail in bookingPayload.Details)
                 {
-                    if (detail.CourtId != CourtId) continue;
-
-                    var scheduleDate = detail.BeginAt?.Date ?? DateTime.Today;
-                    if (scheduleDate < StartDate || scheduleDate > EndDate) continue;
-
-                    bool matchesDay = detail.DayOfWeek == null || detail.DayOfWeek == scheduleDate.DayOfWeek.ToString();
-                    bool withinDateRange = (detail.BeginAt.Value.Date <= scheduleDate) &&
-                                          (detail.EndAt == null || detail.EndAt.Value.Date >= scheduleDate);
+                    // Kiểm tra xem slot có trùng khoảng thời gian và ngày trong tuần không
+                    bool matchesDay = detail.DayOfWeek == null || detail.DayOfWeek == Date.DayOfWeek.ToString();
+                    bool withinDateRange = (detail.BeginAt.Value.Date <= Date) &&
+                                          (detail.EndAt == null || detail.EndAt.Value.Date >= Date);
 
                     if (matchesDay && withinDateRange)
                     {
-                        var slot = schedules.FirstOrDefault(s => s.CourtId == detail.CourtId && s.TimeSlotId == detail.TimeSlotId && s.ScheduleDate == scheduleDate);
+                        var slot = schedules.FirstOrDefault(s => s.CourtId == detail.CourtId && s.TimeSlotId == detail.TimeSlotId);
                         if (slot != null)
                         {
                             var newStatus = bookingPayload.Status switch
                             {
-                                1 => ScheduleStatus.Pending,
-                                2 => ScheduleStatus.Booked,
-                                3 => ScheduleStatus.Paused,
-                                4 => ScheduleStatus.Completed,
-                                _ => slot.Status
+                                1 => ScheduleStatus.Pending, // Pending
+                                2 => ScheduleStatus.Booked,  // Approved
+                                3 => ScheduleStatus.Paused,  // Paused
+                                4 => ScheduleStatus.Completed, // Completed
+                                _ => slot.Status // Giữ nguyên nếu không khớp
                             };
                             slot.Status = newStatus;
                             slot.HeldBy = bookingPayload.BookBy;
                         }
-                        else
-                        {
-                            var timeSlot = timeSlots.FirstOrDefault(t => t.Id == detail.TimeSlotId);
-                            if (timeSlot != null)
-                            {
-                                schedules.Add(new CourtScheduleDTO
-                                {
-                                    ScheduleDate = scheduleDate,
-                                    DayOfWeek = scheduleDate.DayOfWeek.ToString(),
-                                    CourtId = detail.CourtId,
-                                    CourtName = courtName,
-                                    TimeSlotId = detail.TimeSlotId,
-                                    StartTime = timeSlot.StartTime,
-                                    EndTime = timeSlot.EndTime,
-                                    Status = bookingPayload.Status switch
-                                    {
-                                        1 => ScheduleStatus.Pending,
-                                        2 => ScheduleStatus.Booked,
-                                        3 => ScheduleStatus.Paused,
-                                        4 => ScheduleStatus.Completed,
-                                        _ => ScheduleStatus.Available
-                                    },
-                                    HeldBy = bookingPayload.BookBy
-                                });
-                            }
-                        }
 
-                        var key = $"{detail.CourtId}_{detail.TimeSlotId}_{scheduleDate:yyyyMMdd}";
+                        var key = $"{detail.CourtId}_{detail.TimeSlotId}";
                         if (slotComponentRefs.TryGetValue(key, out var slotComponent))
                         {
                             var newStatus = bookingPayload.Status switch
                             {
-                                1 => ScheduleStatus.Pending,
-                                2 => ScheduleStatus.Booked,
-                                3 => ScheduleStatus.Paused,
-                                4 => ScheduleStatus.Completed,
-                                _ => slotComponent.InitialStatus
+                                1 => ScheduleStatus.Pending, // Pending
+                                2 => ScheduleStatus.Booked,  // Approved
+                                3 => ScheduleStatus.Paused,  // Paused
+                                4 => ScheduleStatus.Completed, // Completed
+                                _ => slotComponent.InitialStatus // Giữ nguyên nếu không khớp
                             };
-                            slotComponent.HandleRealtimeSignal(newStatus, -1, null);
+                            slotComponent.HandleRealtimeSignal(newStatus,-1, null);
                         }
                     }
                 }
@@ -268,11 +219,9 @@ namespace Web.Client.Pages
 
         private async Task ResetFilter()
         {
-            StartDate = DateTime.Today;
-            EndDate = DateTime.Today.AddDays(7);
+            Date = DateTime.Today;
             schedules = [];
             await LoadSchedules();
-            await MessageService.Error("Lỗi", 3);
         }
 
         public async ValueTask DisposeAsync()

@@ -3,6 +3,7 @@ using Dapper;
 using Shared.Enums;
 using Shared.Schedules;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Infrastructure.Data.DapperQueries
 {
@@ -16,7 +17,7 @@ namespace Infrastructure.Data.DapperQueries
         }
 
         public async Task<bool> CheckAvailable(int courtId, int timeSlotId, BookingType bookingType, 
-            DateTimeOffset beginAt, DateTimeOffset? endAt, string dayOfWeek)
+            DateTimeOffset beginAt, DateTimeOffset? endAt, string? dayOfWeek)
         {
             using var connection = _sqlConnection.CreateConnection();
             var parameters = new DynamicParameters();
@@ -59,6 +60,23 @@ namespace Infrastructure.Data.DapperQueries
 
             var data = await connection.QueryAsync<ScheduleDTO>(
                 "GetBookingScheduleForCourt",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+            return data;
+        }
+
+        public async Task<IEnumerable<CourtScheduleDTO>> GetCourtSchedulesAsync(DateTime startDate, DateTime endDate, int courtId)
+        {
+            using var connection = _sqlConnection.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("StartDate", startDate.Date, DbType.Date);
+            parameters.Add("EndDate", endDate.Date, DbType.Date);
+            parameters.Add("CourtId", courtId);
+
+            var data = await connection.QueryAsync<CourtScheduleDTO>(
+                "GetBookingScheduleForCourtInRange",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );

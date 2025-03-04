@@ -15,5 +15,7 @@
 
         public static Error Unauthorized(string description) =>
             new("Unauthorized", description);
+        public static Error UnknowError(string description) =>
+            new("UnknowError", description);
     }
 }

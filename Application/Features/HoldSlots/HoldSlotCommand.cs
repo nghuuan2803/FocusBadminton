@@ -41,7 +41,7 @@ namespace Application.Features.HoldSlots
                 request.BookingType,
                 request.BeginAt,
                 request.EndAt,
-                request.DayOfWeek ?? request.BeginAt.DayOfWeek.ToString());
+                request.DayOfWeek);
 
             if (!available)
             {

@@ -2,7 +2,7 @@
 {
     public class PendingState : ISlotState
     {
-        public string StatusText => "Chờ duyệt";
+        public string StatusText => "Chưa duyệt";
         public string StatusColor => "#fff3cd"; // Màu vàng nhạt
         public async Task HandleClick(SlotComponent slot)
         {

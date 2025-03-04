@@ -28,6 +28,11 @@ namespace Web.Endpoints
             var result = await _mediator.Send(query);
             return Ok(result);
         }
-
+        [HttpGet("court-range")]
+        public async Task<IActionResult> GetCourtSchedule([FromQuery] GetCourtScheduleInRangeQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
     }
 }

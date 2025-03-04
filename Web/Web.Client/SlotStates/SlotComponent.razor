@@ -1,1 +1,95 @@
-﻿<span>available</span>
+﻿
+<td style="background-color: @_state.StatusColor; cursor:pointer"
+    @onclick="OnSlotClick">
+    @_state.StatusText
+</td>
+
+<Modal Title="@("BasicModal")"
+       @bind-Visible="@_visible"
+       Style="top: 20px"
+       OnOk="HandleOkModal"
+       OnCancel="HandleCancelModal" >
+    @FormTemplate()
+</Modal>
+
+
+@code {
+
+    RenderFragment FormTemplate()
+    {
+        return @<div class="booking-info">
+        @if(booking.Status==BookingStatus.Pending)
+        {
+            <Button Color="Color.Cyan9" OnClick="ApproveBooking" AutoLoading>Duyệt</Button>
+            <Button Color="Color.Gold2" OnClick="RejectBooking" AutoLoading>Từ chối</Button>
+        }
+        <p><strong>Booking ID:</strong> @booking.Id</p>
+        <p>
+            <strong>Trạng thái:@((int)booking.Status)</strong>
+
+        </p>
+        <p>
+            <strong>Loại đặt sân:@((int)booking.Type)</strong>
+        </p>
+        @if (booking.Type == BookingType.InDay)
+        {
+            <p><strong>Ngày:</strong> @booking.Details?.FirstOrDefault()?.BeginAt?.ToString("dd-MM-yyyy")</p>
+        }
+        else
+        {
+            <p><strong>Ngày bắt đầu:</strong> @booking.Details?.FirstOrDefault()?.BeginAt?.ToString("dd-MM-yyyy")</p>
+            <p><strong>Ngày kết thúc:</strong> @booking.Details?.FirstOrDefault()?.EndAt?.ToString("dd-MM-yyyy")</p>
+            <p><strong>Ngày trong tuần:</strong> @booking.Details?.FirstOrDefault()?.DayOfWeek</p>
+        }
+        <p><strong>Người đặt:</strong> @booking.MemberName</p>
+        <div>
+            <strong>Chi tiết đặt sân:</strong>
+            @if (booking.Details != null && booking.Details.Any())
+            {
+            <ul>
+                @foreach (var detail in booking.Details)
+                {
+                    <li>
+                        Sân: @detail.CourtId, Khung giờ: @detail.TimeSlotId,
+                        Ngày bắt đầu: @detail.BeginAt?.ToString("dd-MM-yyyy"),
+                        Ngày kết thúc: @(detail.EndAt.HasValue ? detail.EndAt.Value.ToString("dd-MM-yyyy") : "Không có ngày kết thúc"),
+                        Ngày trong tuần: @detail.DayOfWeek
+                    </li>
+                }
+            </ul>
+            }
+            else
+            {
+                <p>Không có chi tiết đặt sân.</p>
+            }
+        </div>
+    </div>
+    ;
+        ;
+    }
+
+    bool _visible = false;
+    bool _submitting = false;
+
+
+    private void ShowModal()
+    {
+        _visible = true;
+    }
+
+    /// <summary>
+    /// on modal OK button is click, submit form manually
+    /// </summary>
+    /// <param name="e"></param>
+    private async Task HandleOkModal(MouseEventArgs e)
+    {
+        _submitting = true;
+        await Task.Delay(1000);
+    }
+
+    private void HandleCancelModal(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+
+}

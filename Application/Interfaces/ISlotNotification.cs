@@ -4,6 +4,6 @@
     {
         Task NotifySlotHeldAsync(object payload, CancellationToken cancellationToken);
         Task NotifySlotReleasedAsync(object payload, CancellationToken cancellationToken);
-        Task NotifyBookingCreatedAsync(int bookingId, CancellationToken cancellationToken);
+        Task NotifyBookingCreatedAsync(object payload, CancellationToken cancellationToken);
     }
 }

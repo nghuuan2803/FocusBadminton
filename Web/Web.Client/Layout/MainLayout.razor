@@ -23,8 +23,10 @@
         menuItems.Add(new MenuLeaf("Home", "/", "fa-solid fa-house"));
 
         var scheduleNode = new MenuNode("Lịch đặt sân", "/schedules", "fa-solid fa-calendar-days");
-        scheduleNode.Add(new MenuLeaf("Sân 1", "/schedule-court/1", "fa-solid fa-square"));
-        scheduleNode.Add(new MenuLeaf("Sân 2", "/schedule-court/2", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 1", "/court-schedule/1", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 2", "/court-schedule/2", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 3", "/court-schedule/3", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 4", "/court-schedule/4", "fa-solid fa-square"));
         scheduleNode.Add(new MenuLeaf("Tìm sân trống", "/available-court", "fa-solid fa-calendar-day"));
         scheduleNode.Add(new MenuLeaf("Duyệt yêu cầu", "/booking-approve", "fa-solid fa-list-check"));
 

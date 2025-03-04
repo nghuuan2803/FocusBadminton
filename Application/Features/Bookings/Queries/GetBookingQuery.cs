@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Repositories;
 using Shared.Bookings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Bookings.Queries
 {
@@ -23,7 +18,7 @@ namespace Application.Features.Bookings.Queries
         }
         public async Task<Result<BookingDTO>> Handle(GetBookingQuery request, CancellationToken cancellationToken)
         {
-            var booking = await _repository.FindAsync(request.id);
+            var booking = await _repository.FindAsync(p=>p.Id==request.id);
             if (booking == null)
             {
                 return Result<BookingDTO>.Failure(Error.NotFound($"Booking[{request.id}]","Không tìm thấy"));

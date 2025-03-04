@@ -1,7 +1,9 @@
 ﻿namespace Shared.Schedules
 {
-    public class ScheduleDTO
+    public class CourtScheduleDTO
     {
+        public DateTime ScheduleDate { get; set; }
+        public string? DayOfWeek { get; set; }
         public int CourtId { get; set; }
         public string CourtName { get; set; }
         public int TimeSlotId { get; set; }

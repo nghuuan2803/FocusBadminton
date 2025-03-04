@@ -55,12 +55,18 @@ namespace Web.NotificationServices
             }
         }
 
-        public async Task NotifyBookingCreatedAsync(int bookingId, CancellationToken cancellationToken)
+        public async Task NotifyBookingCreatedAsync(object payload, CancellationToken cancellationToken)
         {
+            if (payload == null)
+            {
+                _logger.LogWarning("Payload is null in NotifyBookingCreatedAsync, skipping.");
+                return;
+            }
+
             try
             {
-                _logger.LogInformation("Sending BookingCreated with BookingId: {BookingId}", bookingId);
-                await _hubContext.Clients.All.SendAsync("BookingCreated", bookingId, cancellationToken);
+                _logger.LogInformation("Sending BookingCreated with payload: {@Payload}", payload);
+                await _hubContext.Clients.All.SendAsync("BookingCreated", payload, cancellationToken);
             }
             catch (Exception ex)
             {

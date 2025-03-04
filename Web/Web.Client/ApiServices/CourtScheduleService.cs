@@ -1,9 +1,7 @@
-﻿using Shared.Schedules;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 
 namespace Web.Client.ApiServices
 {
-    // CourtScheduleService.cs
     public class CourtScheduleService
     {
         private readonly HttpClient _httpClient;
@@ -23,6 +21,12 @@ namespace Web.Client.ApiServices
         {
             var queryString = $"?CourtId={CourtId}&date={date:yyyy-MM-dd}";
             var data = await _httpClient.GetFromJsonAsync<List<ScheduleDTO>>($"api/schedules/court/{queryString}");
+            return data!;
+        }
+        public async Task<List<CourtScheduleDTO>> GetCourtSchedulesInRange(int CourtId, DateTime startDate, DateTime endDate)
+        {
+            var queryString = $"?CourtId={CourtId}&startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
+            var data = await _httpClient.GetFromJsonAsync<List<CourtScheduleDTO>>($"api/schedules/court-range/{queryString}");
             return data!;
         }
     }

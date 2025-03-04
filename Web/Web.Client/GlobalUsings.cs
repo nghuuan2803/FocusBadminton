@@ -1,4 +1,12 @@
 ﻿global using Web.Client.Models;
 global using Web.Client.Helper;
+global using Web.Client.ApiServices;
+global using Shared.Schedules;
+global using Shared.Enums;
+global using Microsoft.JSInterop;
+global using Web.Client.SlotStates;
+global using Microsoft.AspNetCore.Components;
+global using Newtonsoft.Json;
+global using Shared.TimeSlots;
 //global using Web.Client.MediatorPattern;
 //global using Web.Client.StatePattern;
