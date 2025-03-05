@@ -3,7 +3,7 @@ using Application.Interfaces.DapperQueries;
 using Domain.Repositories;
 using Shared.Enums;
 
-namespace Application.Features.HoldSlots
+namespace Application.Features.Slots
 {
     public class HoldSlotCommand : IRequest<int>
     {
@@ -70,13 +70,13 @@ namespace Application.Features.HoldSlots
             var payload = new
             {
                 HoldSlotId = bookingHold.Id,
-                CourtId = bookingHold.CourtId,
-                TimeSlotId = bookingHold.TimeSlotId,
+                bookingHold.CourtId,
+                bookingHold.TimeSlotId,
                 BookingType = (int)bookingHold.BookingType,
-                BeginAt = bookingHold.BeginAt,
-                EndAt = bookingHold.EndAt,
-                DayOfWeek = bookingHold.DayOfWeek,
-                HeldBy = bookingHold.HeldBy
+                bookingHold.BeginAt,
+                bookingHold.EndAt,
+                bookingHold.DayOfWeek,
+                bookingHold.HeldBy
             };
 
             // Gửi thông báo cho tất cả client rằng slot đã được giữ với payload chi tiết

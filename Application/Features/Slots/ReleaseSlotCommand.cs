@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Repositories;
 
-namespace Application.Features.HoldSlots
+namespace Application.Features.Slots
 {
     public class ReleaseSlotCommand : IRequest<bool>
     {
@@ -38,13 +38,13 @@ namespace Application.Features.HoldSlots
             var payload = new
             {
                 HoldSlotId = bookingHold.Id,
-                CourtId = bookingHold.CourtId,
-                TimeSlotId = bookingHold.TimeSlotId,
+                bookingHold.CourtId,
+                bookingHold.TimeSlotId,
                 BookingType = (int)bookingHold.BookingType,   // Enum có thể được chuyển sang string nếu cần
-                BeginAt = bookingHold.BeginAt,
-                EndAt = bookingHold.EndAt,
-                DayOfWeek = bookingHold.DayOfWeek,
-                HeldBy = bookingHold.HeldBy
+                bookingHold.BeginAt,
+                bookingHold.EndAt,
+                bookingHold.DayOfWeek,
+                bookingHold.HeldBy
             };
 
             // Xóa record BookingHold

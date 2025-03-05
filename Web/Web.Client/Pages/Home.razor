@@ -2,6 +2,29 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<p>Giờ VN: @DateTimeOffset.Now</p>
+<p>Giờ UTC: @DateTimeOffset.UtcNow</p>
+<p>-------------</p>
+<p>@_date</p>
+<p>@_date2</p>
+<DatePicker TValue=DateTimeOffset Placeholder="@("Giờ đã chọn")" @bind-Value=_date OnChange="StateHasChanged" />
+<Button OnClick="CombineTime" Color="Color.Blue4">Combine TimeSpan</Button>
 
-Welcome to your new app.
+@code {
+    private DateTimeOffset _date = DateTimeOffset.UtcNow;
+
+    public DateTimeOffset _date2 = DateTimeOffset.Now;
+
+    public void CombineTime()
+    {
+        TimeSpan time = new TimeSpan(7, 0, 0);
+        DateTimeOffset date = _date.Date;
+        _date2 = date.ToOffset(time);
+        DateTime now = DateTime.Now;
+        now = now.ToUniversalTime();
+        _date2 = now;
+
+    }
+}
+
+

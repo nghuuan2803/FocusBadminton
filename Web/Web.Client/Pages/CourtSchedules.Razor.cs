@@ -163,7 +163,7 @@ namespace Web.Client.Pages
                 var key = $"{slotPayload.CourtId}_{slotPayload.TimeSlotId}_{scheduleDate:yyyyMMdd}";
                 if (slotComponentRefs.TryGetValue(key, out var slotComponent))
                 {
-                    slotComponent.HandleRealtimeSignal(ScheduleStatus.Available, (int)slot.HoldId, null);
+                    slotComponent.HandleRealtimeSignal(ScheduleStatus.Available, -1, null);
                 }
             }
             catch (Exception ex)

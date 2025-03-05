@@ -1,4 +1,4 @@
-﻿using Application.Features.HoldSlots;
+﻿using Application.Features.Slots;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
