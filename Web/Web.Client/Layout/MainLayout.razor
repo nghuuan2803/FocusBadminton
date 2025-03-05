@@ -1,6 +1,6 @@
 ﻿@using Web.Client.Models
 @inherits LayoutComponentBase
-
+@inject NavigationManager _navigation
 <div class="page">
     <div class="sidebar">
         <SidebarMenu MenuItems="menuItems" />
@@ -8,6 +8,7 @@
     <main>
         <div class="top-row px-4">
             <a style="color:forestgreen;font-size:large" href="swagger" target="_blank">SWAGGER</a>
+            <Button Color="Color.Purple10" OnClick="GoToLogin">Login</Button>
         </div>
         <article class="content px-4">
             @Body
@@ -49,10 +50,15 @@
         var revenueNode = new MenuNode("Doanh thu", "/revenue", "fa-solid fa-file-invoice-dollar");
         revenueNode.Add(new MenuLeaf("Trong Tháng", "/revenue-monthly", "fa-calendar-week"));
         revenueNode.Add(new MenuLeaf("Khoảng thời gian", "/revenue-filter", "fa-calendar-week"));
-        
+
         menuItems.Add(scheduleNode);
         menuItems.Add(managementNode);
         menuItems.Add(revenueNode);
 
+    }
+
+    private void GoToLogin()
+    {
+        _navigation.NavigateTo("login");
     }
 }

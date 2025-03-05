@@ -22,10 +22,12 @@ namespace Web.Client.SlotStates
         [Inject] private SlotService SlotService { get; set; } = null!;
         [Inject] private MessageService MessageService { get; set; } = null!;
         [Inject] private BookingService BookingService { get; set; } = null!;
-        [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
         public DateTimeOffset StartAt { get; set; }
         public DateTimeOffset EndAt { get; set; }
+
+        private DateTimeOffset? _pauseAt;
+        private DateTimeOffset? _resumeAt;
 
         private ISlotState _state;
         private int holdId;
@@ -66,7 +68,7 @@ namespace Web.Client.SlotStates
             await _state.HandleClick(this);
         }
 
-        public void HandleRealtimeSignal(ScheduleStatus newStatus,int holdId, string? newHeldBy)
+        public void HandleRealtimeSignal(ScheduleStatus newStatus, int holdId, string? newHeldBy)
         {
             this.holdId = holdId;
             HeldBy = newHeldBy;
@@ -86,12 +88,15 @@ namespace Web.Client.SlotStates
             };
 
             this.holdId = await SlotService.HoldAsync(holdRequest);
+
             if (holdId < 1)
             {
                 await MessageService.Error("Không thể chọn!");
-                //HeldBy = holdRequest.HoldBy;
+                MessageService.Destroy();
+            }
+            else
+            {
                 TransitionTo(new HoldingState());
-                StateHasChanged();
             }
         }
 
@@ -111,19 +116,20 @@ namespace Web.Client.SlotStates
             if (success)
             {
                 HeldBy = null;
+                holdId = 0;
+                HoldId = null;
                 TransitionTo(new AvailableState());
-                StateHasChanged();
             }
             else
             {
-                MessageService.Error($"Hold {holdId}");
+                await MessageService.Error($"Lỗi máy chủ");
+                MessageService.Destroy();
             }
         }
 
         public async Task ViewBookingDetailsAsync()
         {
             ShowModal(); // Hiện modal thông tin đặt sân
-            //ShowModalWithService(); // Hiện modal thông tin đặt sân
         }
 
         public async Task BlockSlotAsync()
@@ -156,12 +162,12 @@ namespace Web.Client.SlotStates
                     booking = result;
                     TransitionTo(new BookedState());
                     await MessageService.Success("Duyệt thành công", 3);
+                    MessageService.Destroy();
                 }
                 else
                 {
                     await MessageService.Error("Lỗi", 3);
                 }
-                StateHasChanged();
             }
         }
         private async Task RejectBooking()
@@ -175,14 +181,33 @@ namespace Web.Client.SlotStates
                     ISlotState newState = Date < DateTime.Now ? new TimeOutState() : new AvailableState();
                     TransitionTo(newState);
                     await MessageService.Success("Đã hủy yêu cầu", 3);
+                    MessageService.Destroy();
                 }
                 else
                 {
-                    await MessageService.Error("Lỗi", 3);
+                    await MessageService.Error("Lỗi hệ thống", 3);
+                    MessageService.Destroy();
                 }
-                StateHasChanged();
-                await Task.Delay(1000);
             }
+        }
+
+        private async Task<bool> PauseBooking()
+        {
+            bool result = await BookingService.PauseBooking((int)BookingId, _pauseAt.Value, _resumeAt.Value);
+            if (result)
+            {
+                TransitionTo(new PausedState());
+            }
+            return result;
+        }
+        private async Task<bool> ResumeBooking()
+        {
+            bool result = await BookingService.ResumeBooking((int)BookingId);
+            if (result)
+            {
+                TransitionTo(new BookedState());
+            }
+            return result;
         }
 
         #region not implement

@@ -39,21 +39,43 @@ namespace Web.Endpoints
             return BadRequest(result.Errors);
         }
         [HttpPost("approve")]
-        public async Task<IActionResult> ApproveBooking(ApproveBookingCommand request)
+        public async Task<IActionResult> ApproveBooking(ApproveBookingCommand command)
         {
 
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(command);
             if (result.Succeeded)
             {
                 return Ok(result.Data);
             }
             return BadRequest(result.Errors);
         }
+
         [HttpPost("reject")]
-        public async Task<IActionResult> RejectBooking(RejectBookingCommand request)
+        public async Task<IActionResult> RejectBooking(RejectBookingCommand command)
         {
 
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost("pause")]
+        public async Task<IActionResult> PauseBooking(PauseBookingCommand command)
+        {
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+        [HttpPost("resume")]
+        public async Task<IActionResult> ResumeBooking(ResumeBookingCommand command)
+        {
+            var result = await mediator.Send(command);
             if (result.Succeeded)
             {
                 return Ok(result.Data);

@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_items", "solution_
 		.gitignore = .gitignore
 		..\proc_schedule_v3.sql = ..\proc_schedule_v3.sql
 		..\proc_schedule_v4.sql = ..\proc_schedule_v4.sql
+		..\proc_schedule_v5_paused_handle.sql = ..\proc_schedule_v5_paused_handle.sql
+		requests_sample.txt = requests_sample.txt
 		..\seeddata.sql = ..\seeddata.sql
 	EndProjectSection
 EndProject

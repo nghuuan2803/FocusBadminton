@@ -1,0 +1,119 @@
+﻿------------------------------REQUEST--------------------------------
+1.Giữ slot
+url: ..../api/slot/hold
+method: post
+
+chú thích:
+- bookingType = 1: đặt 1 ngày
+- bookingType = 2: đặt cố định
+- bookingType = 3: đặt linh hoạt (cố định nhưng không có giờ kết thúc)
+- dayOfWeek: bắt buộc, nếu user chưa chọn thì tự convert ngày đặt
+- holdBy: Id member, kiểu int
+- beginAt & endAt: datetimeoffset
+
+request:
+{
+  "courtId": 1,
+  "timeSlotId": 3,
+  "holdBy": "2",
+  "bookingType": 2,
+  "beginAt": "2025-03-05T06:00:00.000Z",
+  "endAt": "2025-03-26T06:30:00.000Z",
+  "dayOfWeek": "Wednesday"
+}
+
+response: holdId (kiểu integer)
+----------------------------------------------------------------------
+2. Nhả slot
+url: ..../api/slot/release
+method: post
+
+chú thích:
+- holdId: id giữ slot
+
+request:
+{
+  "holdId": 1,
+  "heldBy": "2",
+}
+
+response: true/false
+----------------------------------------------------------------------
+3. Đặt sân (Booking)
+url: .../api/booking
+method: post
+
+chú thích:
+- type: loại đặt sân
+    + 1: đặt 1 ngày
+    + 2: đặt cố định
+    + 3: đặt linh hoạt (cố định không có ngày kết thúc)
+- approvedAt & completedAt: có thể null
+- amount: tổng tiền sân (nếu type = 3 thì để trống)
+- deposit: tiền đặt cọc
+- paymentMethod: hình thức thanh toán
+  + 1: tiền mặt
+  + 2: chuyển khoản
+  + 3: momo
+  + 4: vnpay
+- details: chi tiết chọn sân
+    + id: luôn đặt là 0
+    + courtName: có thể null
+    + beginAt & endAt: ngày bắt đầu và kết thúc, có thể null
+    + price: giá mỗi giờ
+    + amount: tính tiền tổng cộng (ví dụ: đặt cố định 4 tuần: amount = price * 4, số tuần tự tính).
+    + dayOfWeek: thứ trong tuần, có viết hoa chữ đầu
+    + lưu ý: nếu đặt 1 sân nhiều ngày trong tuần thì mỗi sân là 1 detail.
+      ví dụ: đặt sân 1 khung giờ 1 từ ngày 05/03/2025 - 05/04/2025 vào thứ 2,4,6 hằng tuần thì
+      dayOfWeek của mỗi detail lần lượt là "MonDay" "Wednesday" "Friday".
+request:
+{
+  "memberId": 1,
+  "teamId": 1,
+  "type": 1,
+  "approvedAt": null,
+  "completedAt": null,
+  "amount": 50000,
+  "deposit": 50000,
+  "voucherId": null,
+  "discount": 0,
+  "paymentMethod": 1,
+  "note": "string",
+  "adminNote": "string",
+  "details": [
+    {
+      "id": 0,
+      "courtId": 1,
+      "courtName": null,
+      "timeSlotId": 1,
+      "beginAt": "2025-04-01T05:00:00.000Z",
+      "endAt": "2025-04-01T05:30:00.000Z",
+      "dayOfWeek": "Monday",
+      "price": 50000,
+      "amount": 50000
+    },
+    {
+      "id": 0,
+      "courtId": 1,
+      "courtName": null,
+      "timeSlotId": 1,
+      "beginAt": "2025-04-01T05:00:00.000Z",
+      "endAt": "2025-04-01T05:30:00.000Z",
+      "dayOfWeek": "Wednesday",
+      "price": 50000,
+      "amount": 50000
+    },
+    {
+      "id": 0,
+      "courtId": 1,
+      "courtName": null,
+      "timeSlotId": 1,
+      "beginAt": "2025-04-01T05:00:00.000Z",
+      "endAt": "2025-04-01T05:30:00.000Z",
+      "dayOfWeek": "Friday",
+      "price": 50000,
+      "amount": 50000
+    }
+  ]
+}
+response: cấu trúc tương tự nhưng sẽ cập nhật id của booking và details

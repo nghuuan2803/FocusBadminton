@@ -35,5 +35,35 @@ namespace Web.Client.ApiServices
             }
             return null;
         }
+        public async Task<bool> PauseBooking(int bookingId, DateTimeOffset pauseAt, DateTimeOffset resumeAt)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/bookings/pause",
+                new { bookingId = bookingId,
+                    pauseAt = pauseAt,
+                    resumeAt = resumeAt,
+                    updatedBy = "admin" 
+                });
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<BookingDTO>();
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> ResumeBooking(int bookingId)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/bookings/resume",
+                new
+                {
+                    bookingId = bookingId,
+                    updatedBy = "admin"
+                });
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<BookingDTO>();
+                return true;
+            }
+            return false;
+        }
     }
 }

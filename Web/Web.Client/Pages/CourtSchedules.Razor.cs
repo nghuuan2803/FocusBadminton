@@ -272,7 +272,8 @@ namespace Web.Client.Pages
             EndDate = DateTime.Today.AddDays(7);
             schedules = [];
             await LoadSchedules();
-            await MessageService.Error("Lỗi", 3);
+            await MessageService.Error("Lỗi", 1);
+            MessageService.Destroy();
         }
 
         public async ValueTask DisposeAsync()
