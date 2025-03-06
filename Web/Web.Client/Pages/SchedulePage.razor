@@ -46,21 +46,15 @@
                                 {
                                     <SlotComponent CourtId="@slot.CourtId"
                                                    TimeSlotId="@slot.TimeSlotId"
-                                                   HeldBy="@slot.HeldBy"
                                                    Date="@Date"
+                                                   StartTime="@slot.StartTime"
+                                                   EndTime="@slot.EndTime"
+                                                   HeldBy="@slot.HeldBy"
+                                                   HoldId="@slot.HoldId"
                                                    BookingDetailId="@slot.BookingDetailId"
                                                    BookingId="@slot.BookingId"
                                                    InitialStatus="@slot.Status"
                                                    OnSlotUpdated="HandleSlotUpdated"
-                                                   @ref="slotComponentRefs[slotKey]" />
-                                }
-                                else
-                                {
-                                    <SlotComponent CourtId="@courtId"
-                                                   TimeSlotId="@timeSlot.Id"
-                                                   InitialStatus="@ScheduleStatus.Available"
-                                                   OnSlotUpdated="HandleSlotUpdated"
-                                                   Date="@Date"
                                                    @ref="slotComponentRefs[slotKey]" />
                                 }
                             }
