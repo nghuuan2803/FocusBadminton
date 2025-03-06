@@ -32,6 +32,8 @@ namespace Web.Client.SlotStates
         private ISlotState _state;
         private int holdId;
         private BookingDTO? booking;
+
+        bool selecting = false;
         protected async override Task OnInitializedAsync()
         {
             _state = GetStateFromStatus(InitialStatus);
@@ -78,15 +80,16 @@ namespace Web.Client.SlotStates
 
         public async Task HoldSlotAsync()
         {
+            if(selecting) return;
+            selecting = true;
             var holdRequest = new HoldSlotRequest
             {
                 CourtId = CourtId,
                 TimeSlotId = TimeSlotId,
                 HoldBy = "1", // Thay bằng thông tin người dùng thực tế
                 BookingType = BookingType.InDay,
-                BeginAt = new DateTimeOffset(Date),
+                BeginAt = new DateTimeOffset(Date).Add(StartTime),
             };
-
             this.holdId = await SlotService.HoldAsync(holdRequest);
 
             if (holdId < 1)
@@ -98,10 +101,13 @@ namespace Web.Client.SlotStates
             {
                 TransitionTo(new HoldingState());
             }
+            selecting = false;
         }
 
         public async Task CancelHoldAsync()
         {
+            if (selecting) return;
+            selecting = true;
             if (holdId < 1)
             {
                 return;
@@ -125,6 +131,7 @@ namespace Web.Client.SlotStates
                 await MessageService.Error($"Lỗi máy chủ");
                 MessageService.Destroy();
             }
+            selecting = false;
         }
 
         public async Task ViewBookingDetailsAsync()

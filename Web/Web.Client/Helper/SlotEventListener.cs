@@ -88,6 +88,7 @@ namespace Web.Client.Helper
                 try
                 {
                     await _hubConnection.StartAsync(cancellationToken);
+                    Console.WriteLine("hub connect success");
                 }
                 catch (Exception ex)
                 {

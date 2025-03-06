@@ -8,8 +8,7 @@ namespace Web.Client.Pages
         [Inject] private CourtScheduleService CourtScheduleService { get; set; } = null!;
         [Inject] private ILogger<CourtScheduleDTO> Logger { get; set; } = null!;
         [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-        [Inject] private SlotService SlotService { get; set; } = null!;
-        [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+        [Inject] private IConfiguration Configuration { get; set; } = null!;
 
         private SlotEventListener _realtimeHelper = null!;
         private DateTime StartDate { get; set; } = DateTime.Today;
@@ -22,7 +21,10 @@ namespace Web.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            _realtimeHelper = new SlotEventListener($"{NavigationManager.BaseUri}slotHub");
+            var config = Configuration.GetSection("ApiSettings");
+            string baseUrl = config["BaseAddress"] ?? NavigationManager.BaseUri;
+            Console.WriteLine(baseUrl);
+            _realtimeHelper = new SlotEventListener($"{baseUrl}slotHub");
             _realtimeHelper.OnSlotHeld += HandleSlotHeld;
             _realtimeHelper.OnSlotReleased += HandleSlotReleased;
             _realtimeHelper.OnBookingCreated += HandleBookingCreated;
