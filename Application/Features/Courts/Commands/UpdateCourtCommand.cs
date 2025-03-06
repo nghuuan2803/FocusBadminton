@@ -41,7 +41,7 @@ namespace Application.Features.Courts.Commands
             entity.Images = request.Images;
             entity.FacilityId = request.FacilityId;
             entity.Description = request.Description;
-            entity.UpdatedAt = DateTimeOffset.Now;
+            entity.UpdatedAt = DateTimeOffset.UtcNow;
             await _repository.SaveAsync(cancellationToken);
             return _mapper.Map<CourtDTO>(entity);
         }

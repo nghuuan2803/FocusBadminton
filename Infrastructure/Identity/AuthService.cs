@@ -95,7 +95,7 @@ public class AuthService : IAuthService
                 {
                     AccountId = user.Id,
                     FullName = payload.Name,
-                    CreatedAt = DateTimeOffset.Now,
+                    CreatedAt = DateTimeOffset.UtcNow,
                     CreatedBy = "System",
                     Email = payload.Email,
                 };

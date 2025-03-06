@@ -84,7 +84,7 @@ namespace Web.Client.Mediators
             // Transition all slots to the TimeOutState
             foreach (var slot in _slot.Values)
             {
-                if (slot.StartAt < DateTimeOffset.Now)
+                if (slot.StartAt < DateTimeOffset.UtcNow)
                     slot.TransitionTo(new TimeOutState());
             }
         }

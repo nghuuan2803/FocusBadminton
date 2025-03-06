@@ -3,7 +3,7 @@
     public class BookedState : ISlotState
     {
         public string StatusText => "Đã đặt";
-        public string StatusColor => "#cce5ff"; // Màu xanh dương nhạt
+        public string StatusColor => "#d4380d";
         public async Task HandleClick(SlotComponent slot)
         {
             // Có thể không làm gì hoặc xem thông tin (tùy yêu cầu)

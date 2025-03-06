@@ -1,11 +1,10 @@
-﻿
-namespace Web.Client.SlotStates
+﻿namespace Web.Client.SlotStates
 {
     public class HeldState : ISlotState
     {
-        public string StatusText => "Đang chọn";
+        public string StatusText => "Tạm khóa";
 
-        public string StatusColor => "#ffffff";
+        public string StatusColor => "#bfbfbf";
 
         public Task HandleClick(SlotComponent slot)
         {

@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_items", "solution_items", "{72B8F7A2-EB4C-4127-890E-60C9A4C37C6F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		..\proc_check_available_fix.sql = ..\proc_check_available_fix.sql
 		..\proc_schedule_v3.sql = ..\proc_schedule_v3.sql
 		..\proc_schedule_v4.sql = ..\proc_schedule_v4.sql
 		..\proc_schedule_v5_paused_handle.sql = ..\proc_schedule_v5_paused_handle.sql

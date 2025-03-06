@@ -3,7 +3,7 @@
     public class BlockedState : ISlotState
     {
         public string StatusText => "Chặn";
-        public string StatusColor => "#000000";
+        public string StatusColor => "#610b00";
         public async Task HandleClick(SlotComponent slot)
         {
             // không làm gì

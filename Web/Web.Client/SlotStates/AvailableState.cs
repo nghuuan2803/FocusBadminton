@@ -3,7 +3,8 @@
     public class AvailableState : ISlotState
     {
         public string StatusText => "Trống";
-        public string StatusColor => "#d4edda"; // Màu xanh nhạt
+        public string StatusColor => "#fff";
+        //public string StatusColor => "#b5f5ec"; // Màu xanh nhạt
 
 
         public async Task HandleClick(SlotComponent slot)

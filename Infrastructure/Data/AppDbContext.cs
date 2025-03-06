@@ -352,7 +352,7 @@ namespace Infrastructure.Data
                     StartTime = startTime,
                     EndTime = endTime,
                     Duration = duration,
-                    CreatedAt = DateTimeOffset.Now,
+                    CreatedAt = DateTimeOffset.UtcNow,
                 };
                 if (time.StartTime.Days > 0 || endTime.Hours > 23)
                     break;

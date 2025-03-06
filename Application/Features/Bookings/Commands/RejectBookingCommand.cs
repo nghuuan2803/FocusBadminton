@@ -36,7 +36,7 @@ namespace Application.Features.Bookings.Commands
                 return Result<BookingDTO>.Failure(Error.Validation($"Invalid status: Status must be [Pending], CurrentStatus is [{booking.Status.ToString()}]"));
             }
             booking.Status = BookingStatus.Rejected;
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             booking.ApprovedAt = now;
             booking.UpdatedAt = now;
             booking.UpdatedBy = request.RejectBy;

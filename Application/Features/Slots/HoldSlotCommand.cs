@@ -48,7 +48,7 @@ namespace Application.Features.Slots
                 return 0;
             }
 
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             var bookingHold = new BookingHold
             {
                 CourtId = request.CourtId,

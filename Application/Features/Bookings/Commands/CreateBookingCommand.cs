@@ -59,7 +59,7 @@ namespace Application.Features.Bookings.Commands
 
             // Kiểm tra xem đã giữ lịch chưa
             _logger.Log($"Kiểm tra BookingHolds cho MemberId: {request.MemberId}, Số lượng khung giờ yêu cầu: {request.Details.Count}");
-            var holds = await _holdRepo.GetAllAsync(x => x.HeldBy == request.MemberId.ToString() && x.ExpiresAt > DateTimeOffset.Now);
+            var holds = await _holdRepo.GetAllAsync(x => x.HeldBy == request.MemberId.ToString() && x.ExpiresAt > DateTimeOffset.UtcNow);
             if (holds.Count() < request.Details.Count)
             {
                 _logger.Log($"Thất bại: Số lượng BookingHolds ({holds.Count()}) nhỏ hơn số lượng khung giờ yêu cầu ({request.Details.Count})");

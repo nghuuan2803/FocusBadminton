@@ -4,7 +4,7 @@ namespace Domain.Common
 {
     public abstract class BaseAuditableEntity<T> : BaseEntity<T>
     {
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         [MaxLength(36)]
         public string CreatedBy { get; set; } = "system";

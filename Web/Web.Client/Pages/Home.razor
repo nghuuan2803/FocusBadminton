@@ -2,28 +2,39 @@
 
 <PageTitle>Home</PageTitle>
 
-<p>Giờ VN: @DateTimeOffset.Now</p>
-<p>Giờ UTC: @DateTimeOffset.UtcNow</p>
-<p>-------------</p>
-<p>@_date</p>
-<p>@_date2</p>
-<DatePicker TValue=DateTimeOffset Placeholder="@("Giờ đã chọn")" @bind-Value=_date OnChange="StateHasChanged" />
-<Button OnClick="CombineTime" Color="Color.Blue4">Combine TimeSpan</Button>
+<p>Giờ Server: @_serverDate</p>
+<p>Giờ UTC: @_utcDate</p>
+<p>Giờ VN: @_vnDate</p>
+<hr />
+<p>Giờ pick: @_selectdate</p>
+<p>Giờ: @_time.ToString("hh:mm")</p>
+<DatePicker TValue=DateTimeOffset Placeholder="@("Giờ đã chọn")" @bind-Value=_selectdate OnChange="StateHasChanged" />
+<TimePicker TValue=TimeOnly Placeholder="@("Giờ đã chọn")" @bind-Value=_time OnChange="TimeUpdate" />
+
+<Button OnClick="HandleTime" Color="Color.Blue4">Handle</Button>
 
 @code {
-    private DateTimeOffset _date = DateTimeOffset.UtcNow;
-
-    public DateTimeOffset _date2 = DateTimeOffset.Now;
-
-    public void CombineTime()
+    private DateTimeOffset _selectdate = DateTimeOffset.UtcNow;
+    private DateTimeOffset _utcDate = DateTimeOffset.UtcNow;
+    private DateTimeOffset _serverDate = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(-8));
+    public DateTimeOffset _vnDate = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
+    private TimeOnly _time = new TimeOnly(8,0,0);
+    public void HandleTime()
     {
-        TimeSpan time = new TimeSpan(7, 0, 0);
-        DateTimeOffset date = _date.Date;
-        _date2 = date.ToOffset(time);
-        DateTime now = DateTime.Now;
-        now = now.ToUniversalTime();
-        _date2 = now;
-
+        _serverDate = _selectdate.ToOffset(TimeSpan.FromHours(-8));
+        _utcDate = _selectdate.ToUniversalTime();
+        _vnDate = _utcDate.ToOffset(TimeSpan.FromHours(7));
+    }
+    public void TimeUpdate()
+    {
+        SetVnDate();
+        _vnDate = _vnDate.AddHours(_time.Hour - 7);
+        _utcDate = _vnDate.ToUniversalTime();
+        StateHasChanged();
+    }
+    void SetVnDate()
+    {
+        _vnDate = _selectdate.ToOffset(TimeSpan.FromHours(7));
     }
 }
 

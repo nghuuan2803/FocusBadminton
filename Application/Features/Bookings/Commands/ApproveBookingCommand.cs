@@ -43,7 +43,7 @@ namespace Application.Features.Bookings.Commands
             }
             
             booking.Status = BookingStatus.Approved;
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             booking.ApprovedAt = now;
             booking.UpdatedAt = now;
             booking.UpdatedBy = request.ApproveBy; 
@@ -54,7 +54,7 @@ namespace Application.Features.Bookings.Commands
         }
         private bool CheckSlotTimeout(IEnumerable<BookingDetail> slots)
         {
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             foreach (var slot in slots)
             {
                 if(slot.BeginAt < now)
