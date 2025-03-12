@@ -1,6 +1,4 @@
-﻿using Application.Features.Auth.Strategies;
-
-namespace Application.Features.Auth.Factories
+﻿namespace Application.Interfaces
 {
     public interface ILoginStrategyFactory
     {

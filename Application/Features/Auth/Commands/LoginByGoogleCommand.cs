@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿/*using Application.Interfaces;
 using Shared.Auth;
 
 namespace Application.Features.Auth.Commands
@@ -19,3 +19,4 @@ namespace Application.Features.Auth.Commands
         }
     }
 }
+*/

@@ -1,4 +1,5 @@
-﻿using Shared.Auth;
+﻿using Google.Apis.Auth;
+using Shared.Auth;
 
 namespace Application.Interfaces
 {
@@ -6,8 +7,11 @@ namespace Application.Interfaces
     {
         Task<Result<AuthResponse>> LoginByPasswordAsync(string email, string password);
         Task<Result<AuthResponse>> LoginByGoogleAsync(string authCode);
-        Task<Result<AuthResponse>> LoginByFaceBookAsync(string idToken);
+        Task<Result<AuthResponse>> LoginByFacebookAsync(string accessToken);
         Task<Result<AuthResponse>> RefreshTokensAsync(string refreshToken);
-        Task<Result> LogoutAsync(string email);
+        Task<Account> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload);
+        Task<string> GenerateAccessToken(Account user);
+        string GenerateRefreshToken();
+        Task SaveRefreshTokenAsync(Account user, string refreshToken);
     }
 }

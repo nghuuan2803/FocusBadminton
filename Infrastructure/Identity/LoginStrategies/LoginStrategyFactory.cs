@@ -1,7 +1,7 @@
-﻿using Application.Features.Auth.Strategies;
+﻿using Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application.Features.Auth.Factories
+namespace Infrastructure.Identity.LoginStrategies
 {
     public class LoginStrategyFactory : ILoginStrategyFactory
     {
@@ -16,7 +16,9 @@ namespace Application.Features.Auth.Factories
             return loginType.ToLower() switch
             {
                 "google" => _serviceProvider.GetRequiredService<GoogleLoginStrategy>(),
-                
+                "google-flutter" => _serviceProvider.GetRequiredService<GoogleLoginFlutterStrategy>(),
+                "facebook" => _serviceProvider.GetRequiredService<FacebookLoginStrategy>(),
+                "password" => _serviceProvider.GetRequiredService<PasswordLoginStrategy>(),
                 _ => throw new ArgumentException("Loại đăng nhập không hợp lệ.", nameof(loginType))
             };
         }

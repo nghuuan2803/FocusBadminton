@@ -1,4 +1,4 @@
-﻿namespace Web.Request.Auth
+﻿namespace Shared.Auth
 {
     public class AuthLoginRequest
     {

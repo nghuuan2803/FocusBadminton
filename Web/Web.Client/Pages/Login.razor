@@ -1,23 +1,38 @@
 ﻿@page "/login"
+@using Shared.Auth
 @inject NavigationManager Navigation
+@inject HttpClient Http
 @inject IJSRuntime JS
 
-<h3>Đăng nhập bằng Google</h3>
+<h3>Đăng nhập bằng Google hoặc Facebook</h3>
 <button @onclick="LoginViaGoogle">Đăng nhập bằng Google</button>
+<button @onclick="LoginViaFacebook">Đăng nhập bằng Facebook</button>
+<!-- Đăng nhập bằng Password -->
+<div>
+    <h4>Đăng nhập bằng Email và Mật khẩu</h4>
+    <input type="email" @bind="email" placeholder="Email" />
+    <input type="password" @bind="password" placeholder="Mật khẩu" />
+    <button @onclick="LoginViaPassword">Đăng nhập</button>
+    <p>@message</p>
+</div>
 
+<p>Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></p>
 @code {
     private bool _isInitialized = false;
-    private string clientId = "568380109802-dtu6hse617l9bs7dg0tn9me2fl3tvau4.apps.googleusercontent.com";
-    private string redirectUri = "https://localhost:7000/google-callback"; 
+    private string GGclientId = "568380109802-dtu6hse617l9bs7dg0tn9me2fl3tvau4.apps.googleusercontent.com";
+    private string GGredirectUri = "https://localhost:7000/google-callback"; 
+    private string FBredirectUri = "https://localhost:7000/facebook-callback";
+    private string FBAppId = "1293858475171011";
+    private string email = "";
+    private string password = "";
+    private string message = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async override Task OnInitializedAsync()
     {
-        if (firstRender && !_isInitialized)
-        {
-            _isInitialized = true;
-            await JS.InvokeVoidAsync("initLogin"); // Chạy JS sau khi trang load
-        }
+        _isInitialized = true;
+        // await JS.InvokeVoidAsync("initLogin"); Chạy JS sau khi trang load
     }
+
 
     async Task LoginViaGoogle()
     {
@@ -25,13 +40,53 @@
 
         var authUrl = $"https://accounts.google.com/o/oauth2/v2/auth" +
               $"?response_type=code" +
-              $"&client_id={clientId}" +
-              $"&redirect_uri={redirectUri}" +
+              $"&client_id={GGclientId}" +
+              $"&redirect_uri={GGredirectUri}" +
               $"&scope=openid%20email%20profile" +
               $"&state=xyz" +
               $"&prompt=select_account";
 
         Console.WriteLine($"URL chuyển hướng: {authUrl}");
         Navigation.NavigateTo(authUrl, forceLoad: true); // Chuyển hướng đến Google
+    }
+
+    async Task LoginViaFacebook()
+    {
+        var authUrl = $"https://www.facebook.com/v22.0/dialog/oauth" +
+              $"?client_id={FBAppId}" +
+              $"&redirect_uri={FBredirectUri}" +
+              $"&scope=email" +
+              $"&response_type=code";
+        Navigation.NavigateTo(authUrl, forceLoad: true);
+    }
+
+    async Task LoginViaPassword()
+    {
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            message = "Vui lòng nhập email và mật khẩu.";
+            return;
+        }
+
+        var loginRequest = new { LoginType = "password", Credential = $"{email}|{password}" };
+        var apiUrl = "https://localhost:7000/api/auth/login";
+        var response = await Http.PostAsJsonAsync(apiUrl, loginRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            if (authResponse != null)
+            {
+                await JS.InvokeVoidAsync("localStorage.setItem", "accessToken", authResponse.accessToken);
+                await JS.InvokeVoidAsync("localStorage.setItem", "refreshToken", authResponse.refreshToken);
+                message = "Đăng nhập thành công!";
+                Navigation.NavigateTo("/");
+            }
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            message = $"Đăng nhập thất bại: {errorContent}";
+        }
     }
 }

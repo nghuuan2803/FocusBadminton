@@ -1,0 +1,70 @@
+﻿@page "/register"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@using System.ComponentModel.DataAnnotations
+@using Shared.Auth
+
+<h3>Đăng ký tài khoản</h3>
+
+<EditForm Model="@registerRequest" OnValidSubmit="PerformRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="registerRequest.Email" />
+        <ValidationMessage For="() => registerRequest.Email" />
+    </div>
+
+    <div>
+        <label>Số điện thoại:</label>
+        <InputText @bind-Value="registerRequest.PhoneNumber" />
+        <ValidationMessage For="() => registerRequest.PhoneNumber" />
+    </div>
+
+    <div>
+        <label>Họ và tên:</label>
+        <InputText @bind-Value="registerRequest.Fullname" />
+        <ValidationMessage For="() => registerRequest.Fullname" />
+    </div>
+
+    <div>
+        <label>Mật khẩu:</label>
+        <InputText type="password" @bind-Value="registerRequest.Password" />
+        <ValidationMessage For="() => registerRequest.Password" />
+    </div>
+
+    <div>
+        <label>Nhập lại mật khẩu:</label>
+        <InputText type="password" @bind-Value="registerRequest.ConfirmPassword" />
+        <ValidationMessage For="() => registerRequest.ConfirmPassword" />
+    </div>
+
+    <button type="submit">Đăng ký</button>
+    <p>@message</p>
+</EditForm>
+
+<p>Đã có tài khoản? <a href="/login">Đăng nhập ngay</a></p>
+
+@code {
+    private AuthRegisterRequest registerRequest = new AuthRegisterRequest();
+    private string message = "";
+
+    private async Task PerformRegister()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7000/api/auth/register", registerRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            message = "Đăng ký thành công! Bạn sẽ được chuyển hướng đến trang đăng nhập.";
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            message = $"Đăng ký thất bại: {errorContent}";
+        }
+    }
+}

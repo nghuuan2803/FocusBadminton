@@ -1,5 +1,4 @@
 ﻿using Microsoft.OpenApi.Models;
-using Web.Components;
 using Infrastructure;
 using System.Threading.RateLimiting;
 using Web.Policies;
@@ -7,9 +6,9 @@ using Web.Hubs;
 using Application;
 using Application.Interfaces;
 using Web.NotificationServices;
-using Application.Features.Auth.Strategies;
-using Application.Features.Auth.Factories;
 using Web.Crons;
+using Infrastructure.Identity.LoginStrategies;
+using Web.Components;
 
 
 namespace Web
@@ -79,6 +78,10 @@ namespace Web
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<GoogleLoginStrategy>();
+            builder.Services.AddScoped<FacebookLoginStrategy>();
+            builder.Services.AddScoped<PasswordLoginStrategy>();
+            builder.Services.AddScoped<GoogleLoginFlutterStrategy>();
+
             builder.Services.AddScoped<ILoginStrategyFactory, LoginStrategyFactory>();
 
             var app = builder.Build();

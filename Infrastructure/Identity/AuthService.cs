@@ -90,12 +90,12 @@ public class AuthService : IAuthService
                 {
                     return Error.Validation("Tạo người dùng mới thất bại.");
                 }
-                //tạo member mới
+
                 var member = new Member
                 {
                     AccountId = user.Id,
                     FullName = payload.Name,
-                    CreatedAt = DateTimeOffset.Now,
+                    CreatedAt = DateTimeOffset.UtcNow,
                     CreatedBy = "System",
                     Email = payload.Email,
                 };
@@ -120,7 +120,7 @@ public class AuthService : IAuthService
     }
 
     // Tạo JWT token
-    private async Task<string> GenerateAccessToken(Account user)
+    public async Task<string> GenerateAccessToken(Account user)
     {
         string role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
@@ -144,20 +144,146 @@ public class AuthService : IAuthService
     }
 
     // Tạo refresh token ngẫu nhiên
-    private string GenerateRefreshToken()
+    public string GenerateRefreshToken()
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
     }
 
     // Lưu refresh token vào DB
-    private async Task SaveRefreshTokenAsync(Account user, string refreshToken)
+    public async Task SaveRefreshTokenAsync(Account user, string refreshToken)
     {
         await _userManager.RemoveAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
         await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", refreshToken);
     }
 
-    public Task<Result<AuthResponse>> LoginByFaceBookAsync(string idToken) => Task.FromResult(Result<AuthResponse>.Failure(Error.Validation("Not Implemented")));
-    public Task<Result<AuthResponse>> LoginByPasswordAsync(string email, string password) => Task.FromResult(Result<AuthResponse>.Failure(Error.Validation("Not Implemented")));
+    public async Task<Result<AuthResponse>> LoginByFacebookAsync(string accessToken)
+    {
+        try
+        {
+            // Xác thực access token với Facebook
+            var appId = _configuration["Authentication:Facebook:AppId"];
+            var appSecret = _configuration["Authentication:Facebook:AppSecret"];
+            var verifyUrl = $"https://graph.facebook.com/debug_token?input_token={accessToken}&access_token={appId}|{appSecret}";
+
+            var response = await _httpClient.GetAsync(verifyUrl);
+            if (!response.IsSuccessStatusCode)
+            {
+                return Error.Validation("Xác thực access token thất bại.");
+            }
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            using var jsonDoc = JsonDocument.Parse(jsonResponse);
+            if (!jsonDoc.RootElement.TryGetProperty("data", out var data) ||
+                !data.TryGetProperty("is_valid", out var isValid) || !isValid.GetBoolean())
+            {
+                return Error.Validation("Access token không hợp lệ.");
+            }
+
+            // Lấy thông tin người dùng từ Facebook
+            var userInfoUrl = $"https://graph.facebook.com/me?fields=id,name,email&access_token={accessToken}";
+            var userInfoResponse = await _httpClient.GetAsync(userInfoUrl);
+            if (!userInfoResponse.IsSuccessStatusCode)
+            {
+                return Error.Validation("Lấy thông tin người dùng thất bại.");
+            }
+
+            var userInfoJson = await userInfoResponse.Content.ReadAsStringAsync();
+            using var userInfoDoc = JsonDocument.Parse(userInfoJson);
+            var email = userInfoDoc.RootElement.GetProperty("email").GetString();
+            var name = userInfoDoc.RootElement.GetProperty("name").GetString();
+
+            // Tìm hoặc tạo user dựa trên email
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new Account
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    return Error.Validation("Tạo người dùng mới thất bại.");
+                }
+
+                var member = new Member
+                {
+                    AccountId = user.Id,
+                    FullName = name,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = "System",
+                    Email = email,
+                };
+                await _dbContext.Members.AddAsync(member);
+                await _dbContext.SaveChangesAsync();
+
+                await _userManager.AddToRoleAsync(user, "Customer");
+            }
+
+            // Tạo access token và refresh token
+            string accessTokenJwt = await GenerateAccessToken(user);
+            string refreshToken = GenerateRefreshToken();
+            await SaveRefreshTokenAsync(user, refreshToken);
+
+            return new AuthResponse(accessTokenJwt, refreshToken);
+        }
+        catch (Exception ex)
+        {
+            return Error.Validation($"Đăng nhập bằng Facebook thất bại: {ex.Message}");
+        }
+    }
+    public async Task<Result<AuthResponse>> LoginByPasswordAsync(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null || !await _userManager.CheckPasswordAsync(user, password))
+        {
+            return Error.Validation("Email hoặc mật khẩu không đúng.");
+        }
+
+        string accessToken = await GenerateAccessToken(user);
+        string refreshToken = GenerateRefreshToken();
+        await SaveRefreshTokenAsync(user, refreshToken);
+
+        return new AuthResponse(accessToken, refreshToken);
+    }
     public Task<Result> LogoutAsync(string email) => Task.FromResult(Result.Failure(Error.Validation("Not Implemented")));
     public Task<Result<AuthResponse>> RefreshTokensAsync(string refreshToken) => Task.FromResult(Result<AuthResponse>.Failure(Error.Validation("Not Implemented")));
+
+    public async Task<Account> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload)
+    {
+        var user = await _userManager.FindByEmailAsync(payload.Email);
+        if (user == null)
+        {
+            user = new Account
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = payload.Email,
+                Email = payload.Email,
+                EmailConfirmed = true
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                throw new Exception("Tạo người dùng mới thất bại.");
+            }
+
+            var member = new Member
+            {
+                AccountId = user.Id,
+                FullName = payload.Name ?? string.Empty,
+                CreatedAt = DateTimeOffset.UtcNow,
+                CreatedBy = "Google"
+            };
+            await _dbContext.Members.AddAsync(member);
+            await _dbContext.SaveChangesAsync();
+
+            await _userManager.AddToRoleAsync(user, "Customer");
+        }
+        return user;
+    }
 }

@@ -1,16 +1,11 @@
 ﻿using Shared.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
     public interface ILoginStrategy
     {
-        // credential ở đây sẽ là authCode đối với Google
+        // Credential với google là : Authcode
+        // ....       với password là : email / password
         Task<Result<AuthResponse>> LoginAsync(string credential);
     }
-
 }
