@@ -2,8 +2,8 @@
 {
     public class TimeOutState : ISlotState
     {
-        public string StatusText => "Hết thời gian";
-        public string StatusColor => "#f8d7da"; // Màu đỏ nhạt
+        public string StatusText => "-";
+        public string StatusColor => "#8c8c8c"; // Màu đỏ nhạt
         public async Task HandleClick(SlotComponent slot)
         {
             // không làm gì

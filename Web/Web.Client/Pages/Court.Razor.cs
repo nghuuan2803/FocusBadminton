@@ -53,23 +53,23 @@ namespace Web.Client.Pages
             _ = LoadSchedules(); // Gọi lại để load lịch mới sau khi reset
         }
 
-        private string GetStatusText(ScheduleDTO.ScheduleStatus status) => status switch
+        private string GetStatusText(ScheduleStatus status) => status switch
         {
-            ScheduleDTO.ScheduleStatus.Available => "Trống",
-            ScheduleDTO.ScheduleStatus.TimeOut => "Quá giờ",
-            ScheduleDTO.ScheduleStatus.Holding => "Đang giữ",
-            ScheduleDTO.ScheduleStatus.Booked => "Đã đặt",
-            ScheduleDTO.ScheduleStatus.Paused => "Tạm ngưng",
+            ScheduleStatus.Available => "Trống",
+            ScheduleStatus.TimeOut => "Quá giờ",
+            ScheduleStatus.Holding => "Đang giữ",
+            ScheduleStatus.Booked => "Đã đặt",
+            ScheduleStatus.Paused => "Tạm ngưng",
             _ => "Không xác định"
         };
 
-        private string GetStatusColor(ScheduleDTO.ScheduleStatus status) => status switch
+        private string GetStatusColor(ScheduleStatus status) => status switch
         {
-            ScheduleDTO.ScheduleStatus.Available => "green",
-            ScheduleDTO.ScheduleStatus.TimeOut => "gray",
-            ScheduleDTO.ScheduleStatus.Holding => "orange",
-            ScheduleDTO.ScheduleStatus.Booked => "blue",
-            ScheduleDTO.ScheduleStatus.Paused => "red",
+            ScheduleStatus.Available => "green",
+            ScheduleStatus.TimeOut => "gray",
+            ScheduleStatus.Holding => "orange",
+            ScheduleStatus.Booked => "blue",
+            ScheduleStatus.Paused => "red",
             _ => "default"
         };
     }

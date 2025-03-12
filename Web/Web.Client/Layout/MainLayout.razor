@@ -1,13 +1,14 @@
 ﻿@using Web.Client.Models
 @inherits LayoutComponentBase
-
+@inject NavigationManager _navigation
 <div class="page">
     <div class="sidebar">
         <SidebarMenu MenuItems="menuItems" />
     </div>
     <main>
         <div class="top-row px-4">
-            <a style="color:forestgreen;font-size:large" href="swagger" target="_blank">SWAGGER</a>
+            <a class="btn btn-success" href="swagger" target="_blank">SWAGGER</a>
+            <a class="btn btn-primary" href="login">ĐĂNG NHẬP</a>
         </div>
         <article class="content px-4">
             @Body
@@ -23,8 +24,10 @@
         menuItems.Add(new MenuLeaf("Home", "/", "fa-solid fa-house"));
 
         var scheduleNode = new MenuNode("Lịch đặt sân", "/schedules", "fa-solid fa-calendar-days");
-        scheduleNode.Add(new MenuLeaf("Sân 1", "/schedule-court/1", "fa-solid fa-square"));
-        scheduleNode.Add(new MenuLeaf("Sân 2", "/schedule-court/2", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 1", "/court-schedule/1", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 2", "/court-schedule/2", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 3", "/court-schedule/3", "fa-solid fa-square"));
+        scheduleNode.Add(new MenuLeaf("Sân 4", "/court-schedule/4", "fa-solid fa-square"));
         scheduleNode.Add(new MenuLeaf("Tìm sân trống", "/available-court", "fa-solid fa-calendar-day"));
         scheduleNode.Add(new MenuLeaf("Duyệt yêu cầu", "/booking-approve", "fa-solid fa-list-check"));
 
@@ -47,10 +50,15 @@
         var revenueNode = new MenuNode("Doanh thu", "/revenue", "fa-solid fa-file-invoice-dollar");
         revenueNode.Add(new MenuLeaf("Trong Tháng", "/revenue-monthly", "fa-calendar-week"));
         revenueNode.Add(new MenuLeaf("Khoảng thời gian", "/revenue-filter", "fa-calendar-week"));
-        
+
         menuItems.Add(scheduleNode);
         menuItems.Add(managementNode);
         menuItems.Add(revenueNode);
 
+    }
+
+    private void GoToLogin()
+    {
+        _navigation.NavigateTo("login");
     }
 }

@@ -14,6 +14,7 @@ using Infrastructure.Data.Repositories;
 using Infrastructure.Data.DapperQueries;
 using Application.Interfaces.DapperQueries;
 using Application.Interfaces;
+using Infrastructure.Data.Queries;
 
 namespace Infrastructure
 {
@@ -85,6 +86,7 @@ namespace Infrastructure
             services.AddScoped<DapperSqlConnection>();
             services.AddScoped<IScheduleQueries, CourtScheduleQueries>();
             services.AddScoped<IRepository<Booking>, BookingRepository>();
+            services.AddScoped<ICheckMultiDaySlotAvailabilityQuery, CheckMultiDaySlotAvailability>();
             services.AddScoped<AuthService>();
             return services;
         }

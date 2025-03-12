@@ -1,0 +1,50 @@
+﻿/* Container chính, giữ toàn bộ chiều rộng viewport nhưng không vượt quá */
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 100%;
+    max-width: none; /* Bỏ giới hạn max-width mặc định của Bootstrap */
+}
+
+/* Container cho bảng, giới hạn độ rộng và buộc cuộn ngang */
+.table-container {
+    overflow-x: auto;
+    max-width: calc(100vw - 350px); /* Giới hạn độ rộng, trừ phần menu 250px */
+    width: 100%;
+}
+
+.schedule-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    min-width: 0; /* Ngăn bảng phình ra */
+}
+
+    .schedule-table th, .schedule-table td {
+        width: 100px; /* Độ rộng cố định cho mỗi cột khung giờ */
+        max-width: 100px;
+        min-width: 100px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.fixed-column {
+    position: sticky;
+    left: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
+}
+
+.table-dark th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #212529;
+    color: white;
+}

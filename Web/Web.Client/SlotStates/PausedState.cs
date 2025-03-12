@@ -2,8 +2,8 @@
 {
     public class PausedState : ISlotState
     {
-        public string StatusText => "Tạm dừng";
-        public string StatusColor => "#f8d7da"; // Màu đỏ nhạt
+        public string StatusText => "Tạm ngưng";
+        public string StatusColor => "#c41d7f";
         public async Task HandleClick(SlotComponent slot)
         {
             // xem chi tiết booking

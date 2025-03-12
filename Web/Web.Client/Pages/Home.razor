@@ -2,6 +2,40 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<p>Giờ Server: @_serverDate</p>
+<p>Giờ UTC: @_utcDate</p>
+<p>Giờ VN: @_vnDate</p>
+<hr />
+<p>Giờ pick: @_selectdate</p>
+<p>Giờ: @_time.ToString("hh:mm")</p>
+<DatePicker TValue=DateTimeOffset Placeholder="@("Giờ đã chọn")" @bind-Value=_selectdate OnChange="StateHasChanged" />
+<TimePicker TValue=TimeOnly Placeholder="@("Giờ đã chọn")" @bind-Value=_time OnChange="TimeUpdate" />
 
-Welcome to your new app.
+<Button OnClick="HandleTime" Color="Color.Blue4">Handle</Button>
+
+@code {
+    private DateTimeOffset _selectdate = DateTimeOffset.UtcNow;
+    private DateTimeOffset _utcDate = DateTimeOffset.UtcNow;
+    private DateTimeOffset _serverDate = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(-8));
+    public DateTimeOffset _vnDate = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
+    private TimeOnly _time = new TimeOnly(8,0,0);
+    public void HandleTime()
+    {
+        _serverDate = _selectdate.ToOffset(TimeSpan.FromHours(-8));
+        _utcDate = _selectdate.ToUniversalTime();
+        _vnDate = _utcDate.ToOffset(TimeSpan.FromHours(7));
+    }
+    public void TimeUpdate()
+    {
+        SetVnDate();
+        _vnDate = _vnDate.AddHours(_time.Hour - 7);
+        _utcDate = _vnDate.ToUniversalTime();
+        StateHasChanged();
+    }
+    void SetVnDate()
+    {
+        _vnDate = _selectdate.ToOffset(TimeSpan.FromHours(7));
+    }
+}
+
+

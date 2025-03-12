@@ -9,7 +9,7 @@ namespace Web.Crons
     {
         private readonly IHubContext<SlotHub> _hubContext;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(300);
 
         public AutoReleaseSlot(IHubContext<SlotHub> hubContext, IServiceScopeFactory serviceScopeFactory)
         {
@@ -21,8 +21,8 @@ namespace Web.Crons
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await CleanUpExpiredHoldsAsync(stoppingToken);
                 await Task.Delay(_interval, stoppingToken);
+                await CleanUpExpiredHoldsAsync(stoppingToken);
             }
         }
 

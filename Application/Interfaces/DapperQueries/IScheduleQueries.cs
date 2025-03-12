@@ -7,9 +7,10 @@ namespace Application.Interfaces.DapperQueries
     {
         Task<IEnumerable<ScheduleDTO>> GetAllCourtSchedulesAsync(DateTime date, int facilityId);
         Task<IEnumerable<ScheduleDTO>> GetCourtSchedulesAsync(DateTime date, int courtId);
+        Task<IEnumerable<CourtScheduleDTO>> GetCourtSchedulesAsync(DateTime beginDate, DateTime endDate, int courtId);
 
         Task<bool> CheckAvailable(int courtId, int timeSlotId, BookingType bookingType, 
-            DateTimeOffset beginAt, DateTimeOffset? endAt, string dayOfWeek);
+            DateTimeOffset beginAt, DateTimeOffset? endAt, string? dayOfWeek);
 
     }
 }

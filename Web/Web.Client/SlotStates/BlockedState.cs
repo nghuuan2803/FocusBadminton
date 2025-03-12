@@ -2,12 +2,12 @@
 {
     public class BlockedState : ISlotState
     {
-        public string StatusText => "Đã chặn";
-        public string StatusColor => "#f8d7da"; // Màu đỏ nhạt
+        public string StatusText => "Chặn";
+        public string StatusColor => "#610b00";
         public async Task HandleClick(SlotComponent slot)
         {
             // không làm gì
-            await Task.CompletedTask;
+            await slot.UnblockSlotAsync();
         }
     }
 }

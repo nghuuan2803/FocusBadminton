@@ -38,16 +38,49 @@ namespace Web.Endpoints
             }
             return BadRequest(result.Errors);
         }
-        //[HttpPut("Approve/{id}")]
-        //public async Task<IActionResult> ApproveBooking(int id)
-        //{
-        //    var command = new ApproveBookingCommand(id);
-        //    var result = await mediator.Send(command);
-        //    if (result.Succeeded)
-        //    {
-        //        return Ok(result.Data);
-        //    }
-        //    return BadRequest(result.Errors);
-        //}
+        [HttpPost("approve")]
+        public async Task<IActionResult> ApproveBooking(ApproveBookingCommand command)
+        {
+
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost("reject")]
+        public async Task<IActionResult> RejectBooking(RejectBookingCommand command)
+        {
+
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost("pause")]
+        public async Task<IActionResult> PauseBooking(PauseBookingCommand command)
+        {
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+        [HttpPost("resume")]
+        public async Task<IActionResult> ResumeBooking(ResumeBookingCommand command)
+        {
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
     }
 }

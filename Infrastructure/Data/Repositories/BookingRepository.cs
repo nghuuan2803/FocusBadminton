@@ -30,5 +30,16 @@ namespace Infrastructure.Data.Repositories
                     .ThenInclude(d => d.Court)
                 .ToListAsync(cancellationToken);
         }
+
+        public override async Task<Booking> FindAsync(Expression<Func<Booking, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await dbSet.Include(b => b.Member)
+                .Include(p => p.Team)
+                .Include(p => p.Voucher)
+                .Include(p => p.Promotion)
+                .Include(p => p.Details)
+                    .ThenInclude(d => d.Court)
+                .FirstOrDefaultAsync(predicate, cancellationToken);
+        }
     }
 }

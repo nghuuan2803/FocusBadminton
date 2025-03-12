@@ -1,61 +1,73 @@
-﻿@page "/schedules-v1"
-@inject CourtScheduleService CourtScheduleService
-@inject NavigationManager NavigationManager
-<div class="court-schedules-container">
-    <h1>Lịch Đặt Sân (Cơ sở 1)</h1>
-    <div>
-        <label>Ngày: </label>
-        <DatePicker TValue="DateTime" Size="InputSize.Large" @bind-Value="Date" />
-        <Button Type="ButtonType.Primary" AutoLoading Color="Color.Purple5" @onclick="HandleFilter">Lọc</Button>
-        <Button Type="ButtonType.Primary" Color="Color.Purple5" @onclick="ResetFilter">Hôm nay</Button>
-    </div>
-    <div class="schedule-table">
-        @if (isLoading)
-        {
-            <p>Đang tải...</p>
-        }
-        else if (schedules != null && schedules.Any())
-        {
-            <Table TItem="ScheduleDTO"
-                   DataSource="@schedules"
-                   RowKey="record => record.CourtId + '-' + record.TimeSlotId">
-                <Column TData="ScheduleDTO" Title="Mã Sân" >
-                    <Template>
-                        @context.CourtId
-                    </Template>
-                </Column>
-                <Column TData="ScheduleDTO" Title="Sân">
-                    <Template>
-                        @context.CourtName
-                    </Template>
-                </Column>
-                <Column TData="ScheduleDTO" Title="Khung giờ">
-                    <Template>
-                        @context.StartTime.ToString("hh\\:mm") - @context.EndTime.ToString("hh\\:mm")
-                    </Template>
-                </Column>
-                <Column TData="ScheduleDTO" Title="Trạng thái">
-                    <Template>
-                        <span style="color: @GetStatusColor(context.Status)">@GetStatusText(context.Status)</span>
-                    </Template>
-                </Column>
-            </Table>
-        }
-        else
-        {
-            <p>Không có dữ liệu lịch</p>
-        }
-    </div>
-</div>
+﻿@page "/court-schedule/{CourtId:int}"
+@inject IMessageService MessageService
+@using Web.Client.SlotStates
 
-<style>
-    .court-schedules-container {
-        padding: 20px;
+<link href="css/schedule.css" rel="stylesheet" />
+<div class="container mt-4">
+    <h3 class="mb-3">Lịch Đặt @courtName</h3>
+
+    <div class="mb-3">
+        <label for="startDatePicker" class="form-label">Từ ngày:</label>
+        <input type="date" id="startDatePicker" class="form-control w-25 d-inline-block"
+               @bind="StartDate" @bind:format="yyyy-MM-dd" />
+
+        <label for="endDatePicker" class="form-label ms-3">Đến ngày:</label>
+        <input type="date" id="endDatePicker" class="form-control w-25 d-inline-block"
+               @bind="EndDate" @bind:format="yyyy-MM-dd" />
+
+        <button class="btn btn-primary ms-2" @onclick="HandleFilter">Lọc</button>
+        <button class="btn btn-secondary ms-2" @onclick="ResetFilter">Đặt lại</button>
+    </div>
+
+    @if (isLoading)
+    {
+        <p class="text-muted">Đang tải...</p>
     }
-    h1 {
-        margin-bottom: 20px;
+    else if (schedules.Any())
+    {
+        <div class="table-container">
+            <table class="schedule-table table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="fixed-column">Ngày</th>
+                        @foreach (var timeSlot in timeSlots)
+                        {
+                            <th>@timeSlot.StartTime.ToString("hh\\:mm")</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var dateGroup in schedules.GroupBy(s => s.ScheduleDate))
+                    {
+                        var scheduleDate = dateGroup.Key;
+                        <tr>
+                            <td class="fixed-column">@scheduleDate.ToString("dd/MM")<br /> (@dateGroup.First().DayOfWeek)</td>
+                            @foreach (var timeSlot in timeSlots)
+                            {
+                                var slot = dateGroup.FirstOrDefault(s => s.TimeSlotId == timeSlot.Id);
+                                var slotKey = $"{CourtId}_{timeSlot.Id}_{scheduleDate:yyyyMMdd}";
+                                <SlotComponent CourtId="@slot.CourtId"
+                                               TimeSlotId="@slot.TimeSlotId"
+                                               Date="@slot.ScheduleDate"
+                                               StartTime="@slot.StartTime"
+                                               EndTime="@slot.EndTime"
+                                               HeldBy="@slot.HeldBy"
+                                               HoldId="@slot.HoldId"
+                                               BookingId="@slot.BookingId"
+                                               BookingDetailId="@slot.BookingDetailId"
+                                               InitialStatus="@slot.Status"
+                                               OnSlotUpdated="HandleSlotUpdated"
+                                               @ref="slotComponentRefs[slotKey]" />
+
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
-    .schedule-table {
-        margin-top: 20px;
+    else
+    {
+        <p class="text-muted">Không có dữ liệu lịch</p>
     }
-</style>
+</div>

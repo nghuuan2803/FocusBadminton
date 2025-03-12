@@ -3,7 +3,7 @@ using Application.Interfaces.DapperQueries;
 using Domain.Repositories;
 using Shared.Enums;
 
-namespace Application.Features.HoldSlots
+namespace Application.Features.Slots
 {
     public class HoldSlotCommand : IRequest<int>
     {
@@ -39,16 +39,16 @@ namespace Application.Features.HoldSlots
                 request.CourtId,
                 request.TimeSlotId,
                 request.BookingType,
-                request.BeginAt,
-                request.EndAt,
-                request.DayOfWeek ?? request.BeginAt.DayOfWeek.ToString());
+                request.BeginAt.ToUniversalTime(),
+                request.EndAt == null? null: request.EndAt.Value.ToUniversalTime(),
+                request.DayOfWeek);
 
             if (!available)
             {
                 return 0;
             }
 
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             var bookingHold = new BookingHold
             {
                 CourtId = request.CourtId,
@@ -70,13 +70,13 @@ namespace Application.Features.HoldSlots
             var payload = new
             {
                 HoldSlotId = bookingHold.Id,
-                CourtId = bookingHold.CourtId,
-                TimeSlotId = bookingHold.TimeSlotId,
+                bookingHold.CourtId,
+                bookingHold.TimeSlotId,
                 BookingType = (int)bookingHold.BookingType,
-                BeginAt = bookingHold.BeginAt,
-                EndAt = bookingHold.EndAt,
-                DayOfWeek = bookingHold.DayOfWeek,
-                HeldBy = bookingHold.HeldBy
+                bookingHold.BeginAt,
+                bookingHold.EndAt,
+                bookingHold.DayOfWeek,
+                bookingHold.HeldBy
             };
 
             // Gửi thông báo cho tất cả client rằng slot đã được giữ với payload chi tiết

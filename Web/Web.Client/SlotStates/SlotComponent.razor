@@ -1,1 +1,141 @@
-﻿<span>available</span>
+﻿
+<td style="background-color: @_state.StatusColor; cursor:pointer"
+@onclick="OnSlotClick">
+    @_state.StatusText
+</td>
+
+<Modal Title="@("Thông tin đặt sân")"
+@bind-Visible="@_visible"
+Style="top: 20px"
+OnOk="HandleOkModal"
+OnCancel="HandleCancelModal">
+    @FormTemplate()
+</Modal>
+
+<Modal Title="@("Tạm ngưng đặt sân")"
+@bind-Visible="@_pauseVisible"
+OnOk="HandleOkPauseModal"
+OnCancel="HandleCancelPauseModal">
+    @PauseTemplate()
+</Modal>
+
+@code {
+
+    RenderFragment FormTemplate()
+    {
+        return @<div class="booking-info">
+        @if(_state is PendingState)
+    {
+        <Button Color="Color.Cyan9" OnClick="ApproveBooking" AutoLoading>Duyệt</Button>
+        <Button Color="Color.Gold2" OnClick="RejectBooking" AutoLoading>Từ chối</Button>
+    }
+    else if(_state is BookedState)
+    {
+        <Button Color="Color.Cyan9" OnClick="OpenPauseBookingModal" AutoLoading>Tạm ngưng</Button>
+    // <Button Color="Color.Cyan9" OnClick="Complee" AutoLoading>Kết thúc</Button>
+    }
+    else if(_state is PausedState)
+    {
+        <Button Color="Color.Cyan9" OnClick="ResumeBooking" AutoLoading>Tiếp tục</Button>
+    // <Button Color="Color.Cyan9" OnClick="ApproveBooking" AutoLoading>Kết thúc</Button>
+    }
+        <p><strong>Booking ID:</strong> @booking.Id</p>
+        <p>
+            <strong>Trạng thái:@((int)booking.Status)</strong>
+
+        </p>
+        <p>
+            <strong>Loại đặt sân:@((int)booking.Type)</strong>
+        </p>
+        @if (booking.Type == BookingType.InDay)
+    {
+        <p><strong>Ngày:</strong> @booking.Details?.FirstOrDefault()?.BeginAt?.ToString("dd-MM-yyyy")</p>
+    }
+    else
+    {
+        <p><strong>Ngày bắt đầu:</strong> @booking.Details?.FirstOrDefault()?.BeginAt?.ToString("dd-MM-yyyy")</p>
+        <p><strong>Ngày kết thúc:</strong> @booking.Details?.FirstOrDefault()?.EndAt?.ToString("dd-MM-yyyy")</p>
+        <p><strong>Ngày trong tuần:</strong> @booking.Details?.FirstOrDefault()?.DayOfWeek</p>
+    }
+        <p><strong>Người đặt:</strong> @booking.MemberName</p>
+        <div>
+            <strong>Chi tiết đặt sân:</strong>
+            @if (booking.Details != null && booking.Details.Any())
+        {
+            <ul>
+                @foreach (var detail in booking.Details)
+            {
+                <li>
+                    Sân: @detail.CourtId, Khung giờ: @detail.TimeSlotId,
+                    Ngày bắt đầu: @detail.BeginAt?.ToString("dd-MM-yyyy"),
+                    Ngày kết thúc: @(detail.EndAt.HasValue ? detail.EndAt.Value.ToString("dd-MM-yyyy") : "Không có ngày kết thúc"),
+                    Ngày trong tuần: @detail.DayOfWeek
+                </li>
+            }
+            </ul>
+        }
+        else
+        {
+            <p>Không có chi tiết đặt sân.</p>
+        }
+        </div>
+    </div>
+    ;
+        ;
+    }
+
+    RenderFragment PauseTemplate()
+    {
+        return @<div class="booking-info">
+            <DatePicker Placeholder="@("Ngày ngưng")" TValue=DateTimeOffset? @bind-Value=_pauseAt />
+            <DatePicker Placeholder="@("Ngày tiếp tục")" TValue=DateTimeOffset? @bind-Value=_resumeAt />
+        </div>
+    ;
+    }
+
+    bool _visible = false;
+    bool _submitting = false;
+
+    bool _pauseVisible = false;
+
+    private void ShowModal()
+    {
+        _visible = true;
+    }
+
+    private async Task HandleOkModal(MouseEventArgs e)
+    {
+        _submitting = true;
+        await Task.Delay(1000);
+    }
+
+    private void HandleCancelModal(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+
+    private async Task HandleOkPauseModal(MouseEventArgs e)
+    {
+        _submitting = true;
+        bool result = await PauseBooking();
+        if (result)
+        {
+            await MessageService.Success("Thao tác thành công", 2);
+            MessageService.Destroy();
+        }
+        else
+        {
+            await MessageService.Error("Lỗi máy chủ!", 2);
+            MessageService.Destroy();
+        }
+    }
+
+    private void HandleCancelPauseModal(MouseEventArgs e)
+    {
+        _visible = true;
+    }
+    private void OpenPauseBookingModal()
+    {
+        _pauseVisible = true;
+    }
+}

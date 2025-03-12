@@ -1,0 +1,13 @@
+﻿@page "/toast"
+@inject IMessageService _messageService
+
+<Button Color="Color.Blue1" OnClick="OpenMessage">Open Toast</Button>
+
+@code {
+    private async void OpenMessage(MouseEventArgs args)
+    {
+        _messageService.Success("Open Message", 1);
+        await Task.Delay(2000);
+        _messageService.Destroy();
+    }
+}

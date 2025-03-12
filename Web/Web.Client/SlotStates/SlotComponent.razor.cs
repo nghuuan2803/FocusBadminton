@@ -1,108 +1,279 @@
-﻿using Microsoft.AspNetCore.Components;
-using static Shared.Schedules.ScheduleDTO;
-using Web.Client.ApiServices;
+﻿// SlotComponent.razor.cs
+using AntDesign;
+using Shared.Bookings;
 
 namespace Web.Client.SlotStates
 {
-    public partial class SlotComponent
+    public partial class SlotComponent : IDisposable
     {
-        [Parameter] public int CourtId { get; set; }        // ID của sân
-        [Parameter] public int TimeSlotId { get; set; }     // ID của khung giờ
-        [Parameter] public string? HeldBy { get; set; }     // Người giữ chỗ (nếu có)
-        [Parameter] public ScheduleStatus InitialStatus { get; set; } // Trạng thái ban đầu
+        [Parameter] public int CourtId { get; set; }
+        [Parameter] public int TimeSlotId { get; set; }
+        [Parameter] public TimeSpan StartTime { get; set; }
+        [Parameter] public TimeSpan EndTime { get; set; }
+        [Parameter] public int? HoldId { get; set; }
+        [Parameter] public int? BookingId { get; set; }
+        [Parameter] public int? BookingDetailId { get; set; }
+        [Parameter] public string? HeldBy { get; set; }
+        [Parameter] public ScheduleStatus InitialStatus { get; set; }
+        [Parameter] public DateTime Date { get; set; } // Thêm Date để tính DayOfWeek
 
-        [Inject] private SlotService SlotService { get; set; } // Service để gọi API
+        [Parameter] public EventCallback<SlotComponent> OnSlotUpdated { get; set; }
+
+        [Inject] private SlotService SlotService { get; set; } = null!;
+        [Inject] private MessageService MessageService { get; set; } = null!;
+        [Inject] private BookingService BookingService { get; set; } = null!;
+
+        public DateTimeOffset StartAt { get; set; }
+        public DateTimeOffset EndAt { get; set; }
+
+        private DateTimeOffset? _pauseAt;
+        private DateTimeOffset? _resumeAt;
 
         private ISlotState _state;
+        private int holdId;
+        private BookingDTO? booking;
 
-        protected override void OnInitialized()
+        bool selecting = false;
+        protected async override Task OnInitializedAsync()
         {
-            _state = GetStateFromStatus(InitialStatus); // Khởi tạo trạng thái
+            _state = GetStateFromStatus(InitialStatus);
+            holdId = HoldId ?? 0;
+            await Task.Delay(10);
+            if (BookingId != null)
+            {
+                booking = await BookingService.GetBookingAsync(BookingId.Value);
+            }
         }
 
-        // Chuyển đổi từ ScheduleStatus sang ISlotState
         private ISlotState GetStateFromStatus(ScheduleStatus status)
         {
-            return status switch
+
+            ISlotState state = status switch
             {
                 ScheduleStatus.Available => new AvailableState(),
                 ScheduleStatus.Pending => new PendingState(),
                 ScheduleStatus.Booked => new BookedState(),
-                ScheduleStatus.Holding => new HoldingState(),
+                ScheduleStatus.Holding => new HeldState(),
                 ScheduleStatus.Paused => new PausedState(),
                 ScheduleStatus.TimeOut => new TimeOutState(),
                 ScheduleStatus.Blocked => new BlockedState(),
                 ScheduleStatus.Completed => new CompletedState(),
                 _ => throw new ArgumentException("Trạng thái không hợp lệ")
             };
+            if (state is HeldState && HeldBy == "1")
+                state = new HoldingState();
+            return state;
         }
 
-        // Xử lý click
         private async Task OnSlotClick()
         {
             await _state.HandleClick(this);
         }
 
-        // Cập nhật trạng thái từ SignalR
-        public void HandleRealtimeSignal(ScheduleStatus newStatus, string? newHeldBy)
+        public void HandleRealtimeSignal(ScheduleStatus newStatus, int holdId, string? newHeldBy)
         {
-            _state = GetStateFromStatus(newStatus);
+            this.holdId = holdId;
             HeldBy = newHeldBy;
-            StateHasChanged(); // Cập nhật UI
-        }
-        public void TransitionTo(ISlotState newState)
-        {
-            _state = newState;
-            StateHasChanged(); // Cập nhật UI
+            _state = GetStateFromStatus(newStatus);
+            StateHasChanged();
         }
 
-        // Hành động giữ chỗ
         public async Task HoldSlotAsync()
         {
-            var holdRequest = new HoldSlotRequest();
-            //
-            // Điền thông tin cần thiết vào holdRequest
-            //
-            int holdId = await SlotService.HoldAsync(holdRequest);
-            if (holdId > 0)
+            if(selecting) return;
+            selecting = true;
+            var holdRequest = new HoldSlotRequest
             {
-                HeldBy = "admin"; // Hiển thị người giữ chỗ
-                _state = new PendingState(); // Chuyển sang trạng thái chờ duyệt
-                StateHasChanged(); // Cập nhật UI
+                CourtId = CourtId,
+                TimeSlotId = TimeSlotId,
+                HoldBy = "1", // Thay bằng thông tin người dùng thực tế
+                BookingType = BookingType.InDay,
+                BeginAt = new DateTimeOffset(Date).Add(StartTime),
+            };
+            this.holdId = await SlotService.HoldAsync(holdRequest);
+
+            if (holdId < 1)
+            {
+                await MessageService.Error("Không thể chọn!");
+                MessageService.Destroy();
             }
-            // Sau khi giữ chỗ thành công, có thể cập nhật trạng thái qua SignalR
-        }
-        public async Task CancelHoldAsync()
-        {
-            await SlotService.ReleaseAsync(CourtId, HeldBy);
-            HeldBy = null;
-            _state = new AvailableState(); // Chuyển về trạng thái trống
-            StateHasChanged(); // Cập nhật UI
+            else
+            {
+                TransitionTo(new HoldingState());
+            }
+            selecting = false;
         }
 
-        // Hành động xem chi tiết đơn đặt
+        public async Task CancelHoldAsync()
+        {
+            if (selecting) return;
+            selecting = true;
+            if (holdId < 1)
+            {
+                return;
+            }
+            var releaseRequest = new ReleaseSlotRequest
+            {
+                HoldId = holdId,
+                HeldBy = "1"
+            };
+
+            bool success = await SlotService.ReleaseAsync(releaseRequest);
+            if (success)
+            {
+                HeldBy = null;
+                holdId = 0;
+                HoldId = null;
+                TransitionTo(new AvailableState());
+            }
+            else
+            {
+                await MessageService.Error($"Lỗi máy chủ");
+                MessageService.Destroy();
+            }
+            selecting = false;
+        }
+
         public async Task ViewBookingDetailsAsync()
         {
-            // Logic mở modal hoặc chuyển hướng để xem chi tiết
-            await Task.CompletedTask; // Thay bằng logic thực tế
+            ShowModal(); // Hiện modal thông tin đặt sân
         }
 
         public async Task BlockSlotAsync()
         {
-            //var blockRequest = new BlockSlotRequest();
-            //
-            // Điền thông tin cần thiết vào blockRequest
-            //
-            //await SlotService.BlockAsync(blockRequest);
-            _state = new BlockedState(); // Chuyển sang trạng thái bị chặn
-            StateHasChanged(); // Cập nhật UI
+            await Task.CompletedTask; // Thay bằng logic thực tế
+            TransitionTo(new BlockedState());
+            await OnSlotUpdated.InvokeAsync(this);
         }
 
         public async Task UnblockSlotAsync()
         {
-            //await SlotService.UnblockAsync(CourtId, TimeSlotId, BeginDate, EndDate);
-            _state = new AvailableState(); // Chuyển về trạng thái trống
-            StateHasChanged(); // Cập nhật UI
+            await Task.CompletedTask; // Thay bằng logic thực tế
+            TransitionTo(new AvailableState());
+            await OnSlotUpdated.InvokeAsync(this);
         }
+
+        public void TransitionTo(ISlotState newState)
+        {
+            _state = newState;
+            StateHasChanged();
+        }
+
+        private async Task ApproveBooking()
+        {
+            if (BookingId != null)
+            {
+                var result = await BookingService.ApproveBooking((int)BookingId);
+                if (result != null)
+                {
+                    booking = result;
+                    TransitionTo(new BookedState());
+                    await MessageService.Success("Duyệt thành công", 3);
+                    MessageService.Destroy();
+                }
+                else
+                {
+                    await MessageService.Error("Lỗi", 3);
+                }
+            }
+        }
+        private async Task RejectBooking()
+        {
+            if (BookingId != null)
+            {
+                var result = await BookingService.RejectBooking((int)BookingId);
+                if (result != null)
+                {
+                    booking = result;
+                    ISlotState newState = Date < DateTime.Now ? new TimeOutState() : new AvailableState();
+                    TransitionTo(newState);
+                    await MessageService.Success("Đã hủy yêu cầu", 3);
+                    MessageService.Destroy();
+                }
+                else
+                {
+                    await MessageService.Error("Lỗi hệ thống", 3);
+                    MessageService.Destroy();
+                }
+            }
+        }
+
+        private async Task<bool> PauseBooking()
+        {
+            bool result = await BookingService.PauseBooking((int)BookingId, _pauseAt.Value, _resumeAt.Value);
+            if (result)
+            {
+                TransitionTo(new PausedState());
+            }
+            return result;
+        }
+        private async Task<bool> ResumeBooking()
+        {
+            bool result = await BookingService.ResumeBooking((int)BookingId);
+            if (result)
+            {
+                TransitionTo(new BookedState());
+            }
+            return result;
+        }
+
+        #region not implement
+
+        public void OnHeld(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnReleased(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingCreated(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingCanceled(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingApproved(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingRejected(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingPaused(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingResumed(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnBookingCompleted(object payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSlotTimeOut()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            // Dọn dẹp nếu cần
+        }
+
+        #endregion
     }
 }
