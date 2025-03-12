@@ -18,15 +18,24 @@ namespace Application.Common.Mappings
                 .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member != null ? src.Member.FullName : null))
                 .ForMember(dest => dest.TeamName, opt => opt.MapFrom(src => src.Team != null ? src.Team.Name : null))
                 .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details))
-                .ReverseMap(); // Nếu cần ánh xạ ngược
+                .ReverseMap();
+
+            // Ánh xạ từ CreateBookingCommand -> Booking
             CreateMap<CreateBookingCommand, Booking>()
                 .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details))
-                .ReverseMap(); // Nếu cần ánh xạ ngược
-            // Ánh xạ từ BookingDetail -> BookingItem
+                .ReverseMap();
+
+            // Ánh xạ từ BookingItem -> BookingDetail, tự động chuyển BeginAt và EndAt sang UTC
+            CreateMap<BookingItem, BookingDetail>()
+                .ForMember(dest => dest.BeginAt, opt => opt.MapFrom(src => src.BeginAt.HasValue ? src.BeginAt.Value.ToUniversalTime() : (DateTimeOffset?)null))
+                .ForMember(dest => dest.EndAt, opt => opt.MapFrom(src => src.EndAt.HasValue ? src.EndAt.Value.ToUniversalTime() : (DateTimeOffset?)null))
+                .ForMember(dest => dest.Booking, opt => opt.Ignore()); // Ignore vì Booking sẽ được gán sau
+
+            // Ánh xạ ngược từ BookingDetail -> BookingItem (nếu cần)
             CreateMap<BookingDetail, BookingItem>()
                 .ForMember(dest => dest.CourtName, opt => opt.MapFrom(src => src.Court != null ? src.Court.Name : null))
-                .ReverseMap()
-                .ForMember(dest => dest.Court, opt => opt.Ignore());
+                .ForMember(dest => dest.BeginAt, opt => opt.MapFrom(src => src.BeginAt.HasValue ? src.BeginAt.Value : (DateTimeOffset?)null))
+                .ForMember(dest => dest.EndAt, opt => opt.MapFrom(src => src.EndAt.HasValue ? src.EndAt.Value : (DateTimeOffset?)null));
         }
     }
 

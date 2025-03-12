@@ -39,8 +39,8 @@ namespace Application.Features.Slots
                 request.CourtId,
                 request.TimeSlotId,
                 request.BookingType,
-                request.BeginAt,
-                request.EndAt,
+                request.BeginAt.ToUniversalTime(),
+                request.EndAt == null? null: request.EndAt.Value.ToUniversalTime(),
                 request.DayOfWeek);
 
             if (!available)

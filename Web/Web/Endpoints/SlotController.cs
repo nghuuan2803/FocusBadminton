@@ -1,6 +1,5 @@
 ﻿using Application.Features.Slots;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Endpoints
@@ -38,6 +37,28 @@ namespace Web.Endpoints
                 return Ok(true);
             }
             return BadRequest("Slot không thể nhả");
+        }
+
+        [HttpPost("check-fixed-booking-hold")]
+        public async Task<IActionResult> CheckMultiDayAvailability([FromBody] FixedBookingHoldCommand request)
+        {
+            var result = await _mediator.Send(request);
+            if (result.Succeeded)
+            {
+                return Ok(new { data = result.Data, succeeded = true, errors = new string[0] });
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost("release-multi")]
+        public async Task<IActionResult> ReleaseMultipleSlots([FromBody] ReleaseMultipleSlotsCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result)
+            {
+                return Ok(true);
+            }
+            return BadRequest("Không thể nhả một hoặc nhiều slot");
         }
     }
 }

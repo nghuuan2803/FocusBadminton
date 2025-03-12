@@ -56,7 +56,10 @@ namespace Application.Features.Bookings.Commands
         {
             // Ghi log khi bắt đầu xử lý lệnh
             _logger.Log($"Bắt đầu xử lý CreateBookingCommand cho MemberId: {request.MemberId}");
-
+            if (!request.Details.Any())
+            {
+                return Result<BookingDTO>.Failure(Error.Validation("Chưa chọn sân"));                
+            }
             // Kiểm tra xem đã giữ lịch chưa
             _logger.Log($"Kiểm tra BookingHolds cho MemberId: {request.MemberId}, Số lượng khung giờ yêu cầu: {request.Details.Count}");
             var holds = await _holdRepo.GetAllAsync(x => x.HeldBy == request.MemberId.ToString() && x.ExpiresAt > DateTimeOffset.UtcNow);
@@ -113,8 +116,8 @@ namespace Application.Features.Bookings.Commands
                     {
                         CourtId = d.CourtId,
                         TimeSlotId = d.TimeSlotId,
-                        BeginAt = d.BeginAt,
-                        EndAt = d.EndAt,
+                        BeginAt = ((DateTimeOffset)d.BeginAt).ToOffset(TimeSpan.FromHours(7)),
+                        EndAt = d.EndAt != null ? ((DateTimeOffset)d.EndAt).ToOffset(TimeSpan.FromHours(7)): default,
                         DayOfWeek = d.DayOfWeek
                     }).ToList()
                 };

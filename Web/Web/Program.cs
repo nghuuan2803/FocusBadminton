@@ -57,7 +57,7 @@ namespace Web
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
 
-            builder.Services.AddSignalR();
+            builder.Services.AddSignalR().AddMessagePackProtocol();
             builder.Services.AddScoped<ISlotNotification,SlotNotification>();
             builder.Services.AddAntDesign();
 

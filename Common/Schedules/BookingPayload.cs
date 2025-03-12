@@ -2,7 +2,7 @@
 {
     public class BookingPayload
     {
-        public int BookingId { get; set; }
+        public int BookingId { get; set; }  
         public int Status { get; set; }
         public int BookingType { get; set; }
         public List<BookingDetailPayload> Details { get; set; } = [];

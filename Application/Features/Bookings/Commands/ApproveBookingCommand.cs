@@ -39,7 +39,7 @@ namespace Application.Features.Bookings.Commands
             }
             if (!CheckSlotTimeout(booking.Details!))
             {
-                return Result<BookingDTO>.Failure(Error.Validation($"Invalid time: booking has any slot time out"));
+                return Result<BookingDTO>.Failure(Error.Validation($"Invalid time: Có lịch đặt đã quá ngày hiện tại"));
             }
             
             booking.Status = BookingStatus.Approved;
