@@ -2,7 +2,7 @@
 
 namespace Web.Client.Helper
 {
-    public class SlotEventListener : IAsyncDisposable
+    public class SlotEventHelper : IAsyncDisposable, ISlotEventHelper
     {
         private readonly HubConnection _hubConnection;
 
@@ -17,7 +17,7 @@ namespace Web.Client.Helper
         public event Action<object>? OnBookingPaused;
         public event Action<object>? OnBookingResumed;
 
-        public SlotEventListener(string hubUrl)
+        public SlotEventHelper(string hubUrl)
         {
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(hubUrl)

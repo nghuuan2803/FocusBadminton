@@ -1,7 +1,10 @@
-﻿using Application.Interfaces;
+﻿using Application.Common;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 using Shared.Bookings;
+using Shared.CostCalculators;
 using Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 
@@ -35,32 +38,32 @@ namespace Application.Features.Bookings.Commands
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISlotNotification _slotNotification;
-        private readonly Logger _logger; // Thêm Logger
+        private readonly ICostCalculatorFactory _costCalculatorFactory; // Thay BookingCostCalculator bằng ICostCalculatorFactory
+        private readonly Logger _logger;
+        private readonly IServiceProvider _provider;
 
         public CreateBookingCommandHandler(
-            IRepository<Booking> repository,
-            IRepository<BookingHold> holds,
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            ISlotNotification slotNotification)
+           IServiceProvider provider)
         {
-            _repository = repository;
-            _holdRepo = holds;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _slotNotification = slotNotification;
-            _logger = Logger.Instance; // Sử dụng instance Singleton của Logger
+            _provider = provider;
+            _repository = provider.GetRequiredService<IRepository<Booking>>();
+            _holdRepo = provider.GetRequiredService<IRepository<BookingHold>>();
+            _unitOfWork = provider.GetRequiredService<IUnitOfWork>();
+            _mapper = provider.GetRequiredService<IMapper>();
+            _slotNotification = provider.GetRequiredService<ISlotNotification>();
+            _costCalculatorFactory = provider.GetRequiredService<ICostCalculatorFactory>();
+            _logger = Logger.Instance;
         }
 
         public async Task<Result<BookingDTO>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
-            // Ghi log khi bắt đầu xử lý lệnh
             _logger.Log($"Bắt đầu xử lý CreateBookingCommand cho MemberId: {request.MemberId}");
-            if (!request.Details.Any())
+            if (!request.Details?.Any() ?? true)
             {
-                return Result<BookingDTO>.Failure(Error.Validation("Chưa chọn sân"));                
+                return Result<BookingDTO>.Failure(Error.Validation("Chưa chọn sân"));
             }
-            // Kiểm tra xem đã giữ lịch chưa
+
+            // Kiểm tra BookingHold
             _logger.Log($"Kiểm tra BookingHolds cho MemberId: {request.MemberId}, Số lượng khung giờ yêu cầu: {request.Details.Count}");
             var holds = await _holdRepo.GetAllAsync(x => x.HeldBy == request.MemberId.ToString() && x.ExpiresAt > DateTimeOffset.UtcNow);
             if (holds.Count() < request.Details.Count)
@@ -97,6 +100,37 @@ namespace Application.Features.Bookings.Commands
                 _logger.Log($"Xóa {holds.Count()} bản ghi BookingHolds");
                 _holdRepo.RemoveRange(holds);
 
+                // Tính giá cho từng BookingItem và tổng Amount
+                double totalAmount = 0;
+                double finalAmount = 0;
+                foreach (var detail in booking.Details)
+                {
+                    var costRequest = new CostCalculatorRequest
+                    {
+                        CourtId = detail.CourtId,
+                        TimeSlotId = detail.TimeSlotId,
+                        BeginAt = detail.BeginAt.Value,
+                        EndAt = detail.EndAt,
+                        DayOfWeek = detail.DayOfWeek,
+                        MemberId = request.MemberId,
+                        VoucherId = request.VoucherId,
+                        PromotionId = null, // Có thể thêm PromotionId vào CreateBookingCommand nếu cần
+                        BookingType = request.Type
+                    };
+                    var totalCostCalculator = new BaseCostCalculator(_provider);
+                    var finalCostCalculator = _costCalculatorFactory.CreateCalculator(costRequest);
+                    double itemBaseCost = await totalCostCalculator.CalculateAsync(costRequest);
+                    double itemCost = await finalCostCalculator.CalculateAsync(costRequest);
+                    if (itemCost < 0)
+                    {
+                        throw new Exception($"Không thể tính giá cho CourtId: {detail.CourtId}, TimeSlotId: {detail.TimeSlotId}");
+                    }
+                    totalAmount += itemBaseCost;
+                    finalAmount += itemCost;
+                }
+                booking.Amount = totalAmount;
+                double discount = totalAmount - finalAmount;
+                booking.Discount = discount < 0 ? 0 : discount;
                 // Lưu booking
                 _logger.Log("Lưu Booking vào cơ sở dữ liệu");
                 await _repository.AddAsync(booking);
@@ -116,8 +150,8 @@ namespace Application.Features.Bookings.Commands
                     {
                         CourtId = d.CourtId,
                         TimeSlotId = d.TimeSlotId,
-                        BeginAt = ((DateTimeOffset)d.BeginAt).ToOffset(TimeSpan.FromHours(7)),
-                        EndAt = d.EndAt != null ? ((DateTimeOffset)d.EndAt).ToOffset(TimeSpan.FromHours(7)): default,
+                        BeginAt = d.BeginAt.Value.ToOffset(TimeSpan.FromHours(7)),
+                        EndAt = d.EndAt != null ? ((DateTimeOffset)d.EndAt).ToOffset(TimeSpan.FromHours(7)) : default,
                         DayOfWeek = d.DayOfWeek
                     }).ToList()
                 };

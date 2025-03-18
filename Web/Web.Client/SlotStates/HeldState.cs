@@ -2,7 +2,7 @@
 {
     public class HeldState : ISlotState
     {
-        public string StatusText => "Tạm khóa";
+        public string StatusText => "Khóa";
 
         public string StatusColor => "#bfbfbf";
 

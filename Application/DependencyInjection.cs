@@ -5,6 +5,7 @@ using Application.Features.Bookings.Commands;
 using Shared.Bookings;
 using Application.Common.Behaviours;
 using Application.Common;
+using Application.Interfaces;
 
 namespace Application
 {

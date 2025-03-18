@@ -9,7 +9,7 @@ namespace Web.Client.Pages
         [Inject] private NavigationManager NavigationManager { get; set; } = null!;
         [Inject] private IConfiguration Configuration { get; set; } = null!;
 
-        private SlotEventListener _realtimeHelper = null!;
+        private SlotEventHelper _realtimeHelper = null!;
         public DateTime Date { get; set; } = DateTime.Today;
         private List<ScheduleDTO> schedules = [];
         private List<string> courts = [];
@@ -21,7 +21,7 @@ namespace Web.Client.Pages
         {
             var config = Configuration.GetSection("ApiSettings");
             string baseUrl = config["BaseAddress"] ?? NavigationManager.BaseUri;
-            _realtimeHelper = new SlotEventListener($"{baseUrl}slotHub");
+            _realtimeHelper = new SlotEventHelper($"{baseUrl}slotHub");
             _realtimeHelper.OnSlotHeld += HandleSlotHeld;
             _realtimeHelper.OnSlotReleased += HandleSlotReleased;
             _realtimeHelper.OnBookingCreated += HandleBookingCreated;

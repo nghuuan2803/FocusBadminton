@@ -10,7 +10,7 @@ namespace Web.Client.Pages
         [Inject] private NavigationManager NavigationManager { get; set; } = null!;
         [Inject] private IConfiguration Configuration { get; set; } = null!;
 
-        private SlotEventListener _realtimeHelper = null!;
+        private SlotEventHelper _realtimeHelper = null!;
         private DateTime StartDate { get; set; } = DateTime.Today;
         private DateTime EndDate { get; set; } = DateTime.Today.AddDays(6); // Mặc định là 7 ngày sau
         private List<CourtScheduleDTO> schedules = [];
@@ -24,7 +24,7 @@ namespace Web.Client.Pages
             var config = Configuration.GetSection("ApiSettings");
             string baseUrl = config["BaseAddress"] ?? NavigationManager.BaseUri;
             Console.WriteLine(baseUrl);
-            _realtimeHelper = new SlotEventListener($"{baseUrl}slotHub");
+            _realtimeHelper = new SlotEventHelper($"{baseUrl}slotHub");
             _realtimeHelper.OnSlotHeld += HandleSlotHeld;
             _realtimeHelper.OnSlotReleased += HandleSlotReleased;
             _realtimeHelper.OnBookingCreated += HandleBookingCreated;
