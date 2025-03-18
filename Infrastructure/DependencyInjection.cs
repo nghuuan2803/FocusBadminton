@@ -15,6 +15,7 @@ using Infrastructure.Data.DapperQueries;
 using Application.Interfaces.DapperQueries;
 using Application.Interfaces;
 using Infrastructure.Data.Queries;
+using Infrastructure.Implements.CostCalculators;
 
 namespace Infrastructure
 {
@@ -87,6 +88,7 @@ namespace Infrastructure
             services.AddScoped<IScheduleQueries, CourtScheduleQueries>();
             services.AddScoped<IRepository<Booking>, BookingRepository>();
             services.AddScoped<ICheckMultiDaySlotAvailabilityQuery, CheckMultiDaySlotAvailability>();
+            services.AddScoped<ICostCalculatorFactory, CostCalculatorFactory>();
             services.AddScoped<AuthService>();
             return services;
         }

@@ -1,11 +1,13 @@
 ﻿using Application.Interfaces;
 using Application.Interfaces.DapperQueries;
 using Domain.Repositories;
+using Shared.CostCalculators;
 using Shared.Enums;
+using Shared.Slots;
 
 namespace Application.Features.Slots
 {
-    public class HoldSlotCommand : IRequest<int>
+    public class HoldSlotCommand : IRequest<HoldSlotResult>
     {
         public int CourtId { get; set; }
         public int TimeSlotId { get; set; }
@@ -16,23 +18,26 @@ namespace Application.Features.Slots
         public string? DayOfWeek { get; set; }
     }
 
-    public class HoldSlotCommandHandler : IRequestHandler<HoldSlotCommand, int>
+    public class HoldSlotCommandHandler : IRequestHandler<HoldSlotCommand, HoldSlotResult>
     {
         private readonly IRepository<BookingHold> _repository;
         private readonly IScheduleQueries _schedules;
         private readonly ISlotNotification _slotNotification;
+        private readonly ICostCalculatorFactory _costCalculatorFactory;
 
         public HoldSlotCommandHandler(
             IRepository<BookingHold> repository,
             IScheduleQueries schedules,
+            ICostCalculatorFactory costCalculatorFactory,
             ISlotNotification slotNotification)
         {
             _repository = repository;
             _schedules = schedules;
             _slotNotification = slotNotification;
+            _costCalculatorFactory = costCalculatorFactory;
         }
 
-        public async Task<int> Handle(HoldSlotCommand request, CancellationToken cancellationToken)
+        public async Task<HoldSlotResult> Handle(HoldSlotCommand request, CancellationToken cancellationToken)
         {
             // Kiểm tra slot có khả dụng để giữ hay không
             var available = await _schedules.CheckAvailable(
@@ -40,12 +45,12 @@ namespace Application.Features.Slots
                 request.TimeSlotId,
                 request.BookingType,
                 request.BeginAt.ToUniversalTime(),
-                request.EndAt == null? null: request.EndAt.Value.ToUniversalTime(),
+                request.EndAt == null ? null : request.EndAt.Value.ToUniversalTime(),
                 request.DayOfWeek);
 
             if (!available)
             {
-                return 0;
+                return null;
             }
 
             var now = DateTimeOffset.UtcNow;
@@ -78,11 +83,25 @@ namespace Application.Features.Slots
                 bookingHold.DayOfWeek,
                 bookingHold.HeldBy
             };
-
+            CostCalculatorRequest costRequest = new CostCalculatorRequest
+            {
+                CourtId = bookingHold.CourtId,
+                TimeSlotId = bookingHold.TimeSlotId,
+                BeginAt = bookingHold.BeginAt.Value,
+                EndAt = bookingHold.EndAt,
+                DayOfWeek = bookingHold.DayOfWeek ?? string.Empty,
+            };
+            var calculator = _costCalculatorFactory.CreateCalculator(costRequest);
+            double estimatedCost = await calculator.CalculateAsync(costRequest);
             // Gửi thông báo cho tất cả client rằng slot đã được giữ với payload chi tiết
             await _slotNotification.NotifySlotHeldAsync(payload, cancellationToken);
 
-            return bookingHold.Id;
+            return new HoldSlotResult
+            {
+                HoldId = bookingHold.Id,
+                DayOfWeek = bookingHold.DayOfWeek,
+                EstimatedCost = estimatedCost
+            };
         }
     }
 }

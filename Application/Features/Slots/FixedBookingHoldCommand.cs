@@ -2,15 +2,12 @@
 using Application.Interfaces;
 using Domain.Repositories;
 using Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Shared.Slots;
+using Shared.CostCalculators;
 
 namespace Application.Features.Slots
 {
-    public class FixedBookingHoldCommand : IRequest<Result<List<HoldResult>>>
+    public class FixedBookingHoldCommand : IRequest<Result<List<HoldSlotResult>>>
     {
         public int CourtId { get; set; }
         public int TimeSlotId { get; set; }
@@ -20,42 +17,40 @@ namespace Application.Features.Slots
         public BookingType BookingType { get; set; } = BookingType.Fixed;
         public string HeldBy { get; set; } = string.Empty;
     }
-    public class HoldResult
-    {
-        public string DayOfWeek { get; set; } = string.Empty;
-        public int HoldId { get; set; }
-    }
-    public class FixedBookingHoldCommandHandler : IRequestHandler<FixedBookingHoldCommand, Result<List<HoldResult>>>
+    public class FixedBookingHoldCommandHandler : IRequestHandler<FixedBookingHoldCommand, Result<List<HoldSlotResult>>>
     {
         private readonly IRepository<BookingHold> _repository;
         private readonly IScheduleQueries _schedules;
         private readonly ISlotNotification _slotNotification;
         private readonly IUnitOfWork _unitOfWork;
         private readonly Logger _logger;
+        ICostCalculatorFactory _calculatorFactory;
 
         public FixedBookingHoldCommandHandler(
             IRepository<BookingHold> repository,
             IScheduleQueries schedules,
             ISlotNotification slotNotification,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICostCalculatorFactory calculatorFactory)
         {
             _repository = repository;
             _schedules = schedules;
             _slotNotification = slotNotification;
             _unitOfWork = unitOfWork;
             _logger = Logger.Instance;
+            _calculatorFactory = calculatorFactory;
         }
 
-        public async Task<Result<List<HoldResult>>> Handle(FixedBookingHoldCommand request, CancellationToken cancellationToken)
+        public async Task<Result<List<HoldSlotResult>>> Handle(FixedBookingHoldCommand request, CancellationToken cancellationToken)
         {
             _logger.Log($"Bắt đầu xử lý CheckFixedBookingHoldCommand cho CourtId: {request.CourtId}, TimeSlotId: {request.TimeSlotId}");
 
             if (!request.DaysOfWeek.Any())
             {
-                return Result<List<HoldResult>>.Failure(Error.Validation("Chưa chọn ngày trong tuần"));
+                return Result<List<HoldSlotResult>>.Failure(Error.Validation("Chưa chọn ngày trong tuần"));
             }
 
-            var holdResults = new List<HoldResult>();
+            var holdResults = new List<HoldSlotResult>();
             var now = DateTimeOffset.UtcNow;
 
             await _unitOfWork.BeginAsync();
@@ -77,7 +72,7 @@ namespace Application.Features.Slots
                     {
                         _logger.Log($"Không thể giữ lịch cho {dayOfWeek}: Không khả dụng");
                         await _unitOfWork.RollbackAsync();
-                        return Result<List<HoldResult>>.Failure(Error.Validation($"Không thể giữ lịch cho {dayOfWeek} do không khả dụng"));
+                        return Result<List<HoldSlotResult>>.Failure(Error.Validation($"Không thể giữ lịch cho {dayOfWeek} do không khả dụng"));
                     }
 
                     var bookingHold = new BookingHold
@@ -90,9 +85,22 @@ namespace Application.Features.Slots
                         BookingType = request.BookingType,
                         BeginAt = request.BeginAt,
                         EndAt = request.EndAt,
-                        DayOfWeek = dayOfWeek
+                        DayOfWeek = dayOfWeek,
                     };
 
+                    // tạm tính giá
+                    var costCalReq = new CostCalculatorRequest
+                    {
+                        CourtId = request.CourtId,
+                        TimeSlotId = request.TimeSlotId,
+                        BeginAt = request.BeginAt,
+                        EndAt = request.EndAt,
+                        DayOfWeek = dayOfWeek,
+                        MemberId = int.Parse(request.HeldBy),
+                        BookingType = BookingType.Fixed
+                    };
+                    var calculator = _calculatorFactory.CreateCalculator(costCalReq);
+                    double estimatedCost = await calculator.CalculateAsync(costCalReq);
                     // Thêm và lấy ID từ repository
                     await _repository.AddAsync(bookingHold, cancellationToken);
                     await _repository.SaveAsync(cancellationToken); // Lưu để lấy ID
@@ -103,7 +111,7 @@ namespace Application.Features.Slots
                         throw new Exception($"Không thể lấy ID cho BookingHold của {dayOfWeek}");
                     }
 
-                    holdResults.Add(new HoldResult { DayOfWeek = dayOfWeek, HoldId = bookingHold.Id });
+                    holdResults.Add(new HoldSlotResult { DayOfWeek = dayOfWeek, HoldId = bookingHold.Id, EstimatedCost = estimatedCost });
                     _logger.Log($"Đã tạo BookingHold cho {dayOfWeek}, HoldId: {bookingHold.Id}");
                 }
 
@@ -127,13 +135,13 @@ namespace Application.Features.Slots
                 }
 
                 _logger.Log($"Hoàn tất: Đã giữ {holdResults.Count} slot cho các ngày {string.Join(", ", request.DaysOfWeek)}");
-                return Result<List<HoldResult>>.Success(holdResults);
+                return Result<List<HoldSlotResult>>.Success(holdResults);
             }
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackAsync();
                 _logger.Log($"Lỗi khi xử lý CheckFixedBookingHoldCommand: {ex.Message}");
-                return Result<List<HoldResult>>.Failure(Error.UnknowError(ex.Message));
+                return Result<List<HoldSlotResult>>.Failure(Error.UnknowError(ex.Message));
             }
         }
     }

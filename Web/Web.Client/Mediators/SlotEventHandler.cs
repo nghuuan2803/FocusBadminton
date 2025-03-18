@@ -5,14 +5,14 @@ namespace Web.Client.Mediators
 {
     public class SlotEventHandler : IScheduleMediator, IAsyncDisposable
     {
-        private SlotEventListener _slotEventListener;
+        private SlotEventHelper _slotEventListener;
         private readonly Dictionary<string, SlotComponent> _slot = new();
 
         public SlotEventHandler(IConfiguration configuration)
         {
             var config = configuration.GetSection("ApiSettings");
             string apiUrl = config["BaseAddress"];
-            _slotEventListener = new SlotEventListener(apiUrl);
+            _slotEventListener = new SlotEventHelper(apiUrl);
         }
         public async Task StartAsync()
         {

@@ -14,8 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_items", "solution_
 		..\proc_schedule_v3.sql = ..\proc_schedule_v3.sql
 		..\proc_schedule_v4.sql = ..\proc_schedule_v4.sql
 		..\proc_schedule_v5_paused_handle.sql = ..\proc_schedule_v5_paused_handle.sql
+		proc_use.txt = proc_use.txt
 		..\proc_v6.sql = ..\proc_v6.sql
 		requests_sample.txt = requests_sample.txt
+		proc_v8.sql = proc_v8.sql
 		..\seeddata.sql = ..\seeddata.sql
 		sql_index.txt = sql_index.txt
 	EndProjectSection

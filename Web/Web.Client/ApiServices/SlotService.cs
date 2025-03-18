@@ -1,4 +1,5 @@
 ﻿using Shared.Enums;
+using Shared.Slots;
 using System.Net.Http.Json;
 
 namespace Web.Client.ApiServices
@@ -19,7 +20,13 @@ namespace Web.Client.ApiServices
             {
                 return 0;
             }
-            return await response.Content.ReadFromJsonAsync<int>();
+
+            HoldSlotResult result = await response.Content.ReadFromJsonAsync<HoldSlotResult>();
+            if(result != null)
+            {
+                return result.HoldId;
+            }
+            return 0;
         }
         public async Task<bool> ReleaseAsync(ReleaseSlotRequest request)
         {

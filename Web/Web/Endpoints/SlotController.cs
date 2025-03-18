@@ -18,9 +18,8 @@ namespace Web.Endpoints
         [HttpPost("hold")]
         public async Task<IActionResult> HoldSlot([FromBody] HoldSlotCommand command)
         {
-            //return hold id
             var result = await _mediator.Send(command);
-            if (result != 0)
+            if (result != null)
             {
 
                 return Ok(result);
