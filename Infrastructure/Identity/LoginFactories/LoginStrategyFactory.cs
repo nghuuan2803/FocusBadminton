@@ -17,6 +17,7 @@ namespace Infrastructure.Identity.LoginFactories
             return loginType.ToLower() switch
             {
                 "google" => _serviceProvider.GetRequiredService<GoogleLoginStrategy>(),
+                "google-flutter" => _serviceProvider.GetRequiredService<MobileGoogleLoginStrategy>(),
                 "facebook" => _serviceProvider.GetRequiredService<FacebookLoginStrategy>(),
                 "password" => _serviceProvider.GetRequiredService<PasswordLoginStrategy>(),
                 _ => throw new ArgumentException("Loại đăng nhập không hợp lệ.", nameof(loginType))

@@ -119,9 +119,9 @@ public class AuthService : IAuthService
         }
     }
 
-    // Tạo JWT token
+    // Tạo JWT token 
     public async Task<string> GenerateAccessToken(Account user)
-    {
+    { 
         string role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
         var authClaims = new List<Claim>()

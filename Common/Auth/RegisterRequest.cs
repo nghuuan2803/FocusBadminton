@@ -2,7 +2,7 @@
 
 namespace Shared.Auth
 {
-    public class AuthRegisterRequest
+    public class RegisterRequest
     {
             [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
             [RegularExpression(@"^\d{10}$", ErrorMessage = "Số điện thoại phải là 10 chữ số")]

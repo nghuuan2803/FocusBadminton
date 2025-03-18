@@ -106,7 +106,7 @@ namespace Infrastructure.Identity.LoginStrategies
                     await _dbContext.SaveChangesAsync();
 
                     // Gán role mặc định nếu cần
-                    await _userManager.AddToRoleAsync(user, "Customer");
+                    await _userManager.AddToRoleAsync(user, "member");
                 }
 
                 // Bước 4: Tạo access token và refresh token

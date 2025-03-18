@@ -9,6 +9,7 @@ using Web.NotificationServices;
 using Web.Crons;
 using Infrastructure.Identity.LoginStrategies;
 using Web.Components;
+using Infrastructure.Identity.LoginFactories;
 
 
 namespace Web
@@ -48,8 +49,6 @@ namespace Web
                     }
                 });
             });
-            builder.Services.AddScoped<GoogleLoginStrategy>();
-            builder.Services.AddScoped<ILoginStrategyFactory, LoginStrategyFactory>();
 
             builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
             // Add services to the container.
@@ -80,7 +79,7 @@ namespace Web
             builder.Services.AddScoped<GoogleLoginStrategy>();
             builder.Services.AddScoped<FacebookLoginStrategy>();
             builder.Services.AddScoped<PasswordLoginStrategy>();
-            builder.Services.AddScoped<GoogleLoginFlutterStrategy>();
+            builder.Services.AddScoped<MobileGoogleLoginStrategy>();
 
             builder.Services.AddScoped<ILoginStrategyFactory, LoginStrategyFactory>();
 

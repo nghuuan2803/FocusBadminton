@@ -24,13 +24,13 @@ namespace Web.Endpoints
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] AuthLoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             // 📌 Chọn strategy dựa vào request.LoginType ("google", "password", "facebook", ...)
             var strategy = _loginStrategyFactory.GetStrategy(request.LoginType);
             var result = await strategy.LoginAsync(request.Credential);
 
-            if (!result.Succeeded)
+            if (!result.Succeeded) 
             {
                 return BadRequest(new { error = result.Errors });
             }
@@ -38,7 +38,7 @@ namespace Web.Endpoints
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] AuthRegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             // Kiểm tra validation từ DataAnnotations
             if (!ModelState.IsValid)

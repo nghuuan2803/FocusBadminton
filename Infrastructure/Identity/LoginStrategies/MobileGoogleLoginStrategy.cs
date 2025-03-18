@@ -6,12 +6,12 @@ using Application.Interfaces;
 
 namespace Infrastructure.Identity.LoginStrategies
 {
-    public class GoogleLoginFlutterStrategy : ILoginStrategy
+    public class MobileGoogleLoginStrategy : ILoginStrategy
     {
         private readonly IAuthService _authService;
         private readonly IConfiguration _configuration;
 
-        public GoogleLoginFlutterStrategy(IAuthService authService, IConfiguration configuration)
+        public MobileGoogleLoginStrategy(IAuthService authService, IConfiguration configuration)
         {
             _authService = authService;
             _configuration = configuration;

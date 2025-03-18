@@ -19,9 +19,12 @@ namespace Web.Client
             builder.Services.AddScoped<CourtScheduleService>();
             builder.Services.AddScoped<SlotService>();
             builder.Services.AddScoped<BookingService>();
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseAddress) });
+            builder.Services.AddScoped<VouchersService>();
+            builder.Services.AddScoped<MembersService>();
+ 
             builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();
+
         }
     }
 }
