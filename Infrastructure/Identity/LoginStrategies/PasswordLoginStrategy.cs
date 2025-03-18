@@ -30,6 +30,7 @@ namespace Infrastructure.Identity.LoginStrategies
 
             string accessToken = await _authService.GenerateAccessToken(user);
             string refreshToken = _authService.GenerateRefreshToken();
+
             await _authService.SaveRefreshTokenAsync(user, refreshToken);
 
             return new AuthResponse(accessToken, refreshToken);
