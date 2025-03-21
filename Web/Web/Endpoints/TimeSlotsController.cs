@@ -1,9 +1,6 @@
 ﻿using Application.Features.TimeSlots.Queries;
-using Infrastructure.Data;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Web.Endpoints
 {

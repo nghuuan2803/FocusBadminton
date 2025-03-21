@@ -16,6 +16,9 @@ using Application.Interfaces.DapperQueries;
 using Application.Interfaces;
 using Infrastructure.Data.Queries;
 using Infrastructure.Implements.CostCalculators;
+using Infrastructure.Services.Momo;
+using Infrastructure.Services.VnPay;
+using Infrastructure.Implements.Payments;
 
 namespace Infrastructure
 {
@@ -79,7 +82,8 @@ namespace Infrastructure
                     }
                 };
             });
-
+            services.Configure<MomoOptionModel>(configuration.GetSection("MomoAPI"));
+            services.Configure<VnPayOptionModel>(configuration.GetSection("VnPay"));
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -90,6 +94,11 @@ namespace Infrastructure
             services.AddScoped<ICheckMultiDaySlotAvailabilityQuery, CheckMultiDaySlotAvailability>();
             services.AddScoped<ICostCalculatorFactory, CostCalculatorFactory>();
             services.AddScoped<AuthService>();
+            services.AddScoped<IPaymentAdapterFactory, PaymentAdapterFactory>();
+            services.AddScoped<IMomoService,MomoService>();
+            services.AddScoped<MomoPaymentAdapter>();
+            services.AddScoped<IVnPayService,VnPayService>();
+            services.AddScoped<VnPayPaymentAdapter>();
             return services;
         }
     }

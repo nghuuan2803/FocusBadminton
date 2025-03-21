@@ -8,7 +8,8 @@ namespace Shared.Bookings
         public int Id { get; set; }
         public int MemberId { get; set; }
         public string? MemberName { get; set; }
-
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
+        public string? PayMethodName { get; set; }
         public int? TeamId { get; set; }
         public string? TeamName { get; set; }
         public BookingType Type { get; set; } = BookingType.InDay;
@@ -29,5 +30,7 @@ namespace Shared.Bookings
         public string? AdminNote { get; set; }
         public BookingStatus Status { get; set; } = BookingStatus.Pending;
         public virtual ICollection<BookingItem>? Details { get; set; }
+
+        public string? PaymentLink { get; set; }
     }
 }

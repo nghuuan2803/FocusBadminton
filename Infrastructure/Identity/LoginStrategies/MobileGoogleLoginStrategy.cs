@@ -27,7 +27,7 @@ namespace Infrastructure.Identity.LoginStrategies
                 // Xác thực id_token trực tiếp
                 var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, new GoogleJsonWebSignature.ValidationSettings
                 {
-                    Audience = new[] { clientId }
+                    Audience = new[] { clientId, config["ClientIdAndroid"] }
                 });
 
                 // Tìm hoặc tạo user dựa trên email từ payload
@@ -36,7 +36,7 @@ namespace Infrastructure.Identity.LoginStrategies
                 // Tạo JWT token và refresh token
                 string accessToken = await _authService.GenerateAccessToken(user);
                 string refreshToken = _authService.GenerateRefreshToken();
-                await _authService.SaveRefreshTokenAsync(user, refreshToken);
+                //await _authService.SaveRefreshTokenAsync(user, refreshToken);
 
                 return new AuthResponse(accessToken, refreshToken);
             }
