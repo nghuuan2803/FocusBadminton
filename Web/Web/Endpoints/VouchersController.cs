@@ -1,8 +1,10 @@
 ﻿using Application.Common.Mappings;
 using Application.Features.Vouchers.Commands;
 using Application.Features.Vouchers.Queries;
+using Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.Vouchers;
 
 namespace Web.Endpoints
@@ -12,12 +14,20 @@ namespace Web.Endpoints
     public class VouchersController : ControllerBase
     {
         private readonly IMediator _mediator;
-
-        public VouchersController(IMediator mediator)
+        private readonly AppDbContext _dbContext;
+        public VouchersController(IMediator mediator, AppDbContext dbContext)
         {
             _mediator = mediator;
+            _dbContext = dbContext;
         }
 
+        [HttpGet("get-voucher")]
+        public async Task<ActionResult<VoucherDTO>> GetVoucher()
+        {
+            var data = await _dbContext.Vouchers.ToListAsync();
+            return Ok(data);
+        }
+      
         // POST: api/vouchers
         [HttpPost]
         public async Task<ActionResult<VoucherDTO>> CreateVoucher([FromBody] CreateVoucherCommand command)
