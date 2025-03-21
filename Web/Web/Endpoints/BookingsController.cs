@@ -2,6 +2,8 @@
 using Application.Features.Bookings.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Enums;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Web.Endpoints
 {
@@ -79,6 +81,17 @@ namespace Web.Endpoints
             if (result.Succeeded)
             {
                 return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost("cancel")]
+        public async Task<IActionResult> CancelBooking(CancelBookingCommand command)
+        {
+            var result = await mediator.Send(command);
+            if (result.Succeeded)
+            {
+                return Ok(true);
             }
             return BadRequest(result.Errors);
         }

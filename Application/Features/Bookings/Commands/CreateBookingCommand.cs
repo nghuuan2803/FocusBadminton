@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Interfaces;
+using Application.Models.PaymentModels;
 using AutoMapper;
 using Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,8 @@ namespace Application.Features.Bookings.Commands
         public double Deposit { get; set; }
         public int? VoucherId { get; set; }
         public double Discount { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
+        public string? TransactionImage { get; set; }
 
         [MaxLength(250)]
         public string? Note { get; set; }
@@ -34,11 +36,13 @@ namespace Application.Features.Bookings.Commands
     public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Result<BookingDTO>>
     {
         private readonly IRepository<Booking> _repository;
+        private readonly IRepository<Payment> _paymentRepo;
         private readonly IRepository<BookingHold> _holdRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISlotNotification _slotNotification;
         private readonly ICostCalculatorFactory _costCalculatorFactory; // Thay BookingCostCalculator bằng ICostCalculatorFactory
+        private readonly IPaymentAdapterFactory _paymentAdapterFactory;
         private readonly Logger _logger;
         private readonly IServiceProvider _provider;
 
@@ -48,10 +52,12 @@ namespace Application.Features.Bookings.Commands
             _provider = provider;
             _repository = provider.GetRequiredService<IRepository<Booking>>();
             _holdRepo = provider.GetRequiredService<IRepository<BookingHold>>();
+            _paymentRepo = provider.GetRequiredService<IRepository<Payment>>();
             _unitOfWork = provider.GetRequiredService<IUnitOfWork>();
             _mapper = provider.GetRequiredService<IMapper>();
             _slotNotification = provider.GetRequiredService<ISlotNotification>();
             _costCalculatorFactory = provider.GetRequiredService<ICostCalculatorFactory>();
+            _paymentAdapterFactory = provider.GetRequiredService<IPaymentAdapterFactory>();
             _logger = Logger.Instance;
         }
 
@@ -134,6 +140,55 @@ namespace Application.Features.Bookings.Commands
                 // Lưu booking
                 _logger.Log("Lưu Booking vào cơ sở dữ liệu");
                 await _repository.AddAsync(booking);
+                await _repository.SaveAsync();
+
+                // Tạo Payment dựa trên PaymentMethod
+                string paymentUrl = string.Empty;
+                var payment = new Payment
+                {
+                    BookingId = booking.Id,
+                    Method = request.PaymentMethod,
+                    Amount = request.Deposit > 0 ? request.Deposit : booking.Amount, // Ưu tiên deposit nếu có
+                    Type = request.Deposit > 0 ? PaymentType.Deposit : PaymentType.CompleteBooking,
+                    Status = PaymentStatus.Pending
+                };
+
+                switch (request.PaymentMethod)
+                {
+                    case PaymentMethod.Cash:
+                        payment.Status = PaymentStatus.Pending; // Chờ xác nhận thủ công
+                        //cần cập nhật lại entity Payment: cho phép null, kiểu dữ liệu DatetimeOffset
+                        payment.PaidAt = DateTime.Now; // Chưa thanh toán
+                        //payment.PaidAt = null; // Chưa thanh toán
+                        break;
+
+                    case PaymentMethod.BankTransfer:
+                        payment.Image = request.TransactionImage; // Lưu ảnh chuyển khoản
+                        payment.Status = PaymentStatus.Pending; // Chờ duyệt
+                        break;
+
+                    case PaymentMethod.Momo:
+                    case PaymentMethod.VnPay:
+                        var adapter = _paymentAdapterFactory.CreateAdapter(request.PaymentMethod);
+                        var paymentRequest = new PaymentRequest
+                        {
+                            FullName = "User", // Lấy từ Member nếu cần
+                            OrderId = booking.Id.ToString(),
+                            OrderInfo = $"Thanh toan booking {booking.Id}",
+                            Amount = payment.Amount,
+                            Action = "mobile" // Dành cho Flutter
+                        };
+                        var paymentLink = await adapter.GeneratePaymentLinkAsync(paymentRequest);
+                        if (!paymentLink.IsSuccess)
+                        {
+                            throw new Exception($"Failed to create payment link: {paymentLink.ErrorMessage}");
+                        }
+                        paymentUrl = paymentLink.Deeplink;
+                        //payment.Info = paymentLink.Deeplink ?? paymentLink.PaymentUrl; // Lưu deeplink hoặc URL
+                        break;
+                }
+
+                await _paymentRepo.AddAsync(payment);
 
                 // Commit transaction
                 _logger.Log("Commit transaction");
@@ -163,6 +218,7 @@ namespace Application.Features.Bookings.Commands
 
                 // Trả về kết quả
                 var result = _mapper.Map<BookingDTO>(booking);
+                result.PaymentLink = paymentUrl;
                 _logger.Log($"Tạo Booking thành công, trả về BookingDTO với BookingId: {result.Id}");
                 return Result<BookingDTO>.Success(result);
             }

@@ -283,7 +283,7 @@ public class AuthService : IAuthService
             await _dbContext.Members.AddAsync(member);
             await _dbContext.SaveChangesAsync();
 
-            await _userManager.AddToRoleAsync(user, "Customer");
+            await _userManager.AddToRoleAsync(user, "member");
         }
         return user;
     }

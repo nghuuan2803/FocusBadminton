@@ -59,5 +59,23 @@ namespace Web.Endpoints
             }
             return BadRequest("Không thể nhả một hoặc nhiều slot");
         }
+
+        [HttpPost("check-multi-day-unset-end-date")]
+        public async Task<IActionResult> CheckMultiDayAvailabilityForUnsetEndDate([FromBody] CheckMultiDaySlotAvailabilityForUnsetEndDateQuery request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("check-unset-end-date-booking-hold")]
+        public async Task<IActionResult> CheckUnsetEndDateBookingHold([FromBody] FixedUnsetEndDateBookingHoldCommand request)
+        {
+            var result = await _mediator.Send(request);
+            if (result.Succeeded)
+            {
+                return Ok(new { data = result.Data, succeeded = true, errors = new string[0] });
+            }
+            return BadRequest(result.Errors);
+        }
     }
 }
