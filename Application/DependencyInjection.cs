@@ -1,11 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Application.Features.Bookings.Commands;
-using Shared.Bookings;
 using Application.Common.Behaviours;
 using Application.Common;
-using Application.Interfaces;
 
 namespace Application
 {
@@ -19,9 +16,6 @@ namespace Application
 
             // Đăng ký ValidationBehavior
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddScoped<IRequestHandler<CreateBookingCommand, Result<BookingDTO>>,
-                Features.Bookings.Commands.CreateBookingCommandHandler>();
-            //...
             return services;
         }
     }

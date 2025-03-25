@@ -2,8 +2,6 @@
 using Application.Features.Bookings.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Enums;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Web.Endpoints
 {

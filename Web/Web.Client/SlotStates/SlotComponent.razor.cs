@@ -22,7 +22,7 @@ namespace Web.Client.SlotStates
         [Inject] private SlotService SlotService { get; set; } = null!;
         [Inject] private MessageService MessageService { get; set; } = null!;
         [Inject] private BookingService BookingService { get; set; } = null!;
-
+        private string user = "2";
         public DateTimeOffset StartAt { get; set; }
         public DateTimeOffset EndAt { get; set; }
 
@@ -60,7 +60,7 @@ namespace Web.Client.SlotStates
                 ScheduleStatus.Completed => new CompletedState(),
                 _ => throw new ArgumentException("Trạng thái không hợp lệ")
             };
-            if (state is HeldState && HeldBy == "1")
+            if (state is HeldState && HeldBy == user)
                 state = new HoldingState();
             return state;
         }
@@ -75,7 +75,7 @@ namespace Web.Client.SlotStates
             this.holdId = holdId;
             HeldBy = newHeldBy;
             _state = GetStateFromStatus(newStatus);
-            StateHasChanged();
+            //StateHasChanged();
         }
 
         public async Task HoldSlotAsync()
@@ -86,7 +86,7 @@ namespace Web.Client.SlotStates
             {
                 CourtId = CourtId,
                 TimeSlotId = TimeSlotId,
-                HoldBy = "1", // Thay bằng thông tin người dùng thực tế
+                HoldBy = user, // Thay bằng thông tin người dùng thực tế
                 BookingType = BookingType.InDay,
                 BeginAt = new DateTimeOffset(Date).Add(StartTime),
             };
@@ -115,7 +115,7 @@ namespace Web.Client.SlotStates
             var releaseRequest = new ReleaseSlotRequest
             {
                 HoldId = holdId,
-                HeldBy = "1"
+                HeldBy = user
             };
 
             bool success = await SlotService.ReleaseAsync(releaseRequest);

@@ -98,7 +98,7 @@ namespace Web.Endpoints
                     {
                         var totalPaid = (await _paymentRepo.GetAllAsync(p => p.BookingId == booking.Id && p.Status == PaymentStatus.Succeeded))
                             .Sum(p => p.Amount);
-                        if (booking.Status == BookingStatus.Pending && totalPaid >= booking.Deposit)
+                        if (booking.Status == BookingStatus.Pending)
                         {
                             booking.Status = BookingStatus.Approved;
                             booking.ApprovedAt = DateTimeOffset.UtcNow;

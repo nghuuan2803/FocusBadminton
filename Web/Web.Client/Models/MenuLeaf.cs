@@ -1,19 +1,11 @@
 ﻿namespace Web.Client.Models
 {
-    public class MenuLeaf : IMenuComponent
+    public class MenuLeaf : MenuComponent
     {
-        public string Title { get; }
-        public string Url { get; }
-        public string IconClass { get; }
-
-        public MenuLeaf(string title, string url, string iconClass = "")
+        public MenuLeaf(string title, string url, string iconClass = ""): base(title, url, iconClass)
         {
-            Title = title;
-            Url = url;
-            IconClass = iconClass;
         }
-
-        public string Render()
+        public override string Render()
         {
             var iconHtml = string.IsNullOrEmpty(IconClass)
                 ? ""

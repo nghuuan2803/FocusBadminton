@@ -1,25 +1,18 @@
 ﻿namespace Web.Client.Models
 {
-    public class MenuNode : IMenuComponent
+    public class MenuNode : MenuComponent
     {
-        public string Title { get; }
-        public string Url { get; }
-        public string IconClass { get; }
-        private List<IMenuComponent> Children { get; } = new List<IMenuComponent>();
+        private List<MenuComponent> Children { get; } = new List<MenuComponent>();
 
-        public MenuNode(string title, string url = "#", string iconClass = "")
+        public MenuNode(string title, string url = "#", string iconClass = ""): base(title, url, iconClass)
         {
-            Title = title;
-            Url = url;
-            IconClass = iconClass;
         }
-
-        public void Add(IMenuComponent component)
+        public void Add(MenuComponent component)
         {
             Children.Add(component);
         }
 
-        public string Render()
+        public override string Render()
         {
             var iconHtml = string.IsNullOrEmpty(IconClass)
                 ? ""
