@@ -1,51 +1,269 @@
-﻿@page "/register"
+﻿@* @page "/register" *@
+@* @inject HttpClient Http *@
+@* @inject NavigationManager Navigation *@
+@* @inject IJSRuntime JS *@
+@* @using System.ComponentModel.DataAnnotations *@
+@* @using Shared.Auth *@
+
+@* <h3>Đăng ký tài khoản</h3> *@
+
+@* <EditForm Model="@registerRequest" OnValidSubmit="PerformRegister"> *@
+@*     <DataAnnotationsValidator /> *@
+@*     <ValidationSummary /> *@
+
+@*     <div> *@
+@*         <label>Email:</label> *@
+@*         <InputText @bind-Value="registerRequest.Email" /> *@
+@*         <ValidationMessage For="() => registerRequest.Email" /> *@
+@*     </div> *@
+
+@*     <div> *@
+@*         <label>Số điện thoại:</label> *@
+@*         <InputText @bind-Value="registerRequest.PhoneNumber" /> *@
+@*         <ValidationMessage For="() => registerRequest.PhoneNumber" /> *@
+@*     </div> *@
+
+@*     <div> *@
+@*         <label>Họ và tên:</label> *@
+@*         <InputText @bind-Value="registerRequest.Fullname" /> *@
+@*         <ValidationMessage For="() => registerRequest.Fullname" /> *@
+@*     </div> *@
+
+@*     <div> *@
+@*         <label>Mật khẩu:</label> *@
+@*         <InputText type="password" @bind-Value="registerRequest.Password" /> *@
+@*         <ValidationMessage For="() => registerRequest.Password" /> *@
+@*     </div> *@
+
+@*     <div> *@
+@*         <label>Nhập lại mật khẩu:</label> *@
+@*         <InputText type="password" @bind-Value="registerRequest.ConfirmPassword" /> *@
+@*         <ValidationMessage For="() => registerRequest.ConfirmPassword" /> *@
+@*     </div> *@
+
+@*     <button type="submit">Đăng ký</button> *@
+@*     <p>@message</p> *@
+@* </EditForm> *@
+
+@* <p>Đã có tài khoản? <a href="/login">Đăng nhập ngay</a></p> *@
+
+@* @code { *@
+@*     private RegisterRequest registerRequest = new RegisterRequest(); *@
+@*     private string message = ""; *@
+
+@*     private async Task PerformRegister() *@
+@*     { *@
+@*         var response = await Http.PostAsJsonAsync("https://localhost:7000/api/auth/register", registerRequest); *@
+
+@*         if (response.IsSuccessStatusCode) *@
+@*         { *@
+@*             message = "Đăng ký thành công! Bạn sẽ được chuyển hướng đến trang đăng nhập."; *@
+@*             await Task.Delay(2000); *@
+@*             Navigation.NavigateTo("/login"); *@
+@*         } *@
+@*         else *@
+@*         { *@
+@*             var errorContent = await response.Content.ReadAsStringAsync(); *@
+@*             message = $"Đăng ký thất bại: {errorContent}"; *@
+@*         } *@
+@*     } *@
+@* } *@
+@page "/register"
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @using System.ComponentModel.DataAnnotations
 @using Shared.Auth
 
-<h3>Đăng ký tài khoản</h3>
+<style>
+    .register-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 25px;
+        background: linear-gradient(135deg, #ffffff 0%, #e8f0fe 100%);
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-<EditForm Model="@registerRequest" OnValidSubmit="PerformRegister">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    h3 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 25px;
+        font-size: 24px;
+        font-weight: 600;
+    }
 
-    <div>
-        <label>Email:</label>
-        <InputText @bind-Value="registerRequest.Email" />
-        <ValidationMessage For="() => registerRequest.Email" />
-    </div>
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
 
-    <div>
-        <label>Số điện thoại:</label>
-        <InputText @bind-Value="registerRequest.PhoneNumber" />
-        <ValidationMessage For="() => registerRequest.PhoneNumber" />
-    </div>
+    label {
+        display: block;
+        color: #34495e;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
 
-    <div>
-        <label>Họ và tên:</label>
-        <InputText @bind-Value="registerRequest.Fullname" />
-        <ValidationMessage For="() => registerRequest.Fullname" />
-    </div>
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
 
-    <div>
-        <label>Mật khẩu:</label>
-        <InputText type="password" @bind-Value="registerRequest.Password" />
-        <ValidationMessage For="() => registerRequest.Password" />
-    </div>
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 1px solid #dfe6e9;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 14px;
+        background: linear-gradient(135deg, #f9fbfd 0%, #ffffff 100%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
 
-    <div>
-        <label>Nhập lại mật khẩu:</label>
-        <InputText type="password" @bind-Value="registerRequest.ConfirmPassword" />
-        <ValidationMessage For="() => registerRequest.ConfirmPassword" />
-    </div>
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 8px rgba(66, 133, 244, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
 
-    <button type="submit">Đăng ký</button>
-    <p>@message</p>
-</EditForm>
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+            color: #95a5a6;
+            font-style: normal;
+        }
 
-<p>Đã có tài khoản? <a href="/login">Đăng nhập ngay</a></p>
+    .input-icon {
+        position: absolute;
+        left: 12px;
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+
+    .validation-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        background: linear-gradient(45deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+    }
+
+        button:hover {
+            background: linear-gradient(45deg, #27ae60 0%, #2ecc71 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+    p.message {
+        margin-top: 15px;
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 14px;
+    }
+
+        p.message.error {
+            color: #e74c3c;
+        }
+
+    p.login-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    a {
+        color: #4285f4;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    
+
+    }
+</style>
+
+<div class="register-container">
+    <h3>Đăng ký tài khoản</h3>
+
+    <EditForm Model="@registerRequest" OnValidSubmit="PerformRegister">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label>Email:</label>
+            <div class="input-wrapper">
+                <span class="input-icon">✉️</span>
+                <InputText @bind-Value="registerRequest.Email" placeholder="Nhập email của bạn" />
+            </div>
+            <ValidationMessage For="() => registerRequest.Email" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label>Số điện thoại:</label>
+            <div class="input-wrapper">
+                <span class="input-icon">📞</span>
+                <InputText @bind-Value="registerRequest.PhoneNumber" placeholder="Nhập số điện thoại" />
+            </div>
+            <ValidationMessage For="() => registerRequest.PhoneNumber" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label>Họ và tên:</label>
+            <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <InputText @bind-Value="registerRequest.Fullname" placeholder="Nhập họ và tên" />
+            </div>
+            <ValidationMessage For="() => registerRequest.Fullname" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label>Mật khẩu:</label>
+            <div class="input-wrapper">
+                <span class="input-icon">🔒</span>
+                <InputText type="password" @bind-Value="registerRequest.Password" placeholder="Nhập mật khẩu" />
+            </div>
+            <ValidationMessage For="() => registerRequest.Password" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label>Nhập lại mật khẩu:</label>
+            <div class="input-wrapper">
+                <span class="input-icon">🔒</span>
+                <InputText type="password" @bind-Value="registerRequest.ConfirmPassword" placeholder="Xác nhận mật khẩu" />
+            </div>
+            <ValidationMessage For="() => registerRequest.ConfirmPassword" class="validation-message" />
+        </div>
+
+        <button type="submit">Đăng ký</button>
+        <p class="message @(message.Contains("thất bại") ? "error" : "")">@message</p>
+    </EditForm>
+
+    <p class="login-link">Đã có tài khoản? <a href="/login">Đăng nhập ngay</a></p>
+</div>
 
 @code {
     private RegisterRequest registerRequest = new RegisterRequest();
