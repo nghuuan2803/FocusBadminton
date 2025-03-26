@@ -107,7 +107,7 @@ namespace Web.Endpoints
             }
 
             // Gán vai trò Customer
-            var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+            var roleResult = await _userManager.AddToRoleAsync(user, "member");
             if (!roleResult.Succeeded)
             {
                 // Xử lý lỗi gán vai trò (hiếm xảy ra, nhưng cần kiểm tra)
