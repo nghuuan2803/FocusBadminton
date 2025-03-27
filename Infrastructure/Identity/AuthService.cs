@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using Application.Interfaces;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 public class AuthService : IAuthService
@@ -123,13 +124,14 @@ public class AuthService : IAuthService
     public async Task<string> GenerateAccessToken(Account user)
     { 
         string role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+        var member = await _dbContext.Members.FirstOrDefaultAsync(m => m.AccountId == user.Id);
 
         var authClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                //new Claim(ClaimTypes.NameIdentifier, user.UserName),
                 new Claim(ClaimTypes.Role,role),
-       
+                new Claim(ClaimTypes.NameIdentifier, user.Id), // Dùng Id thay vì UserName
             };
 
         var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
@@ -264,7 +266,10 @@ public class AuthService : IAuthService
                 Id = Guid.NewGuid().ToString(),
                 UserName = payload.Email,
                 Email = payload.Email,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                Avatar = payload.Picture ?? string.Empty,
+                CreatedAt = DateTimeOffset.UtcNow,
+                CreatedBy = "Google"
             };
 
             var createResult = await _userManager.CreateAsync(user);
@@ -279,6 +284,44 @@ public class AuthService : IAuthService
                 FullName = payload.Name ?? string.Empty,
                 CreatedAt = DateTimeOffset.UtcNow,
                 CreatedBy = "Google"
+            };
+            await _dbContext.Members.AddAsync(member);
+            await _dbContext.SaveChangesAsync();
+
+            await _userManager.AddToRoleAsync(user, "member");
+        }
+        return user;
+    }
+
+    // Phương thức mới cho Password Sign-In với số điện thoại
+
+    public async Task<Account> FindOrCreateUserByPhoneAsync(string phoneNumber, string password)
+    {
+        var user = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+
+        if (user == null)
+        {
+            user = new Account
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = phoneNumber, // Dùng phoneNumber làm UserName
+                PhoneNumber = phoneNumber,
+                CreatedAt = DateTimeOffset.UtcNow,
+                CreatedBy = "Password"
+            };
+
+            var createResult = await _userManager.CreateAsync(user, password); // Tạo user với mật khẩu
+            if (!createResult.Succeeded)
+            {
+                throw new Exception("Tạo người dùng mới thất bại: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
+            }
+
+            var member = new Member
+            {
+                AccountId = user.Id,
+                CreatedAt = DateTimeOffset.UtcNow,
+                CreatedBy = "Password"
             };
             await _dbContext.Members.AddAsync(member);
             await _dbContext.SaveChangesAsync();
