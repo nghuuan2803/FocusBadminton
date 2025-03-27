@@ -8,6 +8,8 @@ namespace Shared.Bookings
         public int CourtId { get; set; }
         public string? CourtName { get; set; }
         public int TimeSlotId { get; set; }
+        public TimeSpan? StartTime { get; set; }
+        public TimeSpan? EndTime { get; set; }
         public DateTimeOffset? BeginAt { get; set; }
         public DateTimeOffset? EndAt { get; set; }
         [MaxLength(10)]

@@ -19,6 +19,7 @@ using Infrastructure.Implements.CostCalculators;
 using Infrastructure.Services.Momo;
 using Infrastructure.Services.VnPay;
 using Infrastructure.Implements.Payments;
+using Infrastructure.Implements.Handlers;
 
 namespace Infrastructure
 {
@@ -99,6 +100,7 @@ namespace Infrastructure
             services.AddScoped<MomoPaymentAdapter>();
             services.AddScoped<IVnPayService,VnPayService>();
             services.AddScoped<VnPayPaymentAdapter>();
+            services.AddScoped<ITimeSlotStatisticQueries, TimeSlotStatictisQueries>();
             return services;
         }
     }

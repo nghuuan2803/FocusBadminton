@@ -2,10 +2,11 @@
 {
     private static readonly Lazy<Logger> _lazyInstance = new Lazy<Logger>(() => new Logger());
     private readonly string _logFilePath;
-    private static readonly object _lock;
+    private readonly object _lock;
 
     private Logger()
     {
+        _lock = new object();
         _logFilePath = "logs/app_log.txt";
         Directory.CreateDirectory(Path.GetDirectoryName(_logFilePath));
     }

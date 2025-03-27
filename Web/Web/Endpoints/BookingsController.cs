@@ -9,6 +9,7 @@ namespace Web.Endpoints
     [ApiController]
     public class BookingsController(IMediator mediator) : ControllerBase
     {
+        #region commands
         [HttpPost]
         public async Task<IActionResult> CreateBooking(CreateBookingCommand command)
         {
@@ -26,17 +27,6 @@ namespace Web.Endpoints
             var query = new GetBookingsQuery();
             var result = await mediator.Send(query);
             return Ok(result);
-        }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetBooking(int id)
-        {
-            var query = new GetBookingQuery(id);
-            var result = await mediator.Send(query);
-            if (result.Succeeded)
-            {
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Errors);
         }
         [HttpPost("approve")]
         public async Task<IActionResult> ApproveBooking(ApproveBookingCommand command)
@@ -93,5 +83,32 @@ namespace Web.Endpoints
             }
             return BadRequest(result.Errors);
         }
+        #endregion
+
+        #region queries
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBooking(int id)
+        {
+            var query = new GetBookingQuery(id);
+            var result = await mediator.Send(query);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpGet("history/{memberId}")]
+        public async Task<IActionResult> GetHistory(int memberId)
+        {
+            var query = new GetBookingHistoryQuery { MemberId = memberId};
+            var result = await mediator.Send(query);
+            if (result.Succeeded)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Errors);
+        }
+        #endregion
     }
 }

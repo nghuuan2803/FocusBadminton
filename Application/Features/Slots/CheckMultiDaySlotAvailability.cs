@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.Interfaces.DapperQueries;
+using Domain.Repositories;
+using Shared.Enums;
 
 namespace Application.Features.Slots
 {
@@ -11,17 +13,52 @@ namespace Application.Features.Slots
     }
     public class CheckMultiDaySlotAvailabilityQueryHandler : IRequestHandler<CheckMultiDaySlotAvailabilityQuery, List<int>>
     {
-        private readonly ICheckMultiDaySlotAvailabilityQuery _query;
+        private readonly IScheduleQueries _schedules;
+        private readonly IRepository<TimeSlot> _timeSlotRepo;
+        private readonly Logger _logger;
 
-        public CheckMultiDaySlotAvailabilityQueryHandler(ICheckMultiDaySlotAvailabilityQuery query)
+        public CheckMultiDaySlotAvailabilityQueryHandler(IScheduleQueries schedules, IRepository<TimeSlot> timeSlotRepo)
         {
-            _query = query;
+            _schedules = schedules;
+            _timeSlotRepo = timeSlotRepo;
+            _logger = Logger.Instance;
         }
 
         public async Task<List<int>> Handle(CheckMultiDaySlotAvailabilityQuery request, CancellationToken cancellationToken)
         {
-            var result = await _query.Execute(request);
-            return result;
+            _logger.Log($"Kiểm tra khung giờ khả dụng cho Fixed_Unset_EndDate, CourtId: {request.CourtId}");
+
+            var allTimeSlots = await _timeSlotRepo.GetAllAsync(ts => ts.IsApplied && !ts.IsDeleted);
+            var availableSlotIds = new List<int>();
+
+            foreach (var timeSlot in allTimeSlots)
+            {
+                bool isAvailableForAllDays = true;
+                foreach (var dayOfWeek in request.DaysOfWeek)
+                {
+                    var available = await _schedules.CheckAvailable(
+                        request.CourtId,
+                        timeSlot.Id,
+                        BookingType.Fixed_UnSetEndDate,
+                        request.StartDate.ToUniversalTime(),
+                        request.EndDate.ToUniversalTime(),
+                        dayOfWeek);
+
+                    if (!available)
+                    {
+                        isAvailableForAllDays = false;
+                        break;
+                    }
+                }
+
+                if (isAvailableForAllDays)
+                {
+                    availableSlotIds.Add(timeSlot.Id);
+                }
+            }
+
+            _logger.Log($"Tìm thấy {availableSlotIds.Count} khung giờ khả dụng");
+            return availableSlotIds;
         }
     }
 }

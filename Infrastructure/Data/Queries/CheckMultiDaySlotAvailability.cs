@@ -1,11 +1,6 @@
 ﻿using Application.Features.Slots;
 using Application.Interfaces;
-using Domain.Entities;
-using Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Shared.Enums;
-using Shared.Schedules;
-using System.Threading;
 
 namespace Infrastructure.Data.Queries
 {

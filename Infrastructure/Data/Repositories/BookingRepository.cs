@@ -39,6 +39,8 @@ namespace Infrastructure.Data.Repositories
                 .Include(p => p.Promotion)
                 .Include(p => p.Details)
                     .ThenInclude(d => d.Court)
+                .Include(p => p.Details)
+                    .ThenInclude(d => d.TimeSlot)
                 .FirstOrDefaultAsync(predicate, cancellationToken);
         }
     }

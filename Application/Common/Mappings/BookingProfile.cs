@@ -34,8 +34,10 @@ namespace Application.Common.Mappings
             // Ánh xạ ngược từ BookingDetail -> BookingItem (nếu cần)
             CreateMap<BookingDetail, BookingItem>()
                 .ForMember(dest => dest.CourtName, opt => opt.MapFrom(src => src.Court != null ? src.Court.Name : null))
-                .ForMember(dest => dest.BeginAt, opt => opt.MapFrom(src => src.BeginAt.HasValue ? src.BeginAt.Value : (DateTimeOffset?)null))
-                .ForMember(dest => dest.EndAt, opt => opt.MapFrom(src => src.EndAt.HasValue ? src.EndAt.Value : (DateTimeOffset?)null));
+                .ForMember(dest => dest.BeginAt, opt => opt.MapFrom(src => src.BeginAt.HasValue ? src.BeginAt.Value.ToOffset(TimeSpan.FromHours(7)) : (DateTimeOffset?)null))
+                .ForMember(dest => dest.EndAt, opt => opt.MapFrom(src => src.EndAt.HasValue ? src.EndAt.Value.ToOffset(TimeSpan.FromHours(7)) : (DateTimeOffset?)null))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.TimeSlot.StartTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.TimeSlot.EndTime));
         }
     }
 
