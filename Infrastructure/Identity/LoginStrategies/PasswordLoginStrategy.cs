@@ -1,48 +1,45 @@
-﻿using Shared.Auth;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Shared.Auth;
 
-namespace Infrastructure.Identity.LoginStrategies
+public class PasswordLoginStrategy : ILoginStrategy
 {
-    public class PasswordLoginStrategy : ILoginStrategy
+    private readonly IAuthService _authService;
+    private readonly UserManager<Account> _userManager;
+
+    public PasswordLoginStrategy(IAuthService authService, UserManager<Account> userManager)
     {
-        private readonly IAuthService _authService;
-        private readonly UserManager<Account> _userManager;
+        _authService = authService;
+        _userManager = userManager;
+    }
 
-        public PasswordLoginStrategy(IAuthService authService, UserManager<Account> userManager)
+    public async Task<Result<AuthResponse>> LoginAsync(string credential)
+    {
+        var info = credential.Split('|');
+        if (info.Length != 2)
         {
-            _authService = authService;
-            _userManager = userManager;
+            return Error.Validation("Credential không hợp lệ. Định dạng: identifier|password");
         }
 
-        public async Task<Result<AuthResponse>> LoginAsync(string credential)
+        string identifier = info[0]; // Có thể là email hoặc số điện thoại
+        string password = info[1];
+
+        // Tìm hoặc tạo user bằng identifier
+        var user = await _authService.FindOrCreateUserByIdentifierAsync(identifier, password);
+
+        // Kiểm tra mật khẩu
+        if (!await _userManager.CheckPasswordAsync(user, password))
         {
-            var info = credential.Split('|');
-            if (info.Length != 2)
-            {
-                return Error.Validation("Credential không hợp lệ. Định dạng: phoneNumber|password");
-            }
-
-            string phoneNumber = info[0];
-            string password = info[1];
-
-            // Tìm hoặc tạo user
-            var user = await _authService.FindOrCreateUserByPhoneAsync(phoneNumber, password);
-
-            // Kiểm tra mật khẩu
-            if (!await _userManager.CheckPasswordAsync(user, password))
-            {
-                return Error.Validation("Mật khẩu không đúng.");
-            }
-
-            string accessToken = await _authService.GenerateAccessToken(user);
-            string refreshToken = _authService.GenerateRefreshToken();
-
-            await _authService.SaveRefreshTokenAsync(user, refreshToken);
-
-            return new AuthResponse(accessToken, refreshToken);
+            return Error.Validation("Mật khẩu không đúng.");
         }
+
+        string accessToken = await _authService.GenerateAccessToken(user);
+        string refreshToken = _authService.GenerateRefreshToken();
+
+        await _authService.SaveRefreshTokenAsync(user, refreshToken);
+
+        return new AuthResponse(accessToken, refreshToken);
     }
 }

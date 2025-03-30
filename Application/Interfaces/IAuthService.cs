@@ -11,6 +11,7 @@ namespace Application.Interfaces
         Task<Result<AuthResponse>> RefreshTokensAsync(string refreshToken);
         Task<Account> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload);
         Task<Account> FindOrCreateUserByPhoneAsync(string phoneNumber, string password);
+        Task<Account> FindOrCreateUserByIdentifierAsync(string identifier, string password); 
         Task<string> GenerateAccessToken(Account user);
         string GenerateRefreshToken();
         Task SaveRefreshTokenAsync(Account user, string refreshToken);

@@ -297,37 +297,134 @@ public class AuthService : IAuthService
 
     public async Task<Account> FindOrCreateUserByPhoneAsync(string phoneNumber, string password)
     {
-        var user = await _userManager.Users
-            .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+        var member = await _dbContext.Members
+            .FirstOrDefaultAsync(m => m.PhoneNumber == phoneNumber);
 
-        if (user == null)
+        Account user;
+        if (member != null)
+        {
+            user = await _userManager.FindByIdAsync(member.AccountId);
+            if (user == null)
+            {
+                throw new Exception($"Không tìm thấy Account cho Member với PhoneNumber: {phoneNumber}");
+            }
+        }
+        else
         {
             user = new Account
             {
                 Id = Guid.NewGuid().ToString(),
                 UserName = phoneNumber, // Dùng phoneNumber làm UserName
-                PhoneNumber = phoneNumber,
                 CreatedAt = DateTimeOffset.UtcNow,
                 CreatedBy = "Password"
             };
 
-            var createResult = await _userManager.CreateAsync(user, password); // Tạo user với mật khẩu
+            var createResult = await _userManager.CreateAsync(user, password);
             if (!createResult.Succeeded)
             {
                 throw new Exception("Tạo người dùng mới thất bại: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
             }
 
-            var member = new Member
+            member = new Member
             {
                 AccountId = user.Id,
+                PhoneNumber = phoneNumber,
                 CreatedAt = DateTimeOffset.UtcNow,
                 CreatedBy = "Password"
+                // Nếu muốn FullName hoặc Email, cần thêm vào credential hoặc yêu cầu riêng
             };
             await _dbContext.Members.AddAsync(member);
-            await _dbContext.SaveChangesAsync();
+            var rowsAffected = await _dbContext.SaveChangesAsync();
+            Console.WriteLine($"FindOrCreate - Rows affected: {rowsAffected}, AccountId: {member.AccountId}, PhoneNumber: {member.PhoneNumber}");
 
             await _userManager.AddToRoleAsync(user, "member");
         }
+
+        return user;
+    }
+    public async Task<Account> FindOrCreateUserByIdentifierAsync(string identifier, string password)
+    {
+        // Kiểm tra xem identifier là email hay số điện thoại
+        bool isEmail = identifier.Contains("@");
+        Account user;
+
+        if (isEmail)
+        {
+            user = await _userManager.FindByEmailAsync(identifier);
+            if (user == null)
+            {
+                // Tạo mới user nếu không tồn tại
+                user = new Account
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = identifier,
+                    Email = identifier,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = "Password"
+                };
+
+                var createResult = await _userManager.CreateAsync(user, password);
+                if (!createResult.Succeeded)
+                {
+                    throw new Exception("Tạo người dùng mới thất bại: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                }
+
+                var member = new Member
+                {
+                    AccountId = user.Id,
+                    Email = identifier,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = "Password"
+                };
+                await _dbContext.Members.AddAsync(member);
+                await _dbContext.SaveChangesAsync();
+
+                await _userManager.AddToRoleAsync(user, "member");
+            }
+        }
+        else // Giả sử là số điện thoại
+        {
+            var member = await _dbContext.Members
+                .FirstOrDefaultAsync(m => m.PhoneNumber == identifier);
+
+            if (member != null)
+            {
+                user = await _userManager.FindByIdAsync(member.AccountId);
+                if (user == null)
+                {
+                    throw new Exception($"Không tìm thấy Account cho Member với PhoneNumber: {identifier}");
+                }
+            }
+            else
+            {
+                user = new Account
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = identifier,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = "Password"
+                };
+
+                var createResult = await _userManager.CreateAsync(user, password);
+                if (!createResult.Succeeded)
+                {
+                    throw new Exception("Tạo người dùng mới thất bại: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                }
+
+                member = new Member
+                {
+                    AccountId = user.Id,
+                    PhoneNumber = identifier,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = "Password"
+                };
+                await _dbContext.Members.AddAsync(member);
+                await _dbContext.SaveChangesAsync();
+
+                await _userManager.AddToRoleAsync(user, "member");
+            }
+        }
+
         return user;
     }
 }
