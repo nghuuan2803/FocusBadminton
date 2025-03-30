@@ -1,5 +1,7 @@
 ﻿using Application.Features.Statictis;
+using Application.Features.TimeSlots.Commands;
 using Application.Features.TimeSlots.Queries;
+using Azure.Core;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,8 +25,15 @@ namespace Web.Endpoints
             return Ok(result);
         }
 
-        [HttpPost("Statictis")]
+        [HttpPost("statictis")]
         public async Task<IActionResult> GetStatictis(TimeSlotStatictisQuery request, CancellationToken cancellation)
+        {
+            var result = await _mediator.Send(request, cancellation);
+            return Ok(result);
+        }
+
+        [HttpPost("Update")]
+        public async Task<IActionResult> Update(SetTimeSlotPriceCommands request, CancellationToken cancellation)
         {
             var result = await _mediator.Send(request, cancellation);
             return Ok(result);

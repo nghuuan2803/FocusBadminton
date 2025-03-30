@@ -13,6 +13,7 @@ namespace Web.Endpoints
         [HttpPost]
         public async Task<IActionResult> CreateBooking(CreateBookingCommand command)
         {
+            command.HttpContext = HttpContext;
             var result = await mediator.Send(command);
             if (result.Succeeded)
             {

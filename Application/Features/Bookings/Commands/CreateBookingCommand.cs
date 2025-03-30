@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Bookings;
 using Shared.Enums;
@@ -22,7 +23,7 @@ namespace Application.Features.Bookings.Commands
         public string? TransactionImage { get; set; }
         public string? Note { get; set; }
         public string? AdminNote { get; set; }
-
+        public HttpContext? HttpContext { get; set; }
         public ICollection<BookingItem>? Details { get; set; }
     }
 
@@ -95,6 +96,7 @@ namespace Application.Features.Bookings.Commands
 
                 // Xử lý payment
                 var (payment, paymentUrl) = await _paymentHandler.ProcessPaymentAsync(booking, request);
+
 
                 await _unitOfWork.CommitAsync();
 

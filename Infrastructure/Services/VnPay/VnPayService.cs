@@ -1,4 +1,5 @@
 ﻿using Application.Models.PaymentModels;
+using Domain.Common;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -55,6 +56,8 @@ namespace Infrastructure.Services.VnPay
             var vnp_SecureHash = collection.FirstOrDefault(i => i.Key == "vnp_SecureHash").Value;
             var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
             var vnp_OrderInfo = vnpay.GetResponseData("vnp_OrderInfo");
+            string[] info = vnp_OrderInfo.Split();
+            int bookingId = int.Parse(info[info.Length - 1]);
             bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, _config["VnPay:HashSecret"]);
             if (!checkSignature)
             {
@@ -72,6 +75,7 @@ namespace Infrastructure.Services.VnPay
                 TransactionId = vnp_TransactionId.ToString(),
                 Token = vnp_SecureHash.ToString(),
                 VnPayResponseCode = vnp_ResponseCode.ToString(),
+                BookingId = bookingId
             };
         }
     }
