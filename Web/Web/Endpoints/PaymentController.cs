@@ -3,8 +3,6 @@ using Application.Models.PaymentModels;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Repositories;
-using Infrastructure.Implements.Payments;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Shared.Enums;
@@ -127,16 +125,6 @@ namespace Web.Endpoints
             return Ok(result);
         }
 
-        [HttpGet("vnpay-callback")]
-        public async Task<IActionResult> HandleVnPayCallback()
-        {
-            var adapter = _adapterFactory.CreateAdapter(PaymentMethod.VnPay);
-            var result = await adapter.VerifyPaymentAsync(new PaymentVerificationRequest { QueryData = Request.Query });
-            // Xử lý tương tự HandleMomoCallback, redirect về deeplink hoặc URL cho web
-            var deepLink = $"focusbadminton://payment-callback?bookingId={result.OrderId}&resultCode={(result.IsSuccess ? "0" : "1000")}&amount={result.Amount}";
-            return Redirect(deepLink);
-        }
-
         [HttpPost("momo-result")]
         public async Task<IActionResult> HandleMomoResult([FromBody] MomoResultRequest request)
         {
@@ -154,7 +142,8 @@ namespace Web.Endpoints
             var result = await adapter.VerifyPaymentAsync(verificationRequest);
             if (!result.IsSuccess)
                 return Ok(new { Success = false, Message = "Payment verification failed" });
-
+            string[] info = result.OrderInfo.Split();
+            int bookingId = int.Parse(info[info.Length - 1]);
             await _unitOfWork.BeginAsync();
             try
             {
@@ -180,13 +169,54 @@ namespace Web.Endpoints
                 }
 
                 await _unitOfWork.CommitAsync();
-                return Ok(new { Success = true, BookingId = result.OrderId });
+                return Ok(new { Success = true, BookingId = bookingId });
             }
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackAsync();
                 return StatusCode(500, new { Success = false, Error = ex.Message });
             }
+        }
+        [HttpGet("vnpay-callback")]
+        public async Task<IActionResult> HandleVnPayCallback()
+        {
+            var adapter = _adapterFactory.CreateAdapter(PaymentMethod.VnPay);
+            var result = await adapter.VerifyPaymentAsync(new PaymentVerificationRequest { QueryData = Request.Query });
+            int bookingId = result.BookingId ?? 0;
+            await _unitOfWork.BeginAsync();
+            try
+            {
+                var payment = await _paymentRepo.FindAsync(p => p.BookingId == bookingId);
+                if (payment != null)
+                {
+                    payment.Status = result.IsSuccess ? PaymentStatus.Succeeded : PaymentStatus.Failed;
+                    //payment.Status = result.IsSuccess ? PaymentStatus.Succeeded : PaymentStatus.Failed;
+                    payment.PaidAt = DateTime.UtcNow;
+                    _paymentRepo.Update(payment);
+
+                    var booking = await _bookingRepo.FindAsync(b => b.Id == bookingId);
+                    if (booking != null && result.IsSuccess)
+                    {
+                        var totalPaid = (await _paymentRepo.GetAllAsync(p => p.BookingId == bookingId && p.Status == PaymentStatus.Succeeded))
+                            .Sum(p => p.Amount);
+                        if (booking.Status == BookingStatus.Pending)
+                        {
+                            booking.Status = BookingStatus.Approved;
+                            booking.ApprovedAt = DateTimeOffset.UtcNow;
+                            _bookingRepo.Update(booking);
+                        }
+                    }
+                    await _unitOfWork.CommitAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            var deepLink = $"focusbadminton://payment-callback?bookingId={bookingId}&resultCode={(result.IsSuccess ? "0" : "1000")}&amount={result.Amount}";
+            return Redirect(deepLink);
         }
     }
     public class ConfirmPaymentRequest

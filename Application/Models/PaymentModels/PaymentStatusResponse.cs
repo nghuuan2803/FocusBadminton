@@ -9,5 +9,6 @@
         public string TransactionId { get; set; }
         public string ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
+        public int? BookingId { get; set; }
     }
 }

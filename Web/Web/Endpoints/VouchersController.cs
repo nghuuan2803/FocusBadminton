@@ -27,7 +27,23 @@ namespace Web.Endpoints
             var data = await _dbContext.Vouchers.ToListAsync();
             return Ok(data);
         }
-      
+
+        [HttpGet("get-by-member/{memberId}")]
+        public async Task<ActionResult<VoucherDTO>> GetVoucherByMember(int memberId)
+        {
+            var member = await _dbContext.Members.Include(p => p.Account).FirstOrDefaultAsync(p => p.Id == memberId);
+            if (member == null)
+            {
+                return NotFound();
+            }
+            if (member.Account == null)
+            {
+                return BadRequest("Member does not have an account");
+            }
+            var data = await _dbContext.Vouchers.Where(p => p.AccountId == member.AccountId && !p.IsUsed).OrderByDescending(p => p.CreatedAt).ToListAsync();
+            return Ok(data);
+        }
+
         // POST: api/vouchers
         [HttpPost]
         public async Task<ActionResult<VoucherDTO>> CreateVoucher([FromBody] CreateVoucherCommand command)

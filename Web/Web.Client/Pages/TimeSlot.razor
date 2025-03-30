@@ -1,5 +1,206 @@
-﻿<h3>TimeSlot</h3>
+﻿@using Shared.TimeSlots
+@using AntDesign.Charts
+@using AntDesign
+@inject TimeSlotService TimeSlotService
+@page "/timeslots"
+
+<!-- Bảng khung giờ -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Time Slot</h1>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="100">Mã khung giờ</th>
+                        <th>Bắt đầu</th>
+                        <th>Kết thúc</th>
+                        <th>Giá (VNĐ)</th>
+                        <th>Cập nhật</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var timeSlot in timeSlots)
+                    {
+                        <tr>
+                            <td>@timeSlot.Id</td>
+                            <td>@timeSlot.StartTime.ToString("hh\\:mm")</td>
+                            <td>@timeSlot.EndTime.ToString("hh\\:mm")</td>
+                            <td>
+                                @timeSlot.Price.ToString("#,0")
+                                <Button Icon="@IconType.Outline.Edit" @onclick="() => OpenUpdateTimeSlotModal(timeSlot)" />
+                            </td>
+                            <td>@timeSlot.UpdatedAt?.ToString("dd/MM/yyyy") - @timeSlot.UpdatedBy</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<h3 class="mb-3">Biểu đồ thống kê khung giờ</h3>
+
+<div class="mb-3">
+    <label for="startDatePicker" class="form-label">Từ ngày:</label>
+    <input type="date" id="startDatePicker" class="form-control w-25 d-inline-block"
+           @bind="startDate" @bind:format="yyyy-MM-dd" />
+
+    <label for="endDatePicker" class="form-label ms-3">Đến ngày:</label>
+    <input type="date" id="endDatePicker" class="form-control w-25 d-inline-block"
+           @bind="endDate" @bind:format="yyyy-MM-dd" />
+
+    <button class="btn btn-primary ms-2" @onclick="HandleFilter">Lọc</button>
+</div>
+
+<!-- Biểu đồ thống kê khung giờ dạng cột -->
+@if (loading)
+{
+    <p>Đang tải dữ liệu...</p>
+}
+else
+{
+    <div class="container">
+        <AntDesign.Charts.Column Data="chartData" Config="chartConfig" />
+    </div>
+}
+
+<!-- Modal cập nhật TimeSlot -->
+<Modal Title="Cập nhật khung giờ"
+       @bind-Visible="@_modalVisible"
+       OnOk="HandleUpdateTimeSlot"
+       OkText="@("Cập nhật")"
+       CancelText="@("Hủy")">
+    @if (selectedTimeSlot != null)
+    {
+        <div class="mb-3">
+            <label class="form-label">Mã khung giờ</label>
+            <Input @bind-Value="@selectedTimeSlot.Id" Disabled="true" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Thời gian bắt đầu</label>
+            <Input @bind-Value="@startTimeString" Disabled="true" Placeholder="HH:mm:ss" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Thời gian kết thúc</label>
+            <Input @bind-Value="@endTimeString" Disabled="false" Placeholder="HH:mm:ss" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Giá (VND)</label>
+            <AntDesign.InputNumber @bind-Value="@selectedTimeSlot.Price" Min="0" Step="1000" />
+        </div>
+    }
+</Modal>
 
 @code {
+    bool loading = true;
+    IEnumerable<TimeSlotDTO> timeSlots = new List<TimeSlotDTO>();
+    TimeSlotStatisticDTO statictis = new();
+    int year = DateTime.Today.Year;
+    int month = DateTime.Today.Month;
+    DateTimeOffset? startDate = null;
+    DateTimeOffset? endDate = null;
 
+    // Dữ liệu cho biểu đồ
+    object[] chartData = Array.Empty<object>();
+    readonly ColumnConfig chartConfig = new ColumnConfig
+        {
+            Title = new AntDesign.Charts.Title
+            {
+                Visible = true,
+                Text = "Thống kê số lượng đặt sân theo khung giờ"
+            },
+            AutoFit = true,
+            YField = "bookingCount",
+            XField = "timeSlot",
+            Label = new ColumnViewConfigLabel
+            {
+                Visible = true,
+                Position = "middle"
+            },
+            MinColumnWidth = 20,
+            MaxColumnWidth = 40,
+        };
+
+    // Dữ liệu cho modal
+    bool _modalVisible = false;
+    TimeSlotDTO selectedTimeSlot = null;
+    string startTimeString = "";
+    string endTimeString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(100);
+        timeSlots = await TimeSlotService.GetAll();
+        statictis = await TimeSlotService.GetStatictis(year, month, null, null);
+        UpdateChartData();
+        loading = false;
+    }
+
+    private void UpdateChartData()
+    {
+        chartData = statictis.Details.Select(d => new
+        {
+            timeSlot = $"{d.BeginAt:hh\\:mm}",
+            bookingCount = d.BookingCount
+        }).ToArray();
+    }
+
+    private async Task LoadStatictisData()
+    {
+        statictis = await TimeSlotService.GetStatictis(year, month, startDate, endDate);
+        UpdateChartData();
+        StateHasChanged();
+    }
+
+    private async Task HandleFilter()
+    {
+        loading = true;
+        await LoadStatictisData();
+        loading = false;
+    }
+
+    private void OpenUpdateTimeSlotModal(TimeSlotDTO timeSlot)
+    {
+        selectedTimeSlot = new TimeSlotDTO
+            {
+                Id = timeSlot.Id,
+                StartTime = timeSlot.StartTime,
+                EndTime = timeSlot.EndTime,
+                Price = timeSlot.Price
+            };
+        startTimeString = timeSlot.StartTime.ToString(@"hh\:mm\:ss");
+        endTimeString = timeSlot.EndTime.ToString(@"hh\:mm\:ss");
+        _modalVisible = true;
+    }
+
+    private async Task HandleUpdateTimeSlot(MouseEventArgs args)
+    {
+        try
+        {
+            if (TimeSpan.TryParse(startTimeString, out var startTime) && TimeSpan.TryParse(endTimeString, out var endTime))
+            {
+                selectedTimeSlot.StartTime = startTime;
+                selectedTimeSlot.EndTime = endTime;
+
+                // Gọi API để cập nhật
+                await TimeSlotService.Update(selectedTimeSlot);
+
+                // Cập nhật danh sách timeSlots
+                timeSlots = await TimeSlotService.GetAll();
+                _modalVisible = false;
+                StateHasChanged();
+            }
+            else
+            {
+                // Thông báo lỗi nếu thời gian không hợp lệ
+                Console.WriteLine("Thời gian không hợp lệ!");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message + e.StackTrace);
+        }
+
+    }
 }

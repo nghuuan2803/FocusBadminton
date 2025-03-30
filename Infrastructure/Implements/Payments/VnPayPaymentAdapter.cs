@@ -21,7 +21,7 @@ namespace Infrastructure.Implements.Payments
                 Description = request.OrderInfo,
                 Amount = request.Amount,
                 CreateDate = DateTime.Now,
-                BookingId = request.OrderId?.GetHashCode() ?? 0
+                BookingId = int.Parse(request.OrderId)
             };
 
             var paymentUrl = _vnPayService.CreatePaymentUrl(request.Context, vnPayRequest, request.Action);
@@ -33,13 +33,15 @@ namespace Infrastructure.Implements.Payments
             if (request.QueryData != null) // Chỉ hỗ trợ redirect cho web hiện tại
             {
                 var result = _vnPayService.PaymentExecute(request.QueryData);
+
                 return new PaymentStatusResponse
                 {
                     IsSuccess = result.Success,
                     OrderId = result.OrderId,
                     Amount = double.Parse(request.QueryData["vnp_Amount"]) / 100,
                     TransactionId = result.TransactionId,
-                    ErrorCode = result.VnPayResponseCode
+                    ErrorCode = result.VnPayResponseCode,
+                    BookingId = result.BookingId
                 };
             }
 

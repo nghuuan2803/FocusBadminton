@@ -21,6 +21,7 @@ namespace Web.Client
             builder.Services.AddScoped<BookingService>();
             builder.Services.AddScoped<VouchersService>();
             builder.Services.AddScoped<MembersService>();
+            builder.Services.AddScoped<TimeSlotService>();
  
             builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();

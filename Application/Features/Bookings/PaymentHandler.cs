@@ -49,7 +49,6 @@ namespace Application.Features.Bookings
                     break;
 
                 case PaymentMethod.Momo:
-                case PaymentMethod.VnPay:
                     var adapter = _paymentAdapterFactory.CreateAdapter(request.PaymentMethod);
                     var paymentRequest = new PaymentRequest
                     {
@@ -57,7 +56,8 @@ namespace Application.Features.Bookings
                         OrderId = booking.Id.ToString(),
                         OrderInfo = $"Thanh toan booking {booking.Id}",
                         Amount = payment.Amount,
-                        Action = "mobile"
+                        Action = "mobile",
+                        Context = request.HttpContext
                     };
                     var paymentLink = await adapter.GeneratePaymentLinkAsync(paymentRequest);
                     if (!paymentLink.IsSuccess)
@@ -65,6 +65,24 @@ namespace Application.Features.Bookings
                         throw new Exception($"Failed to create payment link: {paymentLink.ErrorMessage}");
                     }
                     paymentUrl = paymentLink.Deeplink;
+                    break;
+                case PaymentMethod.VnPay:
+                    adapter = _paymentAdapterFactory.CreateAdapter(request.PaymentMethod);
+                    paymentRequest = new PaymentRequest
+                    {
+                        FullName = "User",
+                        OrderId = booking.Id.ToString(),
+                        OrderInfo = $"Thanh toan booking {booking.Id}",
+                        Amount = payment.Amount,
+                        Action = "mobile",
+                        Context = request.HttpContext
+                    };
+                    paymentLink = await adapter.GeneratePaymentLinkAsync(paymentRequest);
+                    if (!paymentLink.IsSuccess)
+                    {
+                        throw new Exception($"Failed to create payment link: {paymentLink.ErrorMessage}");
+                    }
+                    paymentUrl = paymentLink.PaymentUrl;
                     break;
             }
 

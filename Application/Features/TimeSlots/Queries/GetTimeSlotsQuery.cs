@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Repositories;
-using MediatR;
+﻿using Domain.Repositories;
 
 namespace Application.Features.TimeSlots.Queries
 {
