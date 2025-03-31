@@ -2,120 +2,340 @@
 @using Web.Client.ApiServices
 @using Shared.Vouchers
 @using Shared.Members
+@using AntDesign
 @inject VouchersService VouchersService
 @inject MembersService MembersService
 @inject NavigationManager NavigationManager
 @inject IMessageService MessageService
+@inject IConfirmService ConfirmService
 
 <h3>Quản lý Voucher</h3>
 
 <div class="container">
-    <!-- Phần tạo mẫu voucher -->
+    <!-- Danh sách mẫu voucher -->
     <div class="row mb-4">
-        <div class="col-md-6">
-            <h4>Tạo mẫu voucher</h4>
-            <EditForm Model="newTemplate" OnValidSubmit="HandleCreateTemplate">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <div class="form-group">
-                    <label>Tên mẫu</label>
-                    <InputText class="form-control" @bind-Value="newTemplate.Name" />
-                </div>
-                <div class="form-group">
-                    <label>Mô tả</label>
-                    <InputTextArea class="form-control" @bind-Value="newTemplate.Description" />
-                </div>
-                <div class="form-group">
-                    <label>Loại giảm giá</label>
-                    <InputSelect class="form-control" @bind-Value="newTemplate.DiscountType">
-                        <option value="@(DiscountType.Percent)">Phần trăm</option>
-                        <option value="@(DiscountType.Point)">Số tiền cố định</option>
-                    </InputSelect>
-                </div>
-                <div class="form-group">
-                    <label>Giá trị</label>
-                    <AntDesign.InputNumber class="form-control" @bind-Value="newTemplate.Value" />
-                </div>
-                <div class="form-group">
-                    <label>Giá trị tối đa</label>
-                    <AntDesign.InputNumber class="form-control" @bind-Value="newTemplate.MaximumValue" />
-                </div>
-                <div class="form-group">
-                    <label>Thời hạn (ngày)</label>
-                    <AntDesign.InputNumber class="form-control" @bind-Value="newTemplate.Duration" />
-                </div>
-                <button type="submit" class="btn btn-primary mt-2" disabled="@isCreatingTemplate">
-                    @(isCreatingTemplate ? "Đang tạo..." : "Tạo mẫu")
-                </button>
-            </EditForm>
+        <div class="col-md-12">
+            <h4>Danh sách mẫu voucher</h4>
+            <div class="mb-2">
+                <Input @bind-Value="@templateSearch" Placeholder="Tìm kiếm theo tên" OnChange="@(e => OnTemplateSearchChange(e))" />
+                <Button Type="primary" OnClick="ShowCreateTemplateModal" class="ml-2">Thêm mẫu mới</Button>
+            </div>
+            <Table TItem="VoucherTemplateDTO" DataSource="@voucherTemplates" RowKey="t => t.Id" Bordered
+                   Total="@templateTotal" PageSize="@templatePageSize" OnChange="HandleTemplateTableChange"
+                   Loading="@isCreatingTemplate">
+                <Column Title="Tên mẫu" DataIndex="@nameof(VoucherTemplateDTO.Name)" />
+                <Column Title="Mô tả" DataIndex="@nameof(VoucherTemplateDTO.Description)" />
+                <Column Title="Loại giảm giá" DataIndex="@nameof(VoucherTemplateDTO.DiscountType)" />
+                <Column Title="Giá trị" DataIndex="@nameof(VoucherTemplateDTO.Value)" />
+                <Column Title="Giá trị tối đa" DataIndex="@nameof(VoucherTemplateDTO.MaximumValue)" />
+                <Column Title="Thời hạn (ngày)" DataIndex="@nameof(VoucherTemplateDTO.Duration)" />
+                <ActionColumn>
+                    @context =>
+                    {
+                        <Button Type="link" OnClick="@((MouseEventArgs e) => ShowEditTemplateModal(context))">Sửa</Button>
+                        <Button Type="link" Danger OnClick="@((MouseEventArgs e) => DeleteTemplate(context.Id))">Xóa</Button>
+                    }
+                </ActionColumn>
+            </Table>
         </div>
     </div>
 
-    <!-- Phần tặng voucher -->
+    <!-- Danh sách thành viên và tặng voucher -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <h4>Tặng voucher cho thành viên</h4>
-            <EditForm Model="voucherRequest" OnValidSubmit="HandleCreateVoucher">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <div class="form-group">
-                    <label>Chọn mẫu voucher</label>
-                    <InputSelect class="form-control" @bind-Value="voucherRequest.VoucherTemplateId">
-                        <option value="0">Chọn mẫu...</option>
-                        @foreach (var template in voucherTemplates)
-                        {
-                            <option value="@template.Id">@template.Name</option>
-                        }
-                    </InputSelect>
-                </div>
-                <div class="form-group">
-                    <label>Chọn thành viên</label>
-                    <InputSelect class="form-control" @bind-Value="voucherRequest.AccountId">
-                        <option value="">Chọn thành viên...</option>
-                        @foreach (var member in members)
-                        {
-                            <option value="@(member.AccountId??"none")">@member.FullName (@member.PhoneNumber)</option>
-                        }
-                    </InputSelect>
-                </div>
-                <div class="form-group">
-                    <label>Ngày hết hạn (tuỳ chọn)</label>
-                    <InputDate class="form-control" @bind-Value="voucherRequest.Expiry" />
-                </div>
-                <button type="submit" class="btn btn-success mt-2" disabled="@isCreatingVoucher">
-                    @(isCreatingVoucher ? "Đang tặng..." : "Tặng voucher")
-                </button>
-            </EditForm>
+            <div class="mb-2">
+                <Input @bind-Value="@memberSearch" Placeholder="Tìm kiếm theo tên" OnChange="@(e => OnMemberSearchChange(e))" />
+                <Button Type="primary" OnClick="ShowGiftVoucherModal" Disabled="@(!selectedMemberIds.Any())" class="ml-2">Tặng voucher</Button>
+                <Button Type="primary" OnClick="GiftToAllMembers" class="ml-2">Tặng tất cả</Button>
+            </div>
+            <Table TItem="MemberDTO" DataSource="@members" RowKey="m => m.Id" Bordered
+                   Total="@memberTotal" PageSize="@memberPageSize" OnChange="HandleMemberTableChange">
+                <Column Title="Tên" DataIndex="@nameof(MemberDTO.FullName)" />
+                <Column Title="Số điện thoại" DataIndex="@nameof(MemberDTO.PhoneNumber)" />
+                <Column Title="Email" DataIndex="@nameof(MemberDTO.Email)" />
+            </Table>
         </div>
     </div>
 </div>
 
+<!-- Modal tạo/sửa mẫu voucher -->
+<Modal Title="@(editingTemplate == null ? "Tạo mẫu voucher" : "Sửa mẫu voucher")"
+       Visible="@isTemplateModalVisible"
+       OnOk="HandleTemplateSubmit"
+       OnCancel="HideTemplateModal">
+    <EditForm Model="@newTemplate" OnValidSubmit="HandleTemplateSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label>Tên mẫu</label>
+            <InputText class="form-control" @bind-Value="@newTemplate.Name" />
+        </div>
+        <div class="form-group">
+            <label>Mô tả</label>
+            <InputTextArea class="form-control" @bind-Value="@newTemplate.Description" />
+        </div>
+        <div class="form-group">
+            <label>Loại giảm giá</label>
+            <InputSelect class="form-control" @bind-Value="@newTemplate.DiscountType">
+                <option value="@DiscountType.Percent">Phần trăm</option>
+                <option value="@DiscountType.Point">Số tiền cố định</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label>Giá trị</label>
+            <AntDesign.InputNumber TValue="decimal" class="form-control" @bind-Value="@newTemplate.Value" Min="0" />
+        </div>
+        <div class="form-group">
+            <label>Giá trị tối đa</label>
+            <AntDesign.InputNumber TValue="decimal" class="form-control" @bind-Value="@newTemplate.MaximumValue" Min="0" />
+        </div>
+        <div class="form-group">
+            <label>Thời hạn (ngày)</label>
+            <AntDesign.InputNumber TValue="int" class="form-control" @bind-Value="@newTemplate.Duration" Min="1" />
+        </div>
+        <button type="submit" class="btn btn-primary mt-2" disabled="@isCreatingTemplate">
+            @(isCreatingTemplate ? "Đang xử lý..." : (editingTemplate == null ? "Tạo mẫu" : "Cập nhật"))
+        </button>
+    </EditForm>
+</Modal>
+
+<!-- Modal tặng voucher -->
+<Modal Title="Tặng voucher"
+       Visible="@isGiftModalVisible"
+       OnOk="HandleGiftVoucher"
+       OnCancel="HideGiftVoucherModal">
+    <div class="form-group">
+        <label>Chọn mẫu voucher</label>
+        <InputSelect class="form-control" @bind-Value="@voucherRequest.VoucherTemplateId">
+            <option value="0">Chọn mẫu...</option>
+            @foreach (var template in voucherTemplates)
+            {
+                <option value="@template.Id">@template.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <label>Ngày hết hạn (tùy chọn)</label>
+        <InputDate class="form-control" @bind-Value="@voucherRequest.Expiry" />
+    </div>
+</Modal>
+
 @code {
-    private VoucherTemplateDTO newTemplate = new VoucherTemplateDTO
+    private VoucherTemplateDTO? editingTemplate = null;
+    private bool isTemplateModalVisible = false;
+    private bool isGiftModalVisible = false;
+    private string templateSearch = string.Empty;
+    private int templatePageSize = 10;
+    private int templatePageNumber = 1;
+    private int templateTotal = 0;
+    private string memberSearch = string.Empty;
+    private int memberPageSize = 10;
+    private int memberPageNumber = 1;
+    private int memberTotal = 0;
+    private HashSet<string> selectedMemberIds = new();
+    private List<VoucherTemplateDTO> voucherTemplates = new();
+    private List<MemberDTO> members = new();
+    private VoucherTemplateDTO newTemplate = new();
+    private VoucherRequest voucherRequest = new();
+    private bool isCreatingTemplate = false;
+    private bool isCreatingVoucher = false;
+
+    private async Task OnTemplateSearchChange(ChangeEventArgs e)
+    {
+        templateSearch = e.Value?.ToString() ?? string.Empty;
+        templatePageNumber = 1;
+        await LoadTemplates();
+    }
+
+    private async Task OnMemberSearchChange(ChangeEventArgs e)
+    {
+        memberSearch = e.Value?.ToString() ?? string.Empty;
+        memberPageNumber = 1;
+        await LoadMembers();
+    }
+
+    private async Task HandleTemplateTableChange(PaginationEventArgs args)
+    {
+        templatePageNumber = args.Page;
+        templatePageSize = args.PageSize;
+        await LoadTemplates();
+    }
+
+    private async Task HandleMemberTableChange(PaginationEventArgs args)
+    {
+        memberPageNumber = args.Page;
+        memberPageSize = args.PageSize;
+        await LoadMembers();
+    }
+
+    private async Task LoadTemplates()
+    {
+        try
+        {
+            var result = await VouchersService.GetVoucherTemplatesAsync(templateSearch, templatePageNumber, templatePageSize);
+            if (result != null)
+            {
+                voucherTemplates = result;
+                templateTotal = result.Count; // Cần backend trả về tổng số thực tế
+            }
+            else
+            {
+                voucherTemplates = new List<VoucherTemplateDTO>();
+                templateTotal = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            await MessageService.Error($"Lỗi khi tải danh sách mẫu: {ex.Message}");
+        }
+        StateHasChanged();
+    }
+
+    private async Task LoadMembers()
+    {
+        try
+        {
+            var result = await MembersService.GetMembersAsync(memberSearch, memberPageNumber, memberPageSize);
+            if (result != null)
+            {
+                members = result;
+                memberTotal = result.Count; // Cần backend trả về tổng số thực tế
+            }
+            else
+            {
+                members = new List<MemberDTO>();
+                memberTotal = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            await MessageService.Error($"Lỗi khi tải danh sách thành viên: {ex.Message}");
+        }
+        StateHasChanged();
+    }
+
+    private void ShowCreateTemplateModal()
+    {
+        newTemplate = new VoucherTemplateDTO
         {
             DiscountType = DiscountType.Percent,
             Value = 0,
             MaximumValue = 0,
             Duration = 30
         };
-    private List<VoucherTemplateDTO> voucherTemplates = new();
-    private List<MemberDTO> members = new();
-    private VoucherRequest voucherRequest = new VoucherRequest();
-    private bool isCreatingTemplate = false;
-    private bool isCreatingVoucher = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        voucherTemplates = await VouchersService.GetVoucherTemplatesAsync();
-        members = await MembersService.GetMembersAsync();
+        editingTemplate = null;
+        isTemplateModalVisible = true;
     }
 
-    private class VoucherRequest
+    private void ShowEditTemplateModal(VoucherTemplateDTO template)
     {
-        public int VoucherTemplateId { get; set; }
-        public string AccountId { get; set; } = string.Empty;
-        public DateTime? Expiry { get; set; }
+        newTemplate = new VoucherTemplateDTO
+        {
+            Id = template.Id,
+            Name = template.Name,
+            Description = template.Description,
+            DiscountType = template.DiscountType,
+            Value = template.Value,
+            MaximumValue = template.MaximumValue,
+            Duration = template.Duration
+        };
+        editingTemplate = template;
+        isTemplateModalVisible = true;
+    }
+
+    private void HideTemplateModal()
+    {
+        isTemplateModalVisible = false;
+    }
+
+    private async Task HandleTemplateSubmit()
+    {
+        if (editingTemplate == null)
+        {
+            await HandleCreateTemplate();
+        }
+        else
+        {
+            await HandleUpdateTemplate();
+        }
+        await LoadTemplates();
+        isTemplateModalVisible = false;
+    }
+
+    private async Task DeleteTemplate(int id)
+    {
+        var confirmed = await ConfirmService.Show("Bạn có chắc muốn xóa mẫu voucher này?", "Xác nhận xóa", ConfirmButtons.YesNo);
+        if (confirmed == ConfirmResult.Yes)
+        {
+            try
+            {
+                var success = await VouchersService.DeleteVoucherTemplateAsync(id);
+                if (success)
+                {
+                    await MessageService.Success("Xóa mẫu voucher thành công!");
+                    await LoadTemplates();
+                }
+                else
+                {
+                    await MessageService.Error("Không thể xóa mẫu voucher!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await MessageService.Error($"Lỗi: {ex.Message}");
+            }
+        }
+    }
+
+    private void ShowGiftVoucherModal()
+    {
+        voucherRequest = new VoucherRequest();
+        isGiftModalVisible = true;
+    }
+
+    private void HideGiftVoucherModal()
+    {
+        isGiftModalVisible = false;
+    }
+
+    private async Task HandleGiftVoucher()
+    {
+        if (voucherRequest.VoucherTemplateId == 0)
+        {
+            await MessageService.Error("Vui lòng chọn mẫu voucher!");
+            return;
+        }
+
+        isCreatingVoucher = true;
+        try
+        {
+            var expiry = voucherRequest.Expiry.HasValue ? DateTimeOffset.Parse(voucherRequest.Expiry.ToString()) : (DateTimeOffset?)null;
+            foreach (var accountId in selectedMemberIds)
+            {
+                var createdVoucher = await VouchersService.CreateVoucherAsync(voucherRequest.VoucherTemplateId, accountId, expiry);
+                if (createdVoucher != null)
+                {
+                    await MessageService.Success($"Đã tặng voucher '{createdVoucher.Code}' cho thành viên!");
+                }
+            }
+            isGiftModalVisible = false;
+            selectedMemberIds.Clear();
+        }
+        catch (Exception ex)
+        {
+            await MessageService.Error($"Lỗi: {ex.Message}");
+        }
+        finally
+        {
+            isCreatingVoucher = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task GiftToAllMembers()
+    {
+        selectedMemberIds = new HashSet<string>(members.Select(m => m.AccountId ?? "none"));
+        ShowGiftVoucherModal();
     }
 }

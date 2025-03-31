@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string DiscountType { get; set; } = "Percent"; // Dùng string để dễ đọc hơn
+        public string DiscountType { get; set; } = "Percent"; 
         public double Value { get; set; }
         public double MaximumValue { get; set; }
         public int? VoucherTemplateId { get; set; }

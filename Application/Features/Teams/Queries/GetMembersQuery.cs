@@ -1,9 +1,5 @@
 ﻿using Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Application.Features.Teams.Queries
 {
@@ -12,6 +8,8 @@ namespace Application.Features.Teams.Queries
         // Có thể thêm điều kiện lọc
         public string? FullName { get; set; }
         public string? PhoneNumber { get; set; }
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
     public class GetMembersQueryHandler : IRequestHandler<GetMembersQuery, IEnumerable<Member>>
     {
@@ -37,7 +35,10 @@ namespace Application.Features.Teams.Queries
                 members = members.Where(m => m.PhoneNumber != null && m.PhoneNumber.Contains(request.PhoneNumber)).ToList();
             }
 
-            return members;
+            return members
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToList();
         }
     }
 }

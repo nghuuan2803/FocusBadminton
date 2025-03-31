@@ -70,5 +70,24 @@ namespace Web.Endpoints
             var template = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetVoucherTemplates), new { id = template.Id }, template);
         }
+
+        // PUT: api/vouchers/templates/{id}
+        [HttpPut("templates/{id}")]
+        public async Task<ActionResult<VoucherTemplateDTO>> UpdateVoucherTemplate(int id, [FromBody] UpdateVoucherTemplateCommand command)
+        {
+            if (id != command.Id) return BadRequest("ID không khớp.");
+            var template = await _mediator.Send(command);
+            return Ok(template);
+        }
+
+        // DELETE: api/vouchers/templates/{id}
+        [HttpDelete("templates/{id}")]
+        public async Task<IActionResult> DeleteVoucherTemplate(int id)
+        {
+            var command = new DeleteVoucherTemplateCommand { Id = id };
+            var result = await _mediator.Send(command);
+            if (!result) return NotFound();
+            return NoContent();
+        }
     }
 }
