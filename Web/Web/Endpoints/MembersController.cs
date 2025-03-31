@@ -22,12 +22,14 @@ namespace Web.Endpoints
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMembers(
             [FromQuery] string? fullName = null,
-            [FromQuery] string? phoneNumber = null)
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
             var query = new GetMembersQuery
             {
                 FullName = fullName,
-                PhoneNumber = phoneNumber
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
             var members = await _mediator.Send(query);
             var memberDTOs = members.Select(p => p.ToMemberDTO()).ToList();
