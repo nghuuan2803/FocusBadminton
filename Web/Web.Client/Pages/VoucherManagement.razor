@@ -3,9 +3,9 @@
 @using Shared.Members
 @using Shared.Vouchers
 
-
+<!-- Danh sách mẫu voucher -->
 <Flex Justify="FlexJustify.End" Gap="@("10")">
-    <Button Type="ButtonType.Primary" Icon="@IconType.Outline.AppstoreAdd">Tạo mới</Button>
+    <Button Type="ButtonType.Primary" Icon="@IconType.Outline.AppstoreAdd" OnClick="ShowCreateTemplateModal">Tạo mới</Button>
 </Flex>
 <Table @ref="_table" TItem="VoucherTemplateDTO" PageSize="10" Total="_total" DataSource="voucherTemplates" @bind-SelectedRows="_selectedRows">
     <PropertyColumn Property="c=>c.Id" Title="#">
@@ -36,13 +36,13 @@
     <ActionColumn Title="Action">
         <Space Size="SpaceSize.Middle">
             <SpaceItem>
-                <Button Icon="@IconType.Outline.Edit"></Button>
-                <Button Icon="@IconType.Outline.Delete"></Button>
+                <Button OnClick="@(() => ShowEditTemplateModal(context))" Icon="@IconType.Outline.Edit"></Button>
+                <Button OnClick="@(() => DeleteTemplate(context.Id))" Icon="@IconType.Outline.Delete"></Button>
             </SpaceItem>
         </Space>
     </ActionColumn>
 </Table>
-<!-- Danh sách mẫu voucher -->
+
 <!-- Modal tạo/sửa mẫu voucher -->
 <Modal Title="@(editingTemplate == null ? "Tạo mẫu voucher" : "Sửa mẫu voucher")"
        Visible="@isTemplateModalVisible"
