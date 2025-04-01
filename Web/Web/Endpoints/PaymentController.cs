@@ -4,7 +4,6 @@ using Domain.Common;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Shared.Enums;
 
 namespace Web.Endpoints
@@ -112,71 +111,10 @@ namespace Web.Endpoints
                 Console.WriteLine($"Error: {ex.Message}");
             }
 
-            var deepLink = $"focusbadminton://payment-callback?bookingId={result.OrderId}&resultCode={(result.IsSuccess ? "0" : "1000")}&amount={result.Amount}";
+            var deepLink = $"focusbadminton://payment-callback?bookingId={bookingId}&resultCode={(result.IsSuccess ? "0" : "1000")}&amount={result.Amount}";
             return Redirect(deepLink);
         }
 
-        [HttpPost("vnpay-notify")]
-        public async Task<IActionResult> HandleVnPayIpn()
-        {
-            var adapter = _adapterFactory.CreateAdapter(PaymentMethod.VnPay);
-            var result = await adapter.VerifyPaymentAsync(new PaymentVerificationRequest { QueryData = Request.Query });
-            // Xử lý tương tự HandleMomoIpn
-            return Ok(result);
-        }
-
-        [HttpPost("momo-result")]
-        public async Task<IActionResult> HandleMomoResult([FromBody] MomoResultRequest request)
-        {
-            var adapter = _adapterFactory.CreateAdapter(PaymentMethod.Momo);
-            var verificationRequest = new PaymentVerificationRequest
-            {
-                QueryData = new QueryCollection(new Dictionary<string, StringValues>
-                {
-                    { "orderId", request.OrderId },
-                    { "errorCode", request.ResultCode },
-                    { "amount", request.Amount.ToString() }
-                })
-            };
-
-            var result = await adapter.VerifyPaymentAsync(verificationRequest);
-            if (!result.IsSuccess)
-                return Ok(new { Success = false, Message = "Payment verification failed" });
-            string[] info = result.OrderInfo.Split();
-            int bookingId = int.Parse(info[info.Length - 1]);
-            await _unitOfWork.BeginAsync();
-            try
-            {
-                var payment = await _paymentRepo.FindAsync(p => p.BookingId == int.Parse(result.OrderId));
-                if (payment == null)
-                    throw new Exception($"Payment not found for BookingId: {result.OrderId}");
-
-                payment.Status = result.IsSuccess ? PaymentStatus.Succeeded : PaymentStatus.Failed;
-                payment.PaidAt = DateTime.UtcNow;
-                _paymentRepo.Update(payment);
-
-                var booking = await _bookingRepo.FindAsync(b => b.Id == payment.BookingId);
-                if (booking != null && result.IsSuccess)
-                {
-                    var totalPaid = (await _paymentRepo.GetAllAsync(p => p.BookingId == booking.Id && p.Status == PaymentStatus.Succeeded))
-                        .Sum(p => p.Amount);
-                    if (booking.Status == BookingStatus.Pending && totalPaid >= booking.Deposit)
-                    {
-                        booking.Status = BookingStatus.Approved;
-                        booking.ApprovedAt = DateTimeOffset.UtcNow;
-                        _bookingRepo.Update(booking);
-                    }
-                }
-
-                await _unitOfWork.CommitAsync();
-                return Ok(new { Success = true, BookingId = bookingId });
-            }
-            catch (Exception ex)
-            {
-                await _unitOfWork.RollbackAsync();
-                return StatusCode(500, new { Success = false, Error = ex.Message });
-            }
-        }
         [HttpGet("vnpay-callback")]
         public async Task<IActionResult> HandleVnPayCallback()
         {

@@ -76,6 +76,8 @@ namespace Application.Features.Bookings.Commands
                     x.BeginAt == item.BeginAt &&
                     x.EndAt == item.EndAt &&
                     x.DayOfWeek == item.DayOfWeek)))
+            //if (holds.Count() < request.Details.Count ||
+            //    !request.Details.All(item => holds.Any(x => x.Id == item.HoldId)))
             {
                 return Result<BookingDTO>.Failure(Error.Validation("Chưa giữ lịch"));
             }

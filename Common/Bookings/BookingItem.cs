@@ -16,5 +16,7 @@ namespace Shared.Bookings
         public string? DayOfWeek { get; set; }
         public double Price { get; set; }
         public double Amount { get; set; }
+
+        public int? HoldId { get; set; }
     }
 }
