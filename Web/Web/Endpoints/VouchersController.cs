@@ -53,6 +53,19 @@ namespace Web.Endpoints
             return CreatedAtAction(nameof(GetVoucherTemplates), new { id = voucherDTO.Id }, voucherDTO);
         }
 
+        [HttpPost("bulk-create")]
+        public async Task<ActionResult<List<VoucherDTO>>> BulkCreateVouchers([FromBody] BulkCreateVoucherRequest request)
+        {
+            var command = new BulkCreateVoucherCommand
+            {
+                VoucherTemplateId = request.VoucherTemplateId,
+                AccountIds = request.AccountIds,
+                Expiry = request.Expiry
+            };
+
+            var vouchers = await _mediator.Send(command);
+            return Ok(vouchers);
+        }
         // GET: api/vouchers/templates
         [HttpGet("templates")]
         public async Task<ActionResult<IEnumerable<VoucherTemplateDTO>>> GetVoucherTemplates()

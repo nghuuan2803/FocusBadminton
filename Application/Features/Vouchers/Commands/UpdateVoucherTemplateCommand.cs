@@ -10,7 +10,7 @@ namespace Application.Features.Vouchers.Commands
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string DiscountType { get; set; } = "Percent";
+        public DiscountType DiscountType { get; set; } = DiscountType.Percent;
         public double Value { get; set; }
         public double MaximumValue { get; set; }
         public int Duration { get; set; }
@@ -35,7 +35,7 @@ namespace Application.Features.Vouchers.Commands
 
             template.Name = request.Name;
             template.Description = request.Description;
-            template.DiscountType = Enum.Parse<DiscountType>(request.DiscountType);
+            template.DiscountType = request.DiscountType;
             template.Value = request.Value;
             template.MaximumValue = request.MaximumValue;
             template.Duration = request.Duration;
