@@ -1,5 +1,96 @@
-﻿<h3>MemberManagement</h3>
+﻿@page "/users"
+@using AntDesign.TableModels
+@using Shared.Members
+
+<h3>Quản lý thành viên</h3>
+
+<Flex Justify="FlexJustify.End" Gap="@("10")" Style="margin-bottom: 16px;">
+@*     <Input Placeholder="Tìm kiếm theo họ tên" @bind-Value="@memberSearch" OnChange="async () => await LoadMembers()" Style="width: 200px;" /> *@
+</Flex>
+
+<Table TItem="MemberDTO"
+       DataSource="@members"
+       PageSize="@memberPageSize"
+       Total="@_total"
+       @ref="_table"
+       RowKey="m => m.Id.ToString()"
+       @bind-PageIndex="@memberPageNumber"
+       OnChange="OnTableChange">
+    <PropertyColumn Property="m => m.FullName" Title="Họ tên" Sortable>
+        @(context.FullName ?? "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.Email" Title="Email" Sortable>
+        @(context.Email ?? "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.PhoneNumber" Title="Số điện thoại">
+        @(context.PhoneNumber ?? "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.AccountId" Title="Account ID">
+        @(context.AccountId ?? "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.CurrentTeamId" Title="Team ID">
+        @(context.CurrentTeamId.HasValue ? context.CurrentTeamId.Value.ToString() : "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.JoinedTeamAt" Title="Ngày vào đội">
+        @(context.JoinedTeamAt.HasValue ? context.JoinedTeamAt.Value.ToString("yyyy-MM-dd") : "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.Gender" Title="Giới tính">
+        @(context.Gender ?? "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.DoB" Title="Ngày sinh">
+        @(context.DoB.HasValue ? context.DoB.Value.ToString("yyyy-MM-dd") : "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.Address" Title="Địa chỉ">
+        @(context.Address ?? "N/A")
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.Contributed" Title="Đóng góp">
+        @context.Contributed.ToString("#,0.0")
+    </PropertyColumn>
+</Table>
 
 @code {
+    ITable _table;
+    private List<MemberDTO> members = new();
+    private int _total;
+    private string memberSearch = "";
+    private int memberPageNumber = 1;
+    private int memberPageSize = 10;
 
+    [Inject] MembersService MembersService { get; set; }
+    [Inject] IMessageService MessageService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMembers();
+    }
+
+    private async Task LoadMembers()
+    {
+        try
+        {
+            var result = await MembersService.GetMembersAsync(memberSearch, memberPageNumber, memberPageSize);
+            if (result != null)
+            {
+                members = result;
+                _total = result.Count; // Cần backend trả về tổng số thực tế nếu muốn phân trang chính xác
+            }
+            else
+            {
+                members = new List<MemberDTO>();
+                _total = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            await MessageService.Error($"Lỗi khi tải danh sách thành viên: {ex.Message}");
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnTableChange(QueryModel<MemberDTO> queryModel)
+    {
+        memberPageNumber = queryModel.PageIndex;
+        memberPageSize = queryModel.PageSize;
+        await LoadMembers();
+    }
 }
