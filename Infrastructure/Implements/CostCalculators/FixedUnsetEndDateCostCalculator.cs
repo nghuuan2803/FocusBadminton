@@ -19,12 +19,19 @@ namespace Infrastructure.Implements.CostCalculators
         public async Task<double> CalculateAsync(CostCalculatorRequest request)
         {
             var timeSlot = await _timeSlotRepo.FindAsync(request.TimeSlotId);
-            if (timeSlot == null)
-                return -1;
             var court = await _courtRepo.FindAsync(request.CourtId);
-            if (court == null)
-                return -1;
-            return timeSlot.Price * court.Coofficient * 7;
+            if (timeSlot == null || court == null) return -1;
+
+            var firstWeekEnd = request.BeginAt.AddDays(6); // Tuần đầu tiên
+            int dayCount = 0;
+            for (var date = request.BeginAt; date <= firstWeekEnd; date = date.AddDays(1))
+            {
+                if (date.ToOffset(TimeSpan.FromHours(7)).DayOfWeek.ToString() == request.DayOfWeek)
+                {
+                    dayCount++;
+                }
+            }
+            return timeSlot.Price * court.Coofficient * dayCount;
         }
     }
 }

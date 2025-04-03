@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Features.Bookings.Calculators;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -41,21 +42,19 @@ namespace Application.Features.Bookings.Commands
         public CreateBookingCommandHandler(
             IServiceProvider provider)
         {
-            var scope = provider.CreateScope();
-            var sp = scope.ServiceProvider;
 
-            _repository = sp.GetRequiredService<IRepository<Booking>>();
-            _holdRepo = sp.GetRequiredService<IRepository<BookingHold>>();
-            _unitOfWork = sp.GetRequiredService<IUnitOfWork>();
-            _mapper = sp.GetRequiredService<IMapper>();
-            _slotNotification = sp.GetRequiredService<ISlotNotification>();
+            _repository = provider.GetRequiredService<IRepository<Booking>>();
+            _holdRepo = provider.GetRequiredService<IRepository<BookingHold>>();
+            _unitOfWork = provider.GetRequiredService<IUnitOfWork>();
+            _mapper = provider.GetRequiredService<IMapper>();
+            _slotNotification = provider.GetRequiredService<ISlotNotification>();
             _paymentHandler = new PaymentHandler(
-                sp.GetRequiredService<IRepository<Payment>>(),
-                sp.GetRequiredService<IPaymentAdapterFactory>(),
+                provider.GetRequiredService<IRepository<Payment>>(),
+                provider.GetRequiredService<IPaymentAdapterFactory>(),
                 Logger.Instance);
             _costProcessor = new BookingCostProcessor(
-                sp,
-                sp.GetRequiredService<ICostCalculatorFactory>());
+                provider,
+                provider.GetRequiredService<ICostCalculatorFactory>());
             _logger = Logger.Instance;
         }
 
@@ -63,6 +62,7 @@ namespace Application.Features.Bookings.Commands
         {
             _logger.Log($"Bắt đầu xử lý CreateBookingCommand cho MemberId: {request.MemberId}");
 
+            #region holds check
             if (!request.Details?.Any() ?? true)
                 return Result<BookingDTO>.Failure(Error.Validation("Chưa chọn sân"));
 
@@ -81,16 +81,21 @@ namespace Application.Features.Bookings.Commands
             {
                 return Result<BookingDTO>.Failure(Error.Validation("Chưa giữ lịch"));
             }
+            #endregion
 
             await _unitOfWork.BeginAsync();
             try
             {
-                var booking = _mapper.Map<Booking>(request);
                 _holdRepo.RemoveRange(holds);
+
+                #region creating booking
+                var booking = _mapper.Map<Booking>(request);
 
                 // Tính toán chi phí
                 var (totalAmount, discount) = await _costProcessor.CalculateBookingCostAsync(booking, request);
-                booking.Amount = totalAmount;
+                booking.Amount = booking.Type == BookingType.Fixed_UnSetEndDate ? -1 : totalAmount;
+                booking.EstimateCost = totalAmount;
+                booking.Deposit = totalAmount;
                 booking.Discount = discount;
 
                 await _repository.AddAsync(booking);
@@ -102,6 +107,9 @@ namespace Application.Features.Bookings.Commands
 
                 await _unitOfWork.CommitAsync();
 
+                #endregion
+
+                #region notify
                 // Gửi thông báo
                 var payload = new
                 {
@@ -120,9 +128,13 @@ namespace Application.Features.Bookings.Commands
                 };
                 await _slotNotification.NotifyBookingCreatedAsync(payload, cancellationToken);
 
+                #endregion
+
+                #region return
                 var result = _mapper.Map<BookingDTO>(booking);
                 result.PaymentLink = paymentUrl;
                 return Result<BookingDTO>.Success(result);
+                #endregion
             }
             catch (Exception ex)
             {

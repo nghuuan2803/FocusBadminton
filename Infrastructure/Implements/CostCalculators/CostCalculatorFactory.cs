@@ -10,7 +10,6 @@ namespace Infrastructure.Implements.CostCalculators
     {
         private readonly IRepository<TimeSlot> _timeSlotRepo;
         private readonly IRepository<Court> _courtRepo;
-        private readonly IRepository<Voucher> _voucherRepo;
         private readonly IRepository<Promotion> _promotionRepo;
         private readonly IRepository<BusinessRule> _ruleRepo;
         private readonly IRepository<Member> _memberRepo;
@@ -25,7 +24,6 @@ namespace Infrastructure.Implements.CostCalculators
         {
             _timeSlotRepo = timeSlotRepo;
             _courtRepo = courtRepo;
-            _voucherRepo = voucherRepo;
             _promotionRepo = promotionRepo;
             _ruleRepo = ruleRepo;
             _memberRepo = memberRepo;
@@ -55,8 +53,6 @@ namespace Infrastructure.Implements.CostCalculators
                 calculator = new WeekendCostDecorator(calculator, _ruleRepo);
             if (request.MemberId.HasValue)
                 calculator = new MemberLevelCostDecorator(calculator, _memberRepo);
-            if (request.VoucherId.HasValue)
-                calculator = new VoucherCostDecorator(calculator, _voucherRepo);
             if (request.PromotionId.HasValue)
                 calculator = new PromotionCostDecorator(calculator, _promotionRepo);
 

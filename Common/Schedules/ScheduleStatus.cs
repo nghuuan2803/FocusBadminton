@@ -9,6 +9,7 @@
         Booked = 4,
         Completed = 5,
         Paused = 6,
-        Blocked = 7
+        Blocked = 7,
+        Creating = 8,
     }
 }

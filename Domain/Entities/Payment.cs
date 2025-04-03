@@ -20,6 +20,6 @@ namespace Domain.Entities
         public DateTime PaidAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
-        //public string? TransactionId { get; set; }
+        public string? TransactionId { get; set; }
     }
 }

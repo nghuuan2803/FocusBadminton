@@ -58,6 +58,7 @@ namespace Web.Client.SlotStates
                 ScheduleStatus.TimeOut => new TimeOutState(),
                 ScheduleStatus.Blocked => new BlockedState(),
                 ScheduleStatus.Completed => new CompletedState(),
+                ScheduleStatus.Creating => new CreatingState(),
                 _ => throw new ArgumentException("Trạng thái không hợp lệ")
             };
             if (state is HeldState && HeldBy == user)

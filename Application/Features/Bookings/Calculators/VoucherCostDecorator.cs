@@ -1,9 +1,8 @@
 ﻿using Application.Interfaces;
-using Domain.Entities;
 using Domain.Repositories;
 using Shared.CostCalculators;
 
-namespace Infrastructure.Implements.CostCalculators
+namespace Application.Features.Bookings.Calculators
 {
     public class VoucherCostDecorator : ICostCalculator
     {
@@ -23,12 +22,13 @@ namespace Infrastructure.Implements.CostCalculators
                 return -1;
             var voucher = await _voucherRepo.FindAsync(request.VoucherId);
             if (voucher == null)
-                return -1;
+                return baseCost;
             voucher.IsUsed = true;
             _voucherRepo.Update(voucher);
+            await _voucherRepo.SaveAsync();
             if (voucher.DiscountType == Shared.Enums.DiscountType.Percent)
                 //vd: discount = 15%, base cost = 50000 => cost = 50000 - 50000 x 15 / 100 = 42500
-                return baseCost - (baseCost * voucher.Value) / 100;
+                return baseCost - baseCost * voucher.Value / 100;
             else
                 return baseCost - voucher.Value;
         }

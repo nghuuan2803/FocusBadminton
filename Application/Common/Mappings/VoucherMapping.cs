@@ -11,7 +11,7 @@ namespace Application.Common.Mappings
                 Id = voucher.Id,
                 Name = voucher.Name,
                 Description = voucher.Description,
-                DiscountType = voucher.DiscountType.ToString(),
+                DiscountType = voucher.DiscountType,
                 Value = voucher.Value,
                 MaximumValue = voucher.MaximumValue,
                 VoucherTemplateId = voucher.VoucherTemplateId,

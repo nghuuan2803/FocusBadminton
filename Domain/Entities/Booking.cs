@@ -13,6 +13,7 @@ namespace Domain.Entities
         public DateTimeOffset? ApprovedAt { get; set; }
         public DateTimeOffset? CompletedAt { get; set; }
         public double Amount { get; set; }
+        public double EstimateCost { get; set; }
         public double Deposit { get; set; }
         public int? VoucherId { get; set; } = null;
         public Voucher? Voucher { get; set; }
@@ -28,7 +29,7 @@ namespace Domain.Entities
         public string? Note { get; set; }
         [MaxLength(250)]
         public string? AdminNote { get; set; }
-        public BookingStatus Status { get; set; } = BookingStatus.Pending;
+        public BookingStatus Status { get; set; } = BookingStatus.Creating;
 
         public virtual ICollection<BookingDetail>? Details { get; set; }
     }

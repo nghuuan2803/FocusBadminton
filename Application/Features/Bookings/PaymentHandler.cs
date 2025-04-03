@@ -31,7 +31,7 @@ namespace Application.Features.Bookings
             {
                 BookingId = booking.Id,
                 Method = request.PaymentMethod,
-                Amount = request.Deposit > 0 ? request.Deposit : booking.Amount,
+                Amount = booking.Amount > 0 ? booking.Amount : booking.EstimateCost,
                 Type = request.Deposit > 0 ? PaymentType.Deposit : PaymentType.CompleteBooking,
                 Status = PaymentStatus.Pending
             };
@@ -39,13 +39,11 @@ namespace Application.Features.Bookings
             switch (request.PaymentMethod)
             {
                 case PaymentMethod.Cash:
-                    payment.Status = PaymentStatus.Pending;
                     payment.PaidAt = DateTime.Now;
+                    booking.Status = BookingStatus.Pending;
                     break;
 
                 case PaymentMethod.BankTransfer:
-                    payment.Image = request.TransactionImage;
-                    payment.Status = PaymentStatus.Pending;
                     break;
 
                 case PaymentMethod.Momo:

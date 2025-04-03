@@ -123,15 +123,15 @@ namespace Infrastructure.Migrations
                         {
                             Id = "8c18473e-f0be-4202-bc37-38ced67318cb",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "16f27721-27a8-4812-99fe-03bdd1e67e85",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(509), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "760ec17b-0bef-4d93-8775-eb4e3fcaf196",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 51, DateTimeKind.Unspecified).AddTicks(7700), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "System",
                             Email = "nghuuan2803@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "NGHUUAN2803@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIZz4erD+gay8IBrpf2XSmpiVeci/jIkvZYTQSiNL8r9+vPQ7XgcEBEaLdTduNQHEw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECte86TXvA06vCnFejPOSjIljRJKWWwzSbqXT2zPAATIrGvhmhRgm62eDLEh/AtfSw==",
                             PersonalPoints = 0.0,
                             PhoneNumberConfirmed = false,
                             RewardPoints = 0.0,
@@ -142,15 +142,15 @@ namespace Infrastructure.Migrations
                         {
                             Id = "845d2699-2419-4cd6-96ac-1d592f143e41",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "de54d49f-9429-40c1-8ffa-8bb49d621e45",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(516), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "6c5af02b-2215-492d-b39f-b4da57beb62a",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 51, DateTimeKind.Unspecified).AddTicks(7707), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "System",
                             Email = "anhuu2803@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ANHUU2803@GMAIL.COM",
                             NormalizedUserName = "SYS_ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEN2iTha805bc48lwWsm/2SsFHmdNHUGG8R1yaMbB/ZNVj6r4GkglfZh6Q+1xASaitg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKg/WJQn6sP4pUDB5/UP2wEN08hhcH0ShlMIG4717/3Y0qCVjqc66onMuDggcxZsxg==",
                             PersonalPoints = 0.0,
                             PhoneNumberConfirmed = false,
                             RewardPoints = 0.0,
@@ -161,15 +161,15 @@ namespace Infrastructure.Migrations
                         {
                             Id = "0cb31850-6e26-43b0-bd66-ae58e99cad7d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "538b3989-d40b-4fb8-ac41-f3805471c089",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 14, 13, 56, 737, DateTimeKind.Unspecified).AddTicks(520), new TimeSpan(0, 0, 0, 0, 0)),
+                            ConcurrencyStamp = "90a111b3-0909-4785-8233-4cc1699ef392",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 51, DateTimeKind.Unspecified).AddTicks(7710), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "System",
                             Email = "anhuu2803@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ANHUU2803@GMAIL.COM",
                             NormalizedUserName = "manager",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKyW1rVEQA8ZJzT1uv1ulEmqUUP8DqGSeLs6GBWEOORPvMBg3hJZqmNJbm1u+LNCkA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIPlDXpCNVZx6+lVpKlCydBDkUHB0wYoWaTU6eHL4BQQ/NB7Z/rec8RcEWnkEqWeRA==",
                             PersonalPoints = 0.0,
                             PhoneNumberConfirmed = false,
                             RewardPoints = 0.0,
@@ -211,6 +211,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("Discount")
+                        .HasColumnType("float");
+
+                    b.Property<double>("EstimateCost")
                         .HasColumnType("float");
 
                     b.Property<int>("MemberId")
@@ -419,7 +422,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "open_time",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1893), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2588), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Giờ mở cửa",
@@ -428,7 +431,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "close_time",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1931), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2592), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Giờ đóng cửa",
@@ -437,7 +440,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "price_friday",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1932), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2594), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Chỉnh giá thứ 6",
@@ -446,7 +449,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "price_saturday",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1934), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2595), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Chỉnh giá thứ 7",
@@ -455,7 +458,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "price_sunday",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1935), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2596), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Chỉnh giá Chủ nhật",
@@ -464,7 +467,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "deposit_rate_hourly",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1936), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2597), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = false,
                             Name = "Yêu cầu đặt cọc khi đặt theo giờ",
@@ -473,7 +476,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "deposit_rate_fixed",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1938), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2598), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Yêu cầu đặt cọc khi đặt cố định",
@@ -482,7 +485,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "payment_hourly",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1939), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2599), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Yêu cầu thanh toán khi đặt theo giờ",
@@ -491,7 +494,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "login_hourly",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1940), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2600), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = false,
                             Name = "Yêu cầu đăng nhập khi đặt theo giờ",
@@ -500,7 +503,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "login_fixed",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1942), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2667), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Yêu cầu đăng nhập khi đặt cố định",
@@ -509,7 +512,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "release_slot",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(1943), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(2668), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             IsApplied = true,
                             Name = "Thời gian tự nhả lịch nếu không đặt",
@@ -605,7 +608,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             Coofficient = 1.2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3998), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7060), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 1 (VIP)",
@@ -616,7 +619,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 2,
                             Coofficient = 1.2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4001), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7061), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 2 (VIP)",
@@ -627,7 +630,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 3,
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4003), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7063), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 3",
@@ -638,7 +641,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 4,
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4004), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7063), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 4",
@@ -649,7 +652,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 5,
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(4006), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7065), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             FacilityId = 1,
                             Name = "Sân 5",
@@ -730,7 +733,7 @@ namespace Infrastructure.Migrations
                             Id = 1,
                             Address = "16 Đ. 53, Phường 14, Gò Vấp, Hồ Chí Minh",
                             Coofficient = 1.0,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3967), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7025), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Latitude = "10.850212299999999",
                             Longitude = "106.64369049999999",
@@ -916,6 +919,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -1203,7 +1209,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2419), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5520), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.050000000000000003,
                             MinPoints = 500000.0,
@@ -1212,7 +1218,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2423), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5524), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.10000000000000001,
                             MinPoints = 1500000.0,
@@ -1221,7 +1227,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2425), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5525), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.14999999999999999,
                             MinPoints = 5000000.0,
@@ -1230,7 +1236,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2426), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5526), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountPercent = 0.20000000000000001,
                             MinPoints = 15000000.0,
@@ -1287,7 +1293,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2665), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5788), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 5, 30, 0, 0),
@@ -1299,7 +1305,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2697), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5857), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 6, 0, 0, 0),
@@ -1311,7 +1317,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2721), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5877), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 6, 30, 0, 0),
@@ -1323,7 +1329,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2746), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5933), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 7, 0, 0, 0),
@@ -1335,7 +1341,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2925), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6125), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 7, 30, 0, 0),
@@ -1347,7 +1353,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3077), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6299), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 8, 0, 0, 0),
@@ -1359,7 +1365,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3119), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6323), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 8, 30, 0, 0),
@@ -1371,7 +1377,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3184), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6344), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 9, 0, 0, 0),
@@ -1383,7 +1389,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3209), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6363), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 9, 30, 0, 0),
@@ -1395,7 +1401,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3232), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6383), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 10, 0, 0, 0),
@@ -1407,7 +1413,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3255), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6401), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 10, 30, 0, 0),
@@ -1419,7 +1425,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3276), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6419), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 11, 0, 0, 0),
@@ -1431,7 +1437,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 13,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3297), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6439), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 11, 30, 0, 0),
@@ -1443,7 +1449,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 14,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3319), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6457), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 12, 0, 0, 0),
@@ -1455,7 +1461,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 15,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3348), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6484), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 12, 30, 0, 0),
@@ -1467,7 +1473,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 16,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3371), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6501), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 13, 0, 0, 0),
@@ -1479,7 +1485,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 17,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3393), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6519), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 13, 30, 0, 0),
@@ -1491,7 +1497,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 18,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3416), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6544), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 14, 0, 0, 0),
@@ -1503,7 +1509,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 19,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3438), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6561), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 14, 30, 0, 0),
@@ -1515,7 +1521,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 20,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3459), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6580), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 15, 0, 0, 0),
@@ -1527,7 +1533,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 21,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3481), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6598), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 15, 30, 0, 0),
@@ -1539,7 +1545,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 22,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3503), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6616), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 16, 0, 0, 0),
@@ -1551,7 +1557,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 23,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3557), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6633), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 16, 30, 0, 0),
@@ -1563,7 +1569,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 24,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3580), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6734), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 17, 0, 0, 0),
@@ -1575,7 +1581,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 25,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3603), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6756), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 17, 30, 0, 0),
@@ -1587,7 +1593,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 26,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3624), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6778), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 18, 0, 0, 0),
@@ -1599,7 +1605,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 27,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3646), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6796), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 18, 30, 0, 0),
@@ -1611,7 +1617,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 28,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3667), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6813), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 19, 0, 0, 0),
@@ -1623,7 +1629,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 29,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3732), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6831), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 19, 30, 0, 0),
@@ -1635,7 +1641,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 30,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3756), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6849), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 20, 0, 0, 0),
@@ -1647,7 +1653,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 31,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3785), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6877), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 20, 30, 0, 0),
@@ -1659,7 +1665,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 32,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3808), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6895), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 21, 0, 0, 0),
@@ -1671,7 +1677,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 33,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3831), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6913), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 21, 30, 0, 0),
@@ -1683,7 +1689,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 34,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3856), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6933), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 22, 0, 0, 0),
@@ -1695,7 +1701,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 35,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3878), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6951), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 22, 30, 0, 0),
@@ -1707,7 +1713,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 36,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3899), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6969), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 23, 0, 0, 0),
@@ -1719,7 +1725,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 37,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3921), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(6986), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(0, 23, 30, 0, 0),
@@ -1731,7 +1737,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 38,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(3943), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(7005), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             Duration = 0.5,
                             EndTime = new TimeSpan(1, 0, 0, 0, 0),
@@ -1864,7 +1870,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2535), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5630), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 1,
                             Duration = 30,
@@ -1875,7 +1881,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2532), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5628), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 1,
                             Duration = 30,
@@ -1886,7 +1892,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2537), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5631), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 1,
                             Duration = 15,
@@ -1897,7 +1903,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2539), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5633), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 0,
                             Duration = 15,
@@ -1908,7 +1914,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 21, 13, 56, 973, DateTimeKind.Unspecified).AddTicks(2540), new TimeSpan(0, 7, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 3, 5, 56, 20, 283, DateTimeKind.Unspecified).AddTicks(5634), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = "system",
                             DiscountType = 0,
                             Duration = 15,

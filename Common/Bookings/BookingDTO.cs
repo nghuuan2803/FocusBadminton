@@ -16,6 +16,7 @@ namespace Shared.Bookings
         public DateTimeOffset? ApprovedAt { get; set; }
         public DateTimeOffset? CompletedAt { get; set; }
         public double Amount { get; set; }
+        public double EstimateCost { get; set; }
         public double Deposit { get; set; }
         public int? VoucherId { get; set; }
         public int? PromotionId { get; set; }

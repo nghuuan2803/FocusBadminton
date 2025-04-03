@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Features.Bookings;
+using Application.Interfaces;
 using Application.Models.PaymentModels;
 using Domain.Common;
 using Domain.Entities;
@@ -16,17 +17,15 @@ namespace Web.Endpoints
         private readonly IRepository<Payment> _paymentRepo;
         private readonly IRepository<Booking> _bookingRepo;
         private readonly IUnitOfWork _unitOfWork;
-
+        private readonly IServiceProvider _serviceProvider;
         public PaymentController(
-            IPaymentAdapterFactory adapterFactory,
-            IRepository<Payment> paymentRepo,
-            IRepository<Booking> bookingRepo,
-            IUnitOfWork unitOfWork)
+            IServiceProvider serviceProvider)
         {
-            _adapterFactory = adapterFactory;
-            _paymentRepo = paymentRepo;
-            _bookingRepo = bookingRepo;
-            _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
+            _adapterFactory = serviceProvider.GetRequiredService<IPaymentAdapterFactory>();
+            _paymentRepo = serviceProvider.GetRequiredService<IRepository<Payment>>();
+            _bookingRepo = serviceProvider.GetRequiredService<IRepository<Booking>>();
+            _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
         }
 
         [HttpPost("momo-notify")]
@@ -78,7 +77,8 @@ namespace Web.Endpoints
             var result = await adapter.VerifyPaymentAsync(new PaymentVerificationRequest { QueryData = Request.Query });
             string[] info = result.OrderInfo.Split();
             int bookingId = int.Parse(info[info.Length - 1]);
-            if (!result.IsSuccess) return Redirect($"focusbadminton://payment-callback?bookingId={result.OrderId}&resultCode=1000&amount={result.Amount}");
+            if (!result.IsSuccess)
+                return Redirect($"focusbadminton://payment-callback?bookingId={result.OrderId}&resultCode=1000&amount={result.Amount}");
 
             await _unitOfWork.BeginAsync();
             try
@@ -95,12 +95,14 @@ namespace Web.Endpoints
                     {
                         var totalPaid = (await _paymentRepo.GetAllAsync(p => p.BookingId == booking.Id && p.Status == PaymentStatus.Succeeded))
                             .Sum(p => p.Amount);
-                        if (booking.Status == BookingStatus.Pending)
+                        if (booking.Status == BookingStatus.Creating)
                         {
                             booking.Status = BookingStatus.Approved;
                             booking.ApprovedAt = DateTimeOffset.UtcNow;
                             _bookingRepo.Update(booking);
                         }
+                        var PointHandler = new UserPointsHandler(_serviceProvider);
+                        await PointHandler.Handle(result.Amount, booking.MemberId);
                     }
                     await _unitOfWork.CommitAsync();
                 }
@@ -128,7 +130,6 @@ namespace Web.Endpoints
                 if (payment != null)
                 {
                     payment.Status = result.IsSuccess ? PaymentStatus.Succeeded : PaymentStatus.Failed;
-                    //payment.Status = result.IsSuccess ? PaymentStatus.Succeeded : PaymentStatus.Failed;
                     payment.PaidAt = DateTime.UtcNow;
                     _paymentRepo.Update(payment);
 
@@ -137,12 +138,14 @@ namespace Web.Endpoints
                     {
                         var totalPaid = (await _paymentRepo.GetAllAsync(p => p.BookingId == bookingId && p.Status == PaymentStatus.Succeeded))
                             .Sum(p => p.Amount);
-                        if (booking.Status == BookingStatus.Pending)
+                        if (booking.Status == BookingStatus.Creating)
                         {
                             booking.Status = BookingStatus.Approved;
                             booking.ApprovedAt = DateTimeOffset.UtcNow;
                             _bookingRepo.Update(booking);
                         }
+                        var PointHandler = new UserPointsHandler(_serviceProvider);
+                        await PointHandler.Handle(result.Amount, booking.MemberId);
                     }
                     await _unitOfWork.CommitAsync();
                 }
@@ -156,16 +159,5 @@ namespace Web.Endpoints
             var deepLink = $"focusbadminton://payment-callback?bookingId={bookingId}&resultCode={(result.IsSuccess ? "0" : "1000")}&amount={result.Amount}";
             return Redirect(deepLink);
         }
-    }
-    public class ConfirmPaymentRequest
-    {
-        public bool IsApproved { get; set; }
-    }
-
-    public class MomoResultRequest
-    {
-        public string OrderId { get; set; }
-        public string ResultCode { get; set; }
-        public double Amount { get; set; }
     }
 }
