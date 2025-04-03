@@ -1,5 +1,4 @@
 ﻿using Shared.Members;
-using System.Net.Http.Json;
 
 namespace Web.Client.ApiServices
 {
