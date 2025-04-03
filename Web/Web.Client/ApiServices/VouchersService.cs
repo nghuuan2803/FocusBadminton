@@ -1,5 +1,4 @@
 ﻿using Shared.Vouchers;
-using System.Net.Http.Json;
 
 namespace Web.Client.ApiServices
 {
@@ -26,6 +25,19 @@ namespace Web.Client.ApiServices
             var response = await _httpClient.PostAsJsonAsync(BaseUrl, request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<VoucherDTO>();
+        }
+
+        public async Task<bool> BulkCreateVouchersAsync(int templateId, List<string> accountIds, DateTimeOffset? expiry)
+        {
+            var command = new BulkCreateVoucherRequest
+            {
+                VoucherTemplateId = templateId,
+                AccountIds = accountIds,
+                Expiry = expiry
+            };
+            var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/bulk-create", command);
+            response.EnsureSuccessStatusCode();
+            return true;
         }
 
         // Lấy danh sách voucher templates

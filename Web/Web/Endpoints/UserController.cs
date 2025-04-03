@@ -45,6 +45,7 @@ public class UserController : ControllerBase
 
             var userInfo = new
             {
+                memberId = member.Id,
                 name = member?.FullName,
                 email = user.Email,
                 phoneNumber = member?.PhoneNumber,

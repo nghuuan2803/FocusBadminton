@@ -15,12 +15,12 @@
         <a>@context.Name</a>
     </PropertyColumn>
     <PropertyColumn Property="c=>c.DiscountType" Title="Loại phiếu">
-        <a>@(context.DiscountType == DiscountType.Percent ? "Phần trăm" : "Cố định")</a>
+        <a>@(context.DiscountType == 1 ? "Phần trăm" : "Cố định")</a>
     </PropertyColumn>
     <PropertyColumn Property="c=>c.Value" Title="Trị giá">
-        <a>@(context.DiscountType == DiscountType.Percent ? context.Value + " %" : context.Value.ToString("#,0 đ"))</a>
+        <a>@(context.DiscountType == 1 ? context.Value + " %" : context.Value.ToString("#,0 đ"))</a>
     </PropertyColumn>
-    <ActionColumn Title="Tặng phiếu">
+    @* <ActionColumn Title="Tặng phiếu">
         <Space Size="SpaceSize.Middle">
             <SpaceItem>
                 <Select DataSource="@members"
@@ -32,23 +32,25 @@
                 </Select>
             </SpaceItem>
         </Space>
-    </ActionColumn>
+    </ActionColumn> *@
     <ActionColumn Title="Action">
         <Space Size="SpaceSize.Middle">
             <SpaceItem>
                 <Button OnClick="@(() => ShowEditTemplateModal(context))" Icon="@IconType.Outline.Edit"></Button>
                 <Button OnClick="@(() => DeleteTemplate(context.Id))" Icon="@IconType.Outline.Delete"></Button>
+                <Button OnClick="@(() => ShowGiftVoucherModal(context))" Icon="@IconType.Outline.Gift">Tặng phiếu</Button>
+                <Button OnClick="@(() => GiftToAllMembers(context))" Icon="@IconType.Outline.Team">Tặng tất cả</Button>
             </SpaceItem>
         </Space>
     </ActionColumn>
 </Table>
 
-<!-- Modal tạo/sửa mẫu voucher -->
-<Modal Title="@(editingTemplate == null ? "Tạo mẫu voucher" : "Sửa mẫu voucher")"
-       Visible="@isTemplateModalVisible"
-       OnOk="HandleTemplateSubmit"
-       OnCancel="HideTemplateModal">
-    <EditForm Model="@newTemplate" OnValidSubmit="HandleTemplateSubmit">
+<!-- Modal tạo mẫu voucher -->
+<Modal Title="Tạo mẫu voucher"
+       Visible="@isCreateModalVisible"
+       OnOk="HandleCreateTemplate"
+       OnCancel="HideCreateModal">
+    <EditForm Model="@newTemplate" OnValidSubmit="HandleCreateTemplate">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <div class="form-group">
@@ -61,10 +63,10 @@
         </div>
         <div class="form-group">
             <label>Loại giảm giá</label>
-            <InputSelect class="form-control" @bind-Value="@newTemplate.DiscountType">
-                <option value="@DiscountType.Percent">Phần trăm</option>
-                <option value="@DiscountType.Point">Số tiền cố định</option>
-            </InputSelect>
+            <RadioGroup @bind-Value="@newTemplate.DiscountType">
+                <Radio Value="1">Phần trăm</Radio>
+                <Radio Value="0">Số tiền cố định</Radio>
+            </RadioGroup>
         </div>
         <div class="form-group">
             <label>Giá trị</label>
@@ -79,13 +81,54 @@
             <AntDesign.InputNumber TValue="int" class="form-control" @bind-Value="@newTemplate.Duration" Min="1" />
         </div>
         <button type="submit" class="btn btn-primary mt-2" disabled="@isCreatingTemplate">
-            @(isCreatingTemplate ? "Đang xử lý..." : (editingTemplate == null ? "Tạo mẫu" : "Cập nhật"))
+            @(isCreatingTemplate ? "Đang xử lý..." : "Tạo mẫu")
+        </button>
+    </EditForm>
+</Modal>
+
+<!-- Modal sửa mẫu voucher -->
+<Modal Title="Sửa mẫu voucher"
+       Visible="@isEditModalVisible"
+       OnOk="HandleUpdateTemplate"
+       OnCancel="HideEditModal">
+    <EditForm Model="@editTemplate" OnValidSubmit="HandleUpdateTemplate">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label>Tên mẫu</label>
+            <InputText class="form-control" @bind-Value="@editTemplate.Name" />
+        </div>
+        <div class="form-group">
+            <label>Mô tả</label>
+            <InputTextArea class="form-control" @bind-Value="@editTemplate.Description" />
+        </div>
+        <div class="form-group">
+            <label>Loại giảm giá</label>
+            <RadioGroup @bind-Value="@editTemplate.DiscountType">
+                <Radio Value="1">Phần trăm</Radio>
+                <Radio Value="0">Số tiền cố định</Radio>
+            </RadioGroup>
+        </div>
+        <div class="form-group">
+            <label>Giá trị</label>
+            <AntDesign.InputNumber TValue="double" class="form-control" @bind-Value="@editTemplate.Value" Min="0" />
+        </div>
+        <div class="form-group">
+            <label>Giá trị tối đa</label>
+            <AntDesign.InputNumber TValue="double" class="form-control" @bind-Value="@editTemplate.MaximumValue" Min="0" />
+        </div>
+        <div class="form-group">
+            <label>Thời hạn (ngày)</label>
+            <AntDesign.InputNumber TValue="int" class="form-control" @bind-Value="@editTemplate.Duration" Min="1" />
+        </div>
+        <button type="submit" class="btn btn-primary mt-2" disabled="@isCreatingTemplate">
+            @(isCreatingTemplate ? "Đang xử lý..." : "Cập nhật")
         </button>
     </EditForm>
 </Modal>
 
 <!-- Modal tặng voucher -->
-<Modal Title="Tặng voucher"
+@* <Modal Title="Tặng voucher"
        Visible="@isGiftModalVisible"
        OnOk="HandleGiftVoucher"
        OnCancel="HideGiftVoucherModal">
@@ -103,6 +146,43 @@
         <label>Ngày hết hạn (tùy chọn)</label>
         <InputDate class="form-control" @bind-Value="@voucherRequest.Expiry" />
     </div>
+</Modal> *@
+
+<Modal Title="Tặng voucher"
+       Visible="@isGiftModalVisible"
+       OnOk="HandleGiftVoucher"
+       OnCancel="HideGiftVoucherModal">
+    <div class="form-group">
+        <label>Tên mẫu:</label>
+        <p>@selectedTemplate?.Name</p>
+    </div>
+    <div class="form-group">
+        <label>Loại giảm giá:</label>
+        <p>@(selectedTemplate?.DiscountType == 1 ? "Phần trăm" : "Cố định")</p>
+    </div>
+    <div class="form-group">
+        <label>Giá trị:</label>
+        <p>@(selectedTemplate?.DiscountType == 1 ? $"{selectedTemplate.Value} %" : selectedTemplate?.Value.ToString("#,0 đ"))</p>
+    </div>
+    <div class="form-group">
+        <label>Thời hạn (ngày):</label>
+        <p>@selectedTemplate?.Duration</p>
+    </div>
+    <div class="form-group">
+        <label>Chọn thành viên:</label>
+        <Select 
+                DataSource="@members"
+                @bind-Value="@_selectedMember"
+                ItemLabel="p=>p.FullName"
+                Placeholder="Chọn thành viên"
+                EnableSearch
+                AutoClearSearchValue="false">
+        </Select>
+    </div>
+    <div class="form-group">
+        <label>Ngày hết hạn (tùy chọn):</label>
+        <InputDate class="form-control" @bind-Value="@voucherRequest.Expiry" />
+    </div>
 </Modal>
 
 @code {
@@ -114,9 +194,10 @@
     private VoucherRequest voucherRequest = new VoucherRequest();
     private bool isCreatingTemplate = false;
     private bool isCreatingVoucher = false;
-    private HashSet<string> selectedMemberIds = new();
+    private List<string> selectedMemberIds = new();
 
-    private bool isTemplateModalVisible = false;
+    private bool isCreateModalVisible = false;
+    private bool isEditModalVisible = false;
     private bool isGiftModalVisible = false;
     private string templateSearch = string.Empty;
     private int templatePageSize = 10;
@@ -127,6 +208,8 @@
     private int memberPageNumber = 1;
     private int memberTotal = 0;
     int _total;
+
+    private VoucherTemplateDTO? selectedTemplate = null;
 
     void OnSelectedItemChangedHandler(MemberDTO member)
     {

@@ -95,7 +95,7 @@ namespace Application.Features.Bookings.Commands
                 var (totalAmount, discount) = await _costProcessor.CalculateBookingCostAsync(booking, request);
                 booking.Amount = booking.Type == BookingType.Fixed_UnSetEndDate ? -1 : totalAmount;
                 booking.EstimateCost = totalAmount;
-                booking.Deposit = totalAmount;
+                booking.Deposit = totalAmount-discount;
                 booking.Discount = discount;
 
                 await _repository.AddAsync(booking);
