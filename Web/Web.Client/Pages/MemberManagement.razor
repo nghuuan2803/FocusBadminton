@@ -25,15 +25,6 @@
     <PropertyColumn Property="m => m.PhoneNumber" Title="Số điện thoại">
         @(context.PhoneNumber ?? "N/A")
     </PropertyColumn>
-    <PropertyColumn Property="m => m.AccountId" Title="Account ID">
-        @(context.AccountId ?? "N/A")
-    </PropertyColumn>
-    <PropertyColumn Property="m => m.CurrentTeamId" Title="Team ID">
-        @(context.CurrentTeamId.HasValue ? context.CurrentTeamId.Value.ToString() : "N/A")
-    </PropertyColumn>
-    <PropertyColumn Property="m => m.JoinedTeamAt" Title="Ngày vào đội">
-        @(context.JoinedTeamAt.HasValue ? context.JoinedTeamAt.Value.ToString("yyyy-MM-dd") : "N/A")
-    </PropertyColumn>
     <PropertyColumn Property="m => m.Gender" Title="Giới tính">
         @(context.Gender ?? "N/A")
     </PropertyColumn>
@@ -42,9 +33,6 @@
     </PropertyColumn>
     <PropertyColumn Property="m => m.Address" Title="Địa chỉ">
         @(context.Address ?? "N/A")
-    </PropertyColumn>
-    <PropertyColumn Property="m => m.Contributed" Title="Đóng góp">
-        @context.Contributed.ToString("#,0.0")
     </PropertyColumn>
 </Table>
 
