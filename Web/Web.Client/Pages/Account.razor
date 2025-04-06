@@ -1,5 +1,18 @@
 ﻿@page "/account"
+@inject IMessageService _message
+
+<Button Type="ButtonType.Primary" @onclick="ShowMessage">Thêm tài khoản</Button>
 
 @code {
-
+    private async Task ShowMessage(MouseEventArgs args)
+    {
+        var cofig = new MessageConfig()
+            {
+                Content = "Action in progress..",
+                Duration = 0
+            };
+        var task = _message.Loading(cofig);
+        await Task.Delay(2000);
+        task.Start();
+    }
 }

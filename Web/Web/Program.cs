@@ -6,10 +6,10 @@ using Web.Hubs;
 using Application;
 using Application.Interfaces;
 using Web.NotificationServices;
-using Web.Crons;
 using Infrastructure.Identity.LoginStrategies;
 using Web.Components;
 using Infrastructure.Identity.LoginFactories;
+using Web.CronJobs;
 
 
 namespace Web
@@ -71,7 +71,8 @@ namespace Web
                         }));
             });
             builder.Services.AddPolicies();
-            builder.Services.AddHostedService<AutoReleaseSlot>();
+            //builder.Services.AddHostedService<AutoReleaseSlot>();
+            builder.Services.AddHostedService<AutoCancelExpiredBooking>();
 
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IAuthService, AuthService>();

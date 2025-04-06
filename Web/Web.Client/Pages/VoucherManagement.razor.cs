@@ -47,7 +47,7 @@ namespace Web.Client.Pages
             }
             catch (Exception ex)
             {
-                await MessageService.Error($"Lỗi khi tải danh sách mẫu: {ex.Message}");
+               MessageService.Error($"Lỗi khi tải danh sách mẫu: {ex.Message}");
             }
             StateHasChanged();
         }
@@ -70,7 +70,7 @@ namespace Web.Client.Pages
             }
             catch (Exception ex)
             {
-                await MessageService.Error($"Lỗi khi tải danh sách thành viên: {ex.Message}");
+               MessageService.Error($"Lỗi khi tải danh sách thành viên: {ex.Message}");
             }
             StateHasChanged();
         }
@@ -116,22 +116,20 @@ namespace Web.Client.Pages
         {
             if (string.IsNullOrWhiteSpace(newTemplate.Name))
             {
-                await MessageService.Error("Tên mẫu không được để trống!");
-                MessageService.Destroy();
+               MessageService.Error("Tên mẫu không được để trống!");
+                
 
                 return;
             }
             if (newTemplate.Value <= 0)
             {
-                await MessageService.Error("Giá trị phải lớn hơn 0!");
-                MessageService.Destroy();
+                MessageService.Error("Giá trị phải lớn hơn 0!");
 
                 return;
             }
             if (newTemplate.Duration <= 0)
             {
-                await MessageService.Error("Thời hạn phải lớn hơn 0!");
-                MessageService.Destroy();
+                MessageService.Error("Thời hạn phải lớn hơn 0!");
 
                 return;
             }
@@ -150,27 +148,23 @@ namespace Web.Client.Pages
                         MaximumValue = 0,
                         Duration = 30
                     };
-                    await MessageService.Success("Tạo mẫu voucher thành công!");
-                    MessageService.Destroy();
+                    MessageService.Success("Tạo mẫu voucher thành công!");
 
                     isCreateModalVisible = false;
                     await LoadTemplates();
                 }
                 else
                 {
-                    await MessageService.Error("Không thể tạo mẫu voucher!");
-                    MessageService.Destroy();
+                    MessageService.Error("Không thể tạo mẫu voucher!");
                 }
             }
             catch (HttpRequestException ex)
             {
-                await MessageService.Error($"Lỗi khi tạo mẫu: {ex.Message} (Status: {ex.StatusCode})");
-                MessageService.Destroy();
+                 MessageService.Error($"Lỗi khi tạo mẫu: {ex.Message} (Status: {ex.StatusCode})");
             }
             catch (Exception ex)
             {
-                await MessageService.Error($"Lỗi không xác định: {ex.Message}");
-                MessageService.Destroy();
+                MessageService.Error($"Lỗi không xác định: {ex.Message}");
             }
             finally
             {
@@ -183,20 +177,17 @@ namespace Web.Client.Pages
         {
             if (string.IsNullOrWhiteSpace(editTemplate.Name))
             {
-                await MessageService.Error("Tên mẫu không được để trống!");
-                MessageService.Destroy();
+                MessageService.Error("Tên mẫu không được để trống!");
                 return;
             }
             if (editTemplate.Value <= 0)
             {
-                await MessageService.Error("Giá trị phải lớn hơn 0!");
-                MessageService.Destroy();
+                MessageService.Error("Giá trị phải lớn hơn 0!");
                 return;
             }
             if (editTemplate.Duration <= 0)
             {
-                await MessageService.Error("Thời hạn phải lớn hơn 0!");
-                MessageService.Destroy();
+                MessageService.Error("Thời hạn phải lớn hơn 0!");
                 return;
             }
 
@@ -211,27 +202,24 @@ namespace Web.Client.Pages
                     {
                         voucherTemplates[index] = updatedTemplate;
                     }
-                    await MessageService.Success("Cập nhật mẫu voucher thành công!");
-                    MessageService.Destroy();
+                    MessageService.Success("Cập nhật mẫu voucher thành công!");
 
                     isEditModalVisible = false;
                     await LoadTemplates();
                 }
                 else
                 {
-                    await MessageService.Error("Không thể cập nhật mẫu voucher!");
-                    MessageService.Destroy();
+                    MessageService.Error("Không thể cập nhật mẫu voucher!");
                 }
             }
             catch (HttpRequestException ex)
             {
-                await MessageService.Error($"Lỗi khi cập nhật mẫu: {ex.Message} (Status: {ex.StatusCode})");
-                MessageService.Destroy();
+                MessageService.Error($"Lỗi khi cập nhật mẫu: {ex.Message} (Status: {ex.StatusCode})");
             }
             catch (Exception ex)
             {
-                await MessageService.Error($"Lỗi không xác định: {ex.Message}");
-                MessageService.Destroy();
+                MessageService.Error($"Lỗi không xác định: {ex.Message}");
+
             }
             finally
             {
@@ -251,21 +239,19 @@ namespace Web.Client.Pages
                     if (success)
                     {
                         voucherTemplates.RemoveAll(t => t.Id == id);
-                        await MessageService.Success("Xóa mẫu voucher thành công!");
-                        MessageService.Destroy();
+                        MessageService.Success("Xóa mẫu voucher thành công!");
 
                         await LoadTemplates();
                     }
                     else
                     {
-                        await MessageService.Error("Không thể xóa mẫu voucher!");
-                        MessageService.Destroy();
+                        MessageService.Error("Không thể xóa mẫu voucher!");
                     }
                 }
                 catch (Exception ex)
                 {
-                    await MessageService.Error($"Lỗi: {ex.Message}");
-                    MessageService.Destroy();
+                   MessageService.Error($"Lỗi: {ex.Message}");
+                    
                 }
                 finally
                 {
@@ -292,7 +278,7 @@ namespace Web.Client.Pages
         {
             if (_selectedMember == null || string.IsNullOrEmpty(_selectedMember.AccountId))
             {
-                await MessageService.Error("Vui lòng chọn một thành viên!");
+               MessageService.Error("Vui lòng chọn một thành viên!");
                 return;
             }
 
@@ -306,20 +292,20 @@ namespace Web.Client.Pages
                     var createdVoucher = await VouchersService.CreateVoucherAsync(voucherRequest.VoucherTemplateId, _selectedMember.AccountId, expiry);
                     if (createdVoucher != null)
                     {
-                        await MessageService.Success($"Đã tặng voucher '{createdVoucher.Code}' cho {_selectedMember.FullName}!");
-                        MessageService.Destroy();
+                       MessageService.Success($"Đã tặng voucher '{createdVoucher.Code}' cho {_selectedMember.FullName}!");
+                        
                         isGiftModalVisible = false;
                     }
                     else
                     {
-                        await MessageService.Error("Không thể tặng voucher!");
-                        MessageService.Destroy();
+                       MessageService.Error("Không thể tặng voucher!");
+                        
                     }
                 }
                 catch (Exception ex)
                 {
-                    await MessageService.Error($"Lỗi: {ex.Message}");
-                    MessageService.Destroy();
+                   MessageService.Error($"Lỗi: {ex.Message}");
+                    
                 }
                 finally
                 {
@@ -345,8 +331,8 @@ namespace Web.Client.Pages
 
                 if (!validMemberIds.Any())
                 {
-                    await MessageService.Error("Không có thành viên hợp lệ để tặng voucher!");
-                    MessageService.Destroy();
+                   MessageService.Error("Không có thành viên hợp lệ để tặng voucher!");
+                    
 
                     return;
                 }
@@ -354,19 +340,19 @@ namespace Web.Client.Pages
                 var result = await VouchersService.BulkCreateVouchersAsync(template.Id, validMemberIds, expiry);
                 if (result)
                 {
-                    await MessageService.Success($"Tặng voucher thành công!");
-                    MessageService.Destroy();
+                   MessageService.Success($"Tặng voucher thành công!");
+                    
                 }
                 else
                 {
-                    await MessageService.Error("Không thể tặng voucher cho bất kỳ thành viên nào!");
-                    MessageService.Destroy();
+                   MessageService.Error("Không thể tặng voucher cho bất kỳ thành viên nào!");
+                    
                 }
             }
             catch (Exception ex)
             {
-                await MessageService.Error($"Lỗi: {ex.Message}");
-                MessageService.Destroy();
+               MessageService.Error($"Lỗi: {ex.Message}");
+                
             }
             finally
             {

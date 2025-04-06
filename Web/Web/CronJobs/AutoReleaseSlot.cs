@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Web.Hubs;
 
-namespace Web.Crons
+namespace Web.CronJobs
 {
     public class AutoReleaseSlot : BackgroundService
     {
@@ -44,13 +44,13 @@ namespace Web.Crons
                     var releasedSlots = expiredHolds.Select(bh => new
                     {
                         HoldSlotId = bh.Id,
-                        CourtId = bh.CourtId,
-                        TimeSlotId = bh.TimeSlotId,
+                        bh.CourtId,
+                        bh.TimeSlotId,
                         BookingType = (int)bh.BookingType,
-                        BeginAt = bh.BeginAt,
-                        EndAt = bh.EndAt,
-                        DayOfWeek = bh.DayOfWeek,
-                        HeldBy = bh.HeldBy
+                        bh.BeginAt,
+                        bh.EndAt,
+                        bh.DayOfWeek,
+                        bh.HeldBy
                     }).ToList();
 
                     // Xóa các record BookingHold hết hạn
