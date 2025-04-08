@@ -71,7 +71,7 @@ namespace Web
                         }));
             });
             builder.Services.AddPolicies();
-            //builder.Services.AddHostedService<AutoReleaseSlot>();
+            builder.Services.AddHostedService<AutoReleaseSlot>();
             builder.Services.AddHostedService<AutoCancelExpiredBooking>();
 
             builder.Services.AddHttpClient();

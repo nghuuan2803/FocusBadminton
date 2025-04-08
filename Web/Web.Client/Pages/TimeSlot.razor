@@ -1,45 +1,50 @@
-﻿@using Shared.TimeSlots
+﻿@using AntDesign.TableModels
+@using Shared.TimeSlots
 @using AntDesign.Charts
 @using AntDesign
 @inject TimeSlotService TimeSlotService
 @page "/timeslots"
 
-<!-- Bảng khung giờ -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Quản lý khung giờ</h1>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th width="100">Mã khung giờ</th>
-                        <th>Bắt đầu</th>
-                        <th>Kết thúc</th>
-                        <th>Giá (VNĐ)</th>
-                        <th>Cập nhật</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var timeSlot in timeSlots)
-                    {
-                        <tr>
-                            <td>@timeSlot.Id</td>
-                            <td>@timeSlot.StartTime.ToString("hh\\:mm")</td>
-                            <td>@timeSlot.EndTime.ToString("hh\\:mm")</td>
-                            <td>
-                                @timeSlot.Price.ToString("#,0")
-                                <Button Icon="@IconType.Outline.Edit" @onclick="() => OpenUpdateTimeSlotModal(timeSlot)" />
-                            </td>
-                            <td>@timeSlot.UpdatedAt?.ToString("dd/MM/yyyy") - @timeSlot.UpdatedBy</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
-<h3 class="mb-3">Biểu đồ thống kê số lần đặt của khung giờ</h3>
+<Breadcrumb>
+    <BreadcrumbItem>FocusBadminton</BreadcrumbItem>
+    <BreadcrumbItem>Khung giờ</BreadcrumbItem>
+</Breadcrumb>
+<br />
+<Table TItem="TimeSlotDTO"
+       DataSource="@timeSlots"
+       PageSize="@pageSize"
+       Total="@_total"
+       @ref="_table"
+       RowKey="m => m.Id.ToString()"
+       @bind-PageIndex="@pageNumber"
+       OnChange="OnTableChange">
+    <PropertyColumn Property="m => m.Id" Title="#" Sortable>
+        @(context.Id)
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.StartTime" Title="Giờ bắt đầu" Sortable>
+        @(context.StartTime.ToString("hh\\:mm"))
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.EndTime" Title="Giờ kết thúc" Sortable>
+        @(context.EndTime.ToString("hh\\:mm"))
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.Price" Title="Giá" Sortable>
+        @(context.Price.ToString("#,0 ₫"))
+    </PropertyColumn>
+    <PropertyColumn Property="m => m.UpdatedAt" Title="Ngày cập nhật" Sortable>
+        @($"{context.UpdatedAt} - {context.UpdatedBy}")
+    </PropertyColumn>
+    <ActionColumn Title="Thao tác">
+        <Space Size="SpaceSize.Middle">
+            <SpaceItem>
+                <Button Icon="@IconType.Outline.Edit" Onclick="() => OpenUpdateTimeSlotModal(context)" ></Button>
+                <Button Icon="@IconType.Outline.Lock"></Button>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+
+@* <h3 class="mb-3">Biểu đồ thống kê số lần đặt của khung giờ</h3>
 
 <div class="mb-3">
     <label for="startDatePicker" class="form-label">Từ ngày:</label>
@@ -52,8 +57,8 @@
 
     <button class="btn btn-primary ms-2" @onclick="HandleFilter">Lọc</button>
 </div>
-
-<!-- Biểu đồ thống kê khung giờ dạng cột -->
+ *@
+@* <!-- Biểu đồ thống kê khung giờ dạng cột -->
 @if (loading)
 {
     <p>Đang tải dữ liệu...</p>
@@ -64,7 +69,7 @@ else
         <AntDesign.Charts.Column Data="chartData" Config="chartConfig" />
     </div>
 }
-
+ *@
 <!-- Modal cập nhật TimeSlot -->
 <Modal Title="Cập nhật khung giờ"
        @bind-Visible="@_modalVisible"
@@ -79,7 +84,7 @@ else
         </div>
         <div class="mb-3">
             <label class="form-label">Thời gian bắt đầu</label>
-            <Input @bind-Value="@startTimeString" Disabled="true" Placeholder="HH:mm:ss" />
+            <Input @bind-Value="@startTimeString" Disabled="false" Placeholder="HH:mm:ss" />
         </div>
         <div class="mb-3">
             <label class="form-label">Thời gian kết thúc</label>
@@ -87,12 +92,13 @@ else
         </div>
         <div class="mb-3">
             <label class="form-label">Giá (VND)</label>
-            <AntDesign.InputNumber @bind-Value="@selectedTimeSlot.Price" Min="0" Step="1000" />
+            <AntDesign.InputNumber Format="#,0 ₫" @bind-Value="@selectedTimeSlot.Price" Min="0" Step="1000" />
         </div>
     }
 </Modal>
 
 @code {
+    ITable _table;
     bool loading = true;
     IEnumerable<TimeSlotDTO> timeSlots = new List<TimeSlotDTO>();
     TimeSlotStatisticDTO statictis = new();
@@ -100,7 +106,9 @@ else
     int month = DateTime.Today.Month;
     DateTimeOffset? startDate = null;
     DateTimeOffset? endDate = null;
-
+    private int pageNumber = 1;
+    private int pageSize = 10;
+    private int _total;
     // Dữ liệu cho biểu đồ
     object[] chartData = Array.Empty<object>();
     readonly ColumnConfig chartConfig = new ColumnConfig
@@ -201,6 +209,11 @@ else
         {
             Console.WriteLine(e.Message + e.StackTrace);
         }
-
+    }
+    private async Task OnTableChange(QueryModel<TimeSlotDTO> queryModel)
+    {
+        pageNumber = queryModel.PageIndex;
+        pageSize = queryModel.PageSize;
+        timeSlots = await TimeSlotService.GetAll();
     }
 }

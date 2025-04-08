@@ -24,10 +24,7 @@ namespace Application.Features.Bookings.Validators
 
             RuleFor(x => x.Deposit)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Deposit không được âm")
-                .LessThanOrEqualTo(x => x.Amount)
-                .When(x => x.Deposit > 0)
-                .WithMessage("Deposit không được lớn hơn Amount");
+                .WithMessage("Deposit không được âm");
 
             RuleFor(x => x.Note)
                 .MaximumLength(250)

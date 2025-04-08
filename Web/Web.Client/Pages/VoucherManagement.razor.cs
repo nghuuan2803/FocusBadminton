@@ -56,7 +56,7 @@ namespace Web.Client.Pages
         {
             try
             {
-                var result = await MembersService.GetMembersAsync(memberSearch, memberPageNumber, memberPageSize);
+                var result = await MembersService.GetMembersAsync();
                 if (result != null)
                 {
                     members = result;
@@ -357,6 +357,7 @@ namespace Web.Client.Pages
             finally
             {
                 isCreatingVoucher = false;
+                isGiftModalVisible = false;
                 StateHasChanged();
             }
         }

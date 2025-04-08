@@ -10,5 +10,6 @@ global using Newtonsoft.Json;
 global using Shared.TimeSlots;
 global using Blazored.LocalStorage;
 global using System.Net.Http.Json;
+global using Web.Client.Helper;
 //global using Web.Client.MediatorPattern;
 //global using Web.Client.StatePattern;

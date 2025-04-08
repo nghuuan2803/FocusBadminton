@@ -65,5 +65,14 @@ namespace Web.Client.ApiServices
             }
             return false;
         }
+
+        public async Task<IEnumerable<BookingDTO>> GetPendingBookingsAsync()
+        {
+            return await _httpClient.GetFromJsonAsync<IEnumerable<BookingDTO>>("api/GetBookings/pending");
+        }
+        public async Task<IEnumerable<BookingDTO>> GetAllAsync()
+        {
+            return await _httpClient.GetFromJsonAsync<IEnumerable<BookingDTO>>("api/Bookings");
+        }
     }
 }

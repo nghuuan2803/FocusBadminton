@@ -1,20 +1,103 @@
 ﻿@using Web.Client.Models
 @inherits LayoutComponentBase
 @inject NavigationManager _navigation
-<div class="page">
-    <div class="sidebar">
-        <SidebarMenu />
-    </div>
-    <main>
-        <div class="top-row px-4">
-            <a class="btn btn-success" href="swagger" target="_blank">SWAGGER</a>
-            <a class="btn btn-primary" href="login">ĐĂNG NHẬP</a>
-        </div>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+
+
+<Layout>
+    <Header Class="header">
+            <img class="logo" src="images/logo.png" />
+    </Header>
+    <Layout>
+        <Sider Collapsible Theme="SiderTheme.Light" Width="250">
+        <Menu Theme="MenuTheme.Light" DefaultSelectedKeys=@(new[]{"1"}) Mode="MenuMode.Inline">
+            <MenuItem Key="1" RouterLink="/">
+                <Icon Type="@IconType.Outline.BarChart" />
+                <span>Tổng quan</span>
+            </MenuItem>
+            <MenuItem Key="2" RouterLink="/court-schedule/1" RouterMatch="NavLinkMatch.All">
+                <Icon Type="@IconType.Outline.Calendar" />
+                <span>Lịch đặt sân</span>
+            </MenuItem>
+             @{
+                RenderFragment sub1Title =
+                    @<span>
+                        <Icon Type="@IconType.Outline.CarryOut" />
+                        <span>Thủ tục</span>
+                    </span>;
+            }
+             <SubMenu Key="sub1" TitleTemplate=sub1Title>
+                  <MenuItem Key="12"  RouterMatch="NavLinkMatch.All">
+                        <Icon Type="@IconType.Outline.Login" />
+                        <span>Nhận sân</span>
+                  </MenuItem>
+                   <MenuItem Key="13"  RouterMatch="NavLinkMatch.All">
+                        <Icon Type="@IconType.Outline.Logout" />
+                        <span>Thanh toán</span>
+                  </MenuItem>
+             </SubMenu>
+            <MenuItem Key="3" RouterLink="/users" RouterMatch="NavLinkMatch.All">
+                        <Icon Type="@IconType.Outline.User" />
+                        <span>Người dùng</span>
+            </MenuItem>
+            <MenuItem Key="5">
+                    <Icon Type="@IconType.Outline.Team" />
+                    <span>Đội/Nhóm</span>
+            </MenuItem>
+            @{
+                RenderFragment sub3Title =
+                    @<span>
+                        <Icon Type="@IconType.Outline.Control" />
+                        <span>Thiết lập</span>
+                    </span>;
+            }
+            <SubMenu Key="sub3" TitleTemplate=sub3Title>
+                <MenuItem Key="6">
+                    <Icon Type="@IconType.Outline.Appstore" />
+                    <span>Thông tin sân</span>
+                </MenuItem>
+                <MenuItem Key="7" RouterLink="/timeslots">
+                    <Icon Type="@IconType.Outline.FieldTime" />
+                    <span>Khung giờ</span>
+                </MenuItem>
+                <MenuItem Key="8" RouterLink="/voucher-management">
+                    <Icon Type="@IconType.Outline.Barcode" />
+                    <span>Phiếu giảm giá</span>
+                </MenuItem>
+                <MenuItem Key="9">
+                    <Icon Type="@IconType.Outline.Sliders" />
+                    <span>Ban-nơ quảng cáo</span>
+                </MenuItem>
+                    <MenuItem Key="10">
+                    <Icon Type="@IconType.Outline.Contacts" />
+                    <span>Thông tin liên hệ</span>
+                </MenuItem>
+            </SubMenu>
+                <MenuItem Key="11">
+                    <Icon Type="@IconType.Outline.Safety" />
+                    <span>Phân quyền</span>
+                </MenuItem>
+        </Menu>
+    </Sider>
+        <Layout>
+            <Content Class="site-layout-background" Style=" padding: 16px; margin: 0; min-height: 100vh;">
+                @Body
+            </Content>
+        </Layout>
+    </Layout>
+</Layout>
+
+<style>
+    .logo {
+        width: 120px;
+        height: 48px;
+        margin: 4px 32px 0px -48px;
+        float: left;
+    }
+
+    .site-layout-background {
+        background: #fff;
+    }
+</style>
 
 @code {
 
@@ -22,8 +105,10 @@
     // {
     // }
 
+
     private void GoToLogin()
     {
         _navigation.NavigateTo("login");
     }
+    
 }

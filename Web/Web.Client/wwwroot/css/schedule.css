@@ -9,7 +9,6 @@
 /* Container cho bảng, giới hạn độ rộng và buộc cuộn ngang */
 .table-container {
     overflow-x: auto;
-    max-width: calc(100vw - 350px); /* Giới hạn độ rộng, trừ phần menu 250px */
     width: 100%;
 }
 

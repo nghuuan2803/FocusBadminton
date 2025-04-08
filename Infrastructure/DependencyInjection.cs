@@ -92,6 +92,7 @@ namespace Infrastructure
             services.AddScoped<DapperSqlConnection>();
             services.AddScoped<IScheduleQueries, CourtScheduleQueries>();
             services.AddScoped<IRepository<Booking>, BookingRepository>();
+            services.AddScoped<IRepository<Member>, MemberRepository>();
             services.AddScoped<ICheckMultiDaySlotAvailabilityQuery, CheckMultiDaySlotAvailability>();
             services.AddScoped<ICostCalculatorFactory, CostCalculatorFactory>();
             services.AddScoped<AuthService>();

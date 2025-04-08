@@ -3,71 +3,107 @@
 @using Web.Client.SlotStates
 
 <link href="css/schedule.css" rel="stylesheet" />
-<div class="container mt-4">
-    <h3 class="mb-3">Lịch Đặt @courtName</h3>
 
-    <div class="mb-3">
-        <label for="startDatePicker" class="form-label">Từ ngày:</label>
-        <input type="date" id="startDatePicker" class="form-control w-25 d-inline-block"
-               @bind="StartDate" @bind:format="yyyy-MM-dd" />
+<Breadcrumb>
+    <BreadcrumbItem>Focus Badminton</BreadcrumbItem>
+    <BreadcrumbItem>Lịch đặt sân</BreadcrumbItem>
+</Breadcrumb>
+<br />
+<Tabs Type="TabType.Card">
+    <TabPane Key="1">
+        <TabTemplate>
+            <span><Icon Type="@IconType.Outline.Calendar" />Bảng lịch</span>
+        </TabTemplate>
+        <ChildContent>
+            <div>
+                <Flex Justify="FlexJustify.SpaceBetween" Gap="@("24")">
+                    <div class="mb-3">
+                        <label for="startDatePicker" class="form-label">Từ ngày:</label>
+                        <DatePicker @bind-Value="StartDate" Format="dd/MM/yyyy" />
 
-        <label for="endDatePicker" class="form-label ms-3">Đến ngày:</label>
-        <input type="date" id="endDatePicker" class="form-control w-25 d-inline-block"
-               @bind="EndDate" @bind:format="yyyy-MM-dd" />
+                        <label for="endDatePicker" class="form-label ms-3">Đến ngày:</label>
+                        <DatePicker @bind-Value="EndDate" Format="dd/MM/yyyy" />
 
-        <button class="btn btn-primary ms-2" @onclick="HandleFilter">Lọc</button>
-        <button class="btn btn-secondary ms-2" @onclick="ResetFilter">Đặt lại</button>
-    </div>
+                        <Button Icon="@IconType.Outline.Filter" Type=ButtonType.Primary Onclick="HandleFilter">Lọc</Button>
+                    </div>
+                    <Button Icon="@IconType.Outline.Reload" Type=ButtonType.Primary Onclick="ResetFilter">Đặt lại</Button>
+                </Flex>
 
-    @if (isLoading)
-    {
-        <p class="text-muted">Đang tải...</p>
-    }
-    else if (schedules.Any())
-    {
-        <div class="table-container">
-            <table class="schedule-table table table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th class="fixed-column">Ngày</th>
-                        @foreach (var timeSlot in timeSlots)
-                        {
-                            <th>@timeSlot.StartTime.ToString("hh\\:mm")</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var dateGroup in schedules.GroupBy(s => s.ScheduleDate))
-                    {
-                        var scheduleDate = dateGroup.Key;
-                        <tr>
-                            <td class="fixed-column">@scheduleDate.ToString("dd/MM")<br /> (@dateGroup.First().DayOfWeek)</td>
-                            @foreach (var timeSlot in timeSlots)
-                            {
-                                var slot = dateGroup.FirstOrDefault(s => s.TimeSlotId == timeSlot.Id);
-                                var slotKey = $"{CourtId}_{timeSlot.Id}_{scheduleDate:yyyyMMdd}";
-                                <SlotComponent CourtId="@slot.CourtId"
-                                               TimeSlotId="@slot.TimeSlotId"
-                                               Date="@slot.ScheduleDate"
-                                               StartTime="@slot.StartTime"
-                                               EndTime="@slot.EndTime"
-                                               HeldBy="@slot.HeldBy"
-                                               HoldId="@slot.HoldId"
-                                               BookingId="@slot.BookingId"
-                                               BookingDetailId="@slot.BookingDetailId"
-                                               InitialStatus="@slot.Status"
-                                               OnSlotUpdated="HandleSlotUpdated"
-                                               @ref="slotComponentRefs[slotKey]" />
+                @if (isLoading)
+                {
+                    <p class="text-muted">Đang tải...</p>
+                }
+                else if (schedules.Any())
+                {
+                    <div class="table-container">
+                        <table class="schedule-table table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="fixed-column">Ngày</th>
+                                    @foreach (var timeSlot in timeSlots)
+                                    {
+                                        <th>@timeSlot.StartTime.ToString("hh\\:mm")</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var dateGroup in schedules.GroupBy(s => s.ScheduleDate))
+                                {
+                                    var scheduleDate = dateGroup.Key;
+                                    <tr>
+                                        <td class="fixed-column">@scheduleDate.ToString("dd/MM")<br /> (@dateGroup.First().DayOfWeek.ToVnDayOfWeek())</td>
+                                        @foreach (var timeSlot in timeSlots)
+                                        {
+                                            var slot = dateGroup.FirstOrDefault(s => s.TimeSlotId == timeSlot.Id);
+                                            var slotKey = $"{CourtId}_{timeSlot.Id}_{scheduleDate:yyyyMMdd}";
+                                            <SlotComponent CourtId="@slot.CourtId"
+                                                           TimeSlotId="@slot.TimeSlotId"
+                                                           Date="@slot.ScheduleDate"
+                                                           StartTime="@slot.StartTime"
+                                                           EndTime="@slot.EndTime"
+                                                           HeldBy="@slot.HeldBy"
+                                                           HoldId="@slot.HoldId"
+                                                           BookingId="@slot.BookingId"
+                                                           BookingDetailId="@slot.BookingDetailId"
+                                                           InitialStatus="@slot.Status"
+                                                           OnSlotUpdated="HandleSlotUpdated"
+                                                           @ref="slotComponentRefs[slotKey]" />
 
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <p class="text-muted">Không có dữ liệu lịch</p>
-    }
-</div>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Không có dữ liệu lịch</p>
+                }
+            </div>
+        </ChildContent>
+    </TabPane>
+    <TabPane Key="2">
+        <TabTemplate>
+            <span>
+                <Badge Size="BadgeSize.Small" Offset="(4, -5)" Count="2">
+                    <Icon Type="@IconType.Outline.OrderedList" />Đơn chưa duyệt
+                </Badge>
+            </span>
+        </TabTemplate>
+        <ChildContent>
+            <Web.Client.Pages.Bookings.PendingList></Web.Client.Pages.Bookings.PendingList>
+        </ChildContent>
+    </TabPane>
+    <TabPane Key="3">
+        <TabTemplate>
+            <span>
+                <Icon Type="@IconType.Outline.History" />Lịch sử
+            </span>
+        </TabTemplate>
+        <ChildContent>
+            <Web.Client.Pages.Bookings.BookingList></Web.Client.Pages.Bookings.BookingList>
+        </ChildContent>
+    </TabPane>
+</Tabs>
+

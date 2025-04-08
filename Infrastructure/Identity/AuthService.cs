@@ -258,7 +258,8 @@ public class AuthService : IAuthService
 
     public async Task<Account> FindOrCreateUserAsync(GoogleJsonWebSignature.Payload payload)
     {
-        var user = await _userManager.FindByEmailAsync(payload.Email);
+        //var user = await _userManager.FindByEmailAsync(payload.Email);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(p=>p.Email == payload.Email);
         if (user == null)
         {
             user = new Account

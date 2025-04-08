@@ -13,7 +13,6 @@
   <ItemGroup>
     <Folder Include="Features\Accounts\EventHandlers\" />
     <Folder Include="Features\Auth\EventHandlers\" />
-    <Folder Include="Features\Teams\EventHandlers\" />
   </ItemGroup>
 
   <ItemGroup>

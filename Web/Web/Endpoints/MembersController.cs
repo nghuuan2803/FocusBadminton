@@ -1,4 +1,5 @@
 ﻿using Application.Common.Mappings;
+using Application.Features.Members.Queries;
 using Application.Features.Teams.Queries;
 using AutoMapper.Execution;
 using MediatR;
@@ -20,20 +21,10 @@ namespace Web.Endpoints
 
         // GET: api/members
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMembers(
-            [FromQuery] string? fullName = null,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMembers()
         {
-            var query = new GetMembersQuery
-            {
-                FullName = fullName,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
-            var members = await _mediator.Send(query);
-            var memberDTOs = members.Select(p => p.ToMemberDTO()).ToList();
-            return Ok(memberDTOs);
+            var members = await _mediator.Send(new GetMembersQuery());
+            return Ok(members);
         }
     }
 }

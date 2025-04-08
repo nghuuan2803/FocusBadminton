@@ -1,0 +1,76 @@
+﻿@using Shared.Bookings
+@inject BookingService BookingService
+
+<Table @ref="_table"
+       TItem="BookingDTO"
+       PageSize="pageSize"
+       Total="_total"
+       DataSource="_data"
+       RowKey="m => m.Id.ToString()"
+       @bind-PageIndex="@pageNumber">
+    <PropertyColumn Property="c =>c.Id" Title="#">
+        @context.Id
+    </PropertyColumn>
+    <PropertyColumn Property="c =>c.CreatedAt" Title="Ngày tạo đơn">
+        @context.CreatedAt.ToString("dd/MM/yyyy hh:mm:ss")
+    </PropertyColumn>
+    <PropertyColumn Property="c =>c.MemberName" Title="Người đặt">
+        @(context.TeamName ?? context.MemberName)
+    </PropertyColumn>
+    <PropertyColumn Property="c =>c.Type" Title="Loại đặt">
+        @(context.Type == BookingType.InDay ? "Trong ngày" : "Cố định")
+    </PropertyColumn>
+    <PropertyColumn Property="c =>c.PaymentMethod" Title="Hình thức thanh toán">
+        @context.PaymentMethod.ToVnPaymentMethod()
+    </PropertyColumn>
+    <PropertyColumn Property="c =>c.VoucherName" Title="Phiếu giảm giá">
+        @(context.VoucherName ?? "Không áp dụng")
+    </PropertyColumn>
+    <PropertyColumn Property="c =>c.Discount" Title="Tiền sân">
+        @if (context.Type == BookingType.Fixed_UnSetEndDate && context.Status != BookingStatus.Completed)
+        {
+            @: chưa thể tính @(context.Discount > 0 ? $"(giảm {context.Discount.ToString("#,0")})" : "")
+        }
+        else
+        {
+            if (context.Discount > 0)
+            {
+                <del>@context.Amount.ToString("#,0")</del> @: - @context.Deposit.ToString("#,0")
+            }
+            else
+            {
+                @context.EstimateCost.ToString("#,0")
+            }
+        }
+    </PropertyColumn>
+    <ActionColumn Title="Thao tác">
+        <Space Size="SpaceSize.Middle">
+            <SpaceItem>
+                <Button Type="ButtonType.Primary">Duyệt</Button>
+                <Button Danger>Từ chối</Button>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+
+@code {
+    private ITable _table;
+    private IEnumerable<BookingDTO> _data = [];
+    private int pageSize = 10;
+    private int pageNumber = 1;
+    int _total;
+
+    BookingDTO[] _selectedRows = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var result = await BookingService.GetPendingBookingsAsync();
+        _data = result;
+        _total = result.Count();
+    }
+}

@@ -14,11 +14,13 @@ namespace Shared.Bookings
         public string? TeamName { get; set; }
         public BookingType Type { get; set; } = BookingType.InDay;
         public DateTimeOffset? ApprovedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? CompletedAt { get; set; }
         public double Amount { get; set; }
         public double EstimateCost { get; set; }
         public double Deposit { get; set; }
         public int? VoucherId { get; set; }
+        public string? VoucherName { get; set; }
         public int? PromotionId { get; set; }
         public double Discount { get; set; }
 

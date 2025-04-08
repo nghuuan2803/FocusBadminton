@@ -18,7 +18,6 @@ namespace Web.Client.Pages
         private List<TimeSlotDTO> timeSlots = [];
         private Dictionary<string, SlotComponent> slotComponentRefs = new();
         private bool isLoading = false;
-
         protected override async Task OnInitializedAsync()
         {
             var config = Configuration.GetSection("ApiSettings");

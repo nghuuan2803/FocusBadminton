@@ -2,8 +2,11 @@
 @using AntDesign.TableModels
 @using Shared.Members
 
-<h3>Quản lý thành viên</h3>
-
+<Breadcrumb>
+    <BreadcrumbItem>Người dùng</BreadcrumbItem>
+    <BreadcrumbItem>Khách hàng</BreadcrumbItem>
+</Breadcrumb>
+<br/>
 <Flex Justify="FlexJustify.End" Gap="@("10")" Style="margin-bottom: 16px;">
 @*     <Input Placeholder="Tìm kiếm theo họ tên" @bind-Value="@memberSearch" OnChange="async () => await LoadMembers()" Style="width: 200px;" /> *@
 </Flex>
@@ -16,24 +19,37 @@
        RowKey="m => m.Id.ToString()"
        @bind-PageIndex="@memberPageNumber"
        OnChange="OnTableChange">
+    <PropertyColumn Property="m => m.Avatar" Title="">
+        <Avatar Size="@("3rem")" Src="@context.Avatar" />
+    </PropertyColumn>
     <PropertyColumn Property="m => m.FullName" Title="Họ tên" Sortable>
-        @(context.FullName ?? "N/A")
+        @(context.FullName ?? "Chưa cập nhật")
     </PropertyColumn>
     <PropertyColumn Property="m => m.Email" Title="Email" Sortable>
-        @(context.Email ?? "N/A")
+        @(context.Email ?? "Chưa cập nhật")
     </PropertyColumn>
     <PropertyColumn Property="m => m.PhoneNumber" Title="Số điện thoại">
-        @(context.PhoneNumber ?? "N/A")
+        @(context.PhoneNumber ?? "Chưa cập nhật")
     </PropertyColumn>
     <PropertyColumn Property="m => m.Gender" Title="Giới tính">
-        @(context.Gender ?? "N/A")
+        @(context.Gender ?? "Chưa cập nhật")
     </PropertyColumn>
     <PropertyColumn Property="m => m.DoB" Title="Ngày sinh">
-        @(context.DoB.HasValue ? context.DoB.Value.ToString("yyyy-MM-dd") : "N/A")
+        @(context.DoB.HasValue ? context.DoB.Value.ToString("yyyy-MM-dd") : "Chưa cập nhật")
     </PropertyColumn>
     <PropertyColumn Property="m => m.Address" Title="Địa chỉ">
-        @(context.Address ?? "N/A")
+        @(context.Address ?? "Chưa cập nhật")
     </PropertyColumn>
+    <PropertyColumn Property="m => m.Point" Title="Điểm tích lũy">
+        @(context.Point)
+    </PropertyColumn>
+    <ActionColumn Align="ColumnAlign.Right" Title="">
+        <Space Size="SpaceSize.Middle">
+            <SpaceItem>
+                <Button Icon="@IconType.Outline.Lock"></Button>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
 </Table>
 
 @code {
@@ -56,7 +72,7 @@
     {
         try
         {
-            var result = await MembersService.GetMembersAsync(memberSearch, memberPageNumber, memberPageSize);
+            var result = await MembersService.GetMembersAsync();
             if (result != null)
             {
                 members = result;
@@ -79,6 +95,5 @@
     {
         memberPageNumber = queryModel.PageIndex;
         memberPageSize = queryModel.PageSize;
-        await LoadMembers();
     }
 }

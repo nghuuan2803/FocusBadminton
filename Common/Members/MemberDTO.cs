@@ -13,5 +13,8 @@
         public string? Gender { get; set; }
         public DateTime? DoB { get; set; }
         public string? Address { get; set; }
+        public string? Avatar { get; set; }
+        public double Point { get; set; }
+
     }
 }

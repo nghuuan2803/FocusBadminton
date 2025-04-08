@@ -10,15 +10,17 @@ namespace Application.Common.Mappings
             {
                 Id = member.Id,
                 FullName = member.FullName,
-                PhoneNumber = member.PhoneNumber,
+                PhoneNumber = member.PhoneNumber ?? member.Account.PhoneNumber,
                 Contributed = member.Contributed,
-                Email = member.Email,
+                Email = member.Email ?? member.Account.Email,
                 AccountId = member.AccountId,
                 CurrentTeamId = member.CurrentTeamId,
                 JoinedTeamAt = member.JoinedTeamAt,
                 Gender = member.Gender,
                 DoB = member.DoB,
-                Address = member.Address
+                Address = member.Address,
+                Avatar = member.Account?.Avatar,
+                Point = member.Account?.PersonalPoints ?? 0,
             };
         }
     }
